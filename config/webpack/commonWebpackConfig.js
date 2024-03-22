@@ -2,12 +2,23 @@
 // https://github.com/shakacode/react_on_rails_demo_ssr_hmr/blob/master/config/webpack/commonWebpackConfig.js
 
 // Common configuration applying to client and server configuration
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+
 const { generateWebpackConfig, merge } = require('shakapacker');
+const path = require('path')
 
 const commonOptions = {
 	resolve: {
-		extensions: ['.css', '.ts', '.tsx']
+		extensions: ['.css', '.ts', '.tsx', '.js'],
+		alias: {
+			"@": path.resolve(__dirname, '../../client')
+		}
 	},
+	plugins: [
+		new TsconfigPathsPlugin({ configFile: path.resolve(__dirname, '../../tsconfig.json') }),
+		new ForkTsCheckerWebpackPlugin()
+	],
 	module: {
 		rules: [
 			{
@@ -17,6 +28,14 @@ const commonOptions = {
 					'postcss-loader',
 					'style-loader'
 				]
+			},
+			{
+				test: /\.([cm]?ts|tsx)$/,
+				loader: "ts-loader",
+				options: {
+					context: path.resolve(__dirname, '../../'),
+					configFile: path.resolve(__dirname, '../../tsconfig.json')
+				}
 			}
 		]
 	}

@@ -8,9 +8,20 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "target": "es5",
-    "jsx": "react",
-    "noEmit": true
+    "jsx": "react-jsx",
+    "noEmit": false,
+    "noEmitOnError": false,
+	"noImplicitAny":true,
+	"strictNullChecks":true,
+	"esModuleInterop": true,
+		"baseUrl":".",
+    "paths": {
+      "@/*": [
+        "client/*"
+      ]
+    }
   },
+	"include":["./client/**/*.ts","./client/**/*.d.ts","./client/**/*.tsx"],
   "exclude": ["**/*.spec.ts", "node_modules", "vendor", "public"],
   "compileOnSave": false
 }
