@@ -1,0 +1,14 @@
+version: "3"
+services:
+  db:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: base_db
+      POSTGRES_USER: base_user
+      POSTGRES_PASSWORD: base_password
+    ports:
+      - "5432:5432"
+volumes:
+  postgres_data: {}
