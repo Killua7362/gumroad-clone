@@ -1,0 +1,11 @@
+.sub{
+	vertical-align:sub;  
+	font-size:60%;
+	position: relative;
+	bottom:-0.5em;
+	left:0.2em;
+}
+
+.logo {
+	font-family: Mabry Pro Avenir Montserrat Corbel URW Gothic source-sans-prosans-serif;
+}

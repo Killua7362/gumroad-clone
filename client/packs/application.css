@@ -2,3 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+	overflow-x:hidden;
+	overflow-y:auto;
+}
+
+:root{
+ /* font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; */
+	font-family:"__GeistSans_ac79ff","__GeistSans_Fallback_ac79ff",ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+	background-color: #09090B;
+	color: white;
+}
+
+*, ::before, ::after {
+  border-width: 0;
+  border-style: solid;
+  border-color: currentColor /* or gray-DEFAULT / gray-400 */;
+  margin: 0;
+	box-sizing:border-box;
+}
