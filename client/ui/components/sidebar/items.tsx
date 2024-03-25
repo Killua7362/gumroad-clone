@@ -7,21 +7,25 @@ export const SideBarItems = [
 	{
 		title: "Home",
 		icon: <BsFillBackpack4Fill />,
-		onClickHandler: () => { }
+		onClickHandler: () => { },
+		linkUrl: "/"
 	},
 	{
 		title: "Products",
 		icon: <IoBagRemove />,
-		onClickHandler: () => { }
+		onClickHandler: () => { },
+		linkUrl: "/products"
 	},
 	{
 		title: "Collaborators",
 		icon: <FaHandshake />,
-		onClickHandler: () => { }
+		onClickHandler: () => { },
+		linkUrl: "/collaborators"
 	},
 	{
 		title: "Checkout",
 		icon: <IoMdCart />,
-		onClickHandler: () => { }
+		onClickHandler: () => { },
+		linkUrl: "/checkout"
 	},
 ]

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PageController < ApplicationController
-  layout "page"
+  layout "application"
 
   def index
   end

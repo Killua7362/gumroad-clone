@@ -8,22 +8,19 @@ import {
 import { RecoilRoot } from 'recoil'
 import Home from '@/ui/pages/Home'
 import BaseLayout from '@/ui/layouts/BaseLayout';
+import NotFoundPage from '@/ui/pages/404';
 
-const Test = () => {
-	return (<div className=''>
-	</div>)
-}
 const RootPage = () => {
 	return (
 		<RecoilRoot>
-			<BaseLayout>
-				<Router>
+			<Router>
+				<BaseLayout>
 					<Routes>
 						<Route path='/' Component={Home} />
-						<Route path='/test' Component={Test} />
+						<Route path='*' Component={NotFoundPage} />
 					</Routes>
-				</Router >
-			</BaseLayout>
+				</BaseLayout>
+			</Router >
 		</RecoilRoot>
 	);
 };

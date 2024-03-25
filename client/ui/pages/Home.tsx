@@ -4,6 +4,7 @@ const Home = () => {
 	return (
 		<HomeLayout>
 			<div>
+				testing
 			</div>
 		</HomeLayout>
 	)

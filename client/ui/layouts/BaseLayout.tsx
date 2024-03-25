@@ -5,7 +5,7 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<div className="min-h-screen w-screen flex flex-col sm:flex-row">
 			<SideBar />
-			<div className="h-full w-full px-10 sm:pt-6 pt-[6rem]">
+			<div className="min-h-screen w-screen px-10 sm:pt-6 pt-[6rem]">
 				{children}
 			</div>
 		</div>

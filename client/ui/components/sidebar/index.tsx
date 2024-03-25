@@ -3,10 +3,13 @@ import { SideBarItems } from '@/ui/components/sidebar/items';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { AnimatePresence, Variants, motion } from 'framer-motion'
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { Link, useLocation } from 'react-router-dom'
 
 const SideBar = () => {
 	const [activeItem, setActiveItem] = useState(0)
-	const [isOpen, setIsOpen] = useState(true)
+	const [isOpen, setIsOpen] = useState(false)
+	const location = useLocation();
+
 	document.title = SideBarItems[activeItem].title
 
 	const eleDesktopVariants = {
@@ -72,12 +75,25 @@ const SideBar = () => {
 		setWindowWidth(window.innerWidth)
 	}, [])
 
+
+	useEffect(() => {
+		for (let i = 0; i < SideBarItems.length; i++) {
+			if (SideBarItems[i].linkUrl === location.pathname) {
+				setActiveItem(i);
+				break;
+			}
+		}
+	}, [location])
 	return (
 		<AnimatePresence>
 			<motion.div className={`z-50 p-4 sm:bg-background fixed sm:relative bg-background`}
 				initial='initial'
 				animate='animate'
 				exit='initial'
+				onClick={(e) => {
+					e.stopPropagation()
+					e.preventDefault()
+				}}
 				variants={windowWidth! < 640 ? {
 					...divMobileVariants,
 					animate: {
@@ -141,28 +157,37 @@ const SideBar = () => {
 						{
 							SideBarItems.map((e, i) => {
 								return (
-									<motion.div
-										whileHover={{ scale: i === activeItem ? 1 : 1.1, transition: { duration: 0.2 } }}
-										className={`flex px-6 items-center py-4 border-white/30 gap-x-4 ${i === activeItem ? "bg-white text-gray-800" : "cursor-pointer hover:bg-background hover:text-white/80 "}`}
-										id={`$sidebaritems_${i}`}
-										onClick={() => { setActiveItem(i) }}>
-										<div className='text-lg'>
-											{e.icon}
-										</div>
-										<AnimatePresence>
-											{
-												isOpen &&
-												<motion.div
-													initial="initial"
-													animate="animate"
-													exit="initial"
-													variants={eleDesktopVariants}
-													className='overflow-hidden'>
-													{e.title}
-												</motion.div>
-											}
-										</AnimatePresence>
-									</motion.div>
+									<Link to={e.linkUrl} className='no-underline text-white'>
+										<motion.div
+											whileHover={{ scale: i === activeItem ? 1 : 1.1, transition: { duration: 0.2 } }}
+											className={`flex px-6 items-center py-4 border-white/30 gap-x-4 ${i === activeItem ? "bg-white text-gray-800" : "cursor-pointer hover:bg-background hover:text-white/80 "}`}
+											id={`$sidebaritems_${i}`}
+											onClick={() => {
+												if (i !== activeItem) {
+													setActiveItem(i)
+												}
+												if (windowWidth! < 640) {
+													setIsOpen(false)
+												}
+											}}>
+											<div className='text-lg'>
+												{e.icon}
+											</div>
+											<AnimatePresence>
+												{
+													isOpen &&
+													<motion.div
+														initial="initial"
+														animate="animate"
+														exit="initial"
+														variants={eleDesktopVariants}
+														className='overflow-hidden'>
+														{e.title}
+													</motion.div>
+												}
+											</AnimatePresence>
+										</motion.div>
+									</Link>
 								)
 							})
 						}
