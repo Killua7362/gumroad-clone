@@ -61,12 +61,11 @@
 
 .teeth{
 	position:absolute;
-	height:1.8rem;
 	width:4rem;
-	background:black;
 	bottom:1.2rem;
 	left:2.6rem;
 	border-radius:40%;
+	background:#09090B;
 }
 
 .teeth:before{

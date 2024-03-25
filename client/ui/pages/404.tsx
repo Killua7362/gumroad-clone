@@ -8,8 +8,10 @@ const NotFoundPage = () => {
 		top: '0'
 	})
 
+	const [mouthHeight, setMouthHeight] = useState<string>("1.5")
+
 	return (
-		<div className="flex flex-col gap-y-10 fixed sm:ml-24 sm:pr-24 mt-[6rem] sm:mt-0 z-50 top-0 left-0 w-full h-full text-white items-center justify-center tracking-wider font-thin" onMouseMove={(e) => {
+		<div className="flex z-10 flex-col gap-y-10 fixed sm:ml-24 sm:pr-24 mt-[2rem] sm:mt-0 z-50 top-0 left-0 w-full h-full text-white items-center justify-center tracking-wider font-thin" onMouseMove={(e) => {
 			const boundingRect = e.currentTarget.getBoundingClientRect()
 
 			const width_high = boundingRect.right;
@@ -23,10 +25,13 @@ const NotFoundPage = () => {
 
 			const normalized_height = (e.clientY - height_low) / (height_high - height_low)
 			const percentage_height = Math.min(100, Math.max(0, normalized_height * 100))
+
 			setPupilPos({
 				left: ((0.9 * (percentage_width / 100))).toString(),
 				top: ((1.9 * (percentage_height / 100))).toString()
 			})
+
+			setMouthHeight(((1 * ((100 - percentage_height) / 100)) + 1.5).toString())
 		}}>
 			<div className="flex">
 				<div className="eye-main font-thinner">
@@ -42,8 +47,7 @@ const NotFoundPage = () => {
 							</div>
 						</div>
 					</div>
-					<div className="teeth">
-					</div>
+					<div className={`teeth`} style={{ height: `${mouthHeight}rem` }} />
 				</div>
 			</div>
 			<div className="text-3xl uppercase font-thin tracking-wider">
