@@ -89,44 +89,56 @@ const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 							</motion.div>
 						}
 					</AnimatePresence>
-					<motion.div
-						initial={{
-							width: '0rem',
-							background: '#09090B'
-						}}
-						animate={{
-							width: searchConfig.active ? '20rem' : '2rem',
-							background: searchConfig.active ? 'white' : '#09090B',
-							color: searchConfig.active ? 'black' : 'white'
-
-						}}
-						exit={{
-							width: '0rem',
-							background: '#09090B'
-
-						}}
-
-						transition={{
-							duration: 1.2
-						}}
-
-						className={`h-[2.35rem] flex items-center p-2 rounded-xl focus-within:border-[2px] border-primary gap-x-2`}>
-						<div className="w-fit h-fit">
-							<FaSearch className="cursor-pointer" onClick={() => {
-								searchConfig.active ? setSearchConfig(prev => {
-									return { ...prev, active: false }
-								}) :
-									setSearchConfig(prev => {
-										return { ...prev, active: true }
-									})
-							}} />
-						</div>
-						<AnimatePresence>
-							{searchConfig.active &&
-								<motion.input className="w-full h-full rounded-xl focus:outline-none text-base" />
-							}
-						</AnimatePresence>
-					</motion.div>
+					<AnimatePresence>
+						<motion.div
+							initial={{
+								width: '0rem',
+								padding: '0rem'
+							}}
+							animate={{
+								width: searchConfig.active ? '20rem' : '0rem',
+								paddingLeft: '0.5rem',
+								transition: {
+									duration: 0.2
+								}
+							}}
+							exit={{
+								width: '0rem',
+								padding: '0rem'
+							}}
+							layout={false}
+							className={`h-[2.4rem] w-full focus-within:border-[2px] border-primary flex gap-x-2 rounded-xl items-center ${searchConfig.active && "bg-white text-black"}`}>
+							<div
+								className="w-fit h-fit text-base mt-1">
+								<FaSearch className="cursor-pointer" onClick={() => {
+									searchConfig.active ? setSearchConfig(prev => {
+										return { ...prev, active: false }
+									}) :
+										setSearchConfig(prev => {
+											return { ...prev, active: true }
+										})
+								}} />
+							</div>
+							<AnimatePresence>
+								{searchConfig.active &&
+									<motion.input
+										initial={{
+											width: 0
+										}}
+										animate={{
+											width: '100%',
+											transition: {
+												duration: 0.2
+											}
+										}}
+										exit={{
+											width: 0
+										}}
+										className="h-full rounded-xl focus:outline-none text-lg leading-0" />
+								}
+							</AnimatePresence>
+						</motion.div>
+					</AnimatePresence>
 				</div>
 				{children}
 			</div>
