@@ -9,6 +9,7 @@ import { RecoilRoot } from 'recoil'
 import Home from '@/ui/pages/Home'
 import BaseLayout from '@/ui/layouts/BaseLayout';
 import NotFoundPage from '@/ui/pages/404';
+import ProductsPage from '@/ui/pages/Products';
 
 const RootPage = () => {
 	return (
@@ -17,6 +18,7 @@ const RootPage = () => {
 				<BaseLayout>
 					<Routes>
 						<Route path='/' Component={Home} />
+						<Route path='/products' Component={ProductsPage} />
 						<Route path='*' Component={NotFoundPage} />
 					</Routes>
 				</BaseLayout>

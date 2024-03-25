@@ -93,11 +93,12 @@ const SideBar = () => {
 
 
 	useEffect(() => {
-		if (location.pathname.split('/')[1] === 'account') {
+		const path = location.pathname.split('/')[1]
+		if (path === 'account') {
 			setActiveItem(-1)
 		} else {
 			for (let i = 0; i < SideBarTopItems.length; i++) {
-				if (SideBarTopItems[i].linkUrl === location.pathname) {
+				if (SideBarTopItems[i].title.toLowerCase() === path) {
 					setActiveItem(i);
 					break;
 				}
