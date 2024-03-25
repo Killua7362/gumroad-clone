@@ -34,16 +34,16 @@ export const SideBarBottomItems = [
 	{
 		title: "Settings",
 		icon: <IoSettingsSharp />,
-		linkUrl: '/account'
+		linkUrl: '/account/settings'
 	},
 	{
 		title: "Profile",
 		icon: <SiAboutdotme />,
-		linkUrl: '/account'
+		linkUrl: '/account/profile'
 	},
 	{
 		title: "Logout",
 		icon: <CgLogOut />,
-		linkUrl: '/account'
+		linkUrl: '/account/logout'
 	},
 ]

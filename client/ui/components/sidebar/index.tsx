@@ -93,17 +93,22 @@ const SideBar = () => {
 
 
 	useEffect(() => {
-		for (let i = 0; i < SideBarTopItems.length; i++) {
-			if (SideBarTopItems[i].linkUrl === location.pathname) {
-				setActiveItem(i);
-				break;
+		if (location.pathname.split('/')[1] === 'account') {
+			setActiveItem(-1)
+		} else {
+			for (let i = 0; i < SideBarTopItems.length; i++) {
+				if (SideBarTopItems[i].linkUrl === location.pathname) {
+					setActiveItem(i);
+					break;
+				}
 			}
 		}
 	}, [location])
 	return (
 		<motion.div className={`p-4 sm:bg-background fixed sm:relative bg-background`}
+			layout
 			style={{
-				zIndex: '50'
+				zIndex: '999'
 			}}
 			initial='initial'
 			animate='animate'
@@ -148,7 +153,7 @@ const SideBar = () => {
 								</div>
 							}
 							<div className='block sm:hidden'>
-								{SideBarTopItems[activeItem].title}
+								{SideBarTopItems[activeItem]?.title || "Account"}
 							</div>
 						</motion.div>
 					</AnimatePresence>
@@ -236,7 +241,14 @@ const SideBar = () => {
 										SideBarBottomItems.map((e, i) => {
 											return (
 												<Link to={e.linkUrl} className='no-underline text-white'>
-													<motion.div whileHover={{ scale: 1.1, transition: { duration: 0.2 } }} className='flex px-6 hover:text-white/80 items-center py-4 border-white/30 gap-x-4 cursor-pointer'>
+													<motion.div
+														whileHover={{
+															scale: activeItem === -1 && (location.pathname.split('/')[2] || "") === e.title.toLowerCase() ? 1 : 1.1,
+															transition: {
+																duration: 0.2
+															}
+														}}
+														className={`flex px-6 items-center py-4 border-white/30 gap-x-4 ${activeItem === -1 && (location.pathname.split('/')[2] || "") === e.title.toLowerCase() ? "bg-white text-gray-800" : "bg-background cursor-pointer hover:text-white/80"}`}>
 														<div className='text-lg'>
 															{e.icon}
 														</div>
@@ -267,7 +279,9 @@ const SideBar = () => {
 							onClick={() => {
 								isAccountOpen ? setIsAccountOpen(false) : setIsAccountOpen(true)
 							}}
-							className={`flex ${isAccountOpen ? "py-4 px-6" : "py-4 px-2 m-2 border-[1px]"} items-center justify-center rounded-xl hover:text-white/80 bg-background items-center border-white gap-x-4 cursor-pointer`}>
+							className={
+								`flex ${isAccountOpen ? "py-4 px-6" : "p-4 m-2 border-[1px]"} ${-1 === activeItem && !isAccountOpen ? "bg-white text-gray-800" : "bg-background text-white hover:text-white/80 "} items-center justify-center rounded-xl border-white/30 gap-x-4 cursor-pointer`
+							}>
 							<div className='text-lg'>
 								<MdAccountCircle />
 							</div>
