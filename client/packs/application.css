@@ -6,6 +6,8 @@ html {
   scroll-behavior: smooth;
 	overflow-x:hidden;
 	overflow-y:auto;
+scrollbar-width: thin;
+scrollbar-color:white #09090B;
 }
 
 :root{

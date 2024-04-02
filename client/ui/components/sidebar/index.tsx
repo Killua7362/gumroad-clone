@@ -1,10 +1,13 @@
 import '@/ui/styles/sidebar.css'
-import { SideBarBottomItems, SideBarTopItems } from '@/ui/components/sidebar/items';
+import { SideBarTopItems } from '@/ui/components/sidebar/items';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { AnimatePresence, Variants, motion } from 'framer-motion'
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { Link, useLocation } from 'react-router-dom'
 import { MdAccountCircle } from "react-icons/md";
+import { IoSettingsSharp } from "react-icons/io5";
+import { SiAboutdotme } from "react-icons/si";
+import { CgLogOut } from "react-icons/cg";
 
 const SideBar = () => {
 	const [activeItem, setActiveItem] = useState(0)
@@ -115,8 +118,6 @@ const SideBar = () => {
 			animate='animate'
 			exit='initial'
 			onClick={(e) => {
-				e.stopPropagation()
-				e.preventDefault()
 			}}
 			variants={windowWidth! < 640 ? {
 				...divMobileVariants,
@@ -184,7 +185,6 @@ const SideBar = () => {
 								return (
 									<Link to={e.linkUrl} className='no-underline text-white'>
 										<motion.div
-											whileHover={{ scale: i === activeItem ? 1 : 1.1, transition: { duration: 0.2 } }}
 											className={`flex px-6 items-center py-4 border-white/30 gap-x-4 ${i === activeItem ? "bg-white text-gray-800" : "cursor-pointer hover:text-white/80 "}`}
 											id={`$sidebarTopitems_${i}`}
 											onClick={() => {
@@ -238,40 +238,89 @@ const SideBar = () => {
 										opacity: 0
 									}}
 									className='overflow-hidden relative'>
-									{
-										SideBarBottomItems.map((e, i) => {
-											return (
-												<Link to={e.linkUrl} className='no-underline text-white'>
+									<Link to='/account/settings' className='no-underline text-white'>
+										<motion.div
+											whileHover={{
+												scale: activeItem === -1 && (location.pathname.split('/')[2] || "") === 'settings' ? 1 : 1.03,
+												transition: {
+													duration: 0.2
+												}
+											}}
+											className={`flex px-6 items-center py-4 border-white/30 gap-x-4 ${activeItem === -1 && (location.pathname.split('/')[2] || "") === 'settings' ? "bg-white text-gray-800" : "bg-background cursor-pointer hover:text-white/80"}`}>
+											<div className='text-lg'>
+												<IoSettingsSharp />
+											</div>
+											<AnimatePresence>
+												{
+													isOpen &&
 													<motion.div
-														whileHover={{
-															scale: activeItem === -1 && (location.pathname.split('/')[2] || "") === e.title.toLowerCase() ? 1 : 1.1,
-															transition: {
-																duration: 0.2
-															}
-														}}
-														className={`flex px-6 items-center py-4 border-white/30 gap-x-4 ${activeItem === -1 && (location.pathname.split('/')[2] || "") === e.title.toLowerCase() ? "bg-white text-gray-800" : "bg-background cursor-pointer hover:text-white/80"}`}>
-														<div className='text-lg'>
-															{e.icon}
-														</div>
-														<AnimatePresence>
-															{
-																isOpen &&
-																<motion.div
-																	initial="initial"
-																	animate="animate"
-																	exit="initial"
-																	variants={eleDesktopVariants}
-																	className='overflow-hidden'>
-																	{e.title}
-																</motion.div>
-															}
-														</AnimatePresence>
+														initial="initial"
+														animate="animate"
+														exit="initial"
+														variants={eleDesktopVariants}
+														className='overflow-hidden'>
+														Settings
 													</motion.div>
+												}
+											</AnimatePresence>
+										</motion.div>
 
-												</Link>
-											)
-										})
-									}
+									</Link>
+									<Link to="/profile?id=123" className='no-underline text-white' target='_blank'
+										rel='noopener noreferrer'>
+										<motion.div
+											whileHover={{
+												scale: activeItem === -1 && (location.pathname.split('/')[2] || "") === 'profile' ? 1 : 1.03,
+												transition: {
+													duration: 0.2
+												}
+											}}
+											className={`flex px-6 items-center py-4 border-white/30 gap-x-4 ${activeItem === -1 && (location.pathname.split('/')[2] || "") === 'profile' ? "bg-white text-gray-800" : "bg-background cursor-pointer hover:text-white/80"}`}>
+											<div className='text-lg'>
+												<SiAboutdotme />
+											</div>
+											<AnimatePresence>
+												{
+													isOpen &&
+													<motion.div
+														initial="initial"
+														animate="animate"
+														exit="initial"
+														variants={eleDesktopVariants}
+														className='overflow-hidden'>
+														Profile
+													</motion.div>
+												}
+											</AnimatePresence>
+										</motion.div>
+
+									</Link>
+									<motion.div
+										whileHover={{
+											scale: activeItem === -1 && (location.pathname.split('/')[2] || "") === 'logout' ? 1 : 1.03,
+											transition: {
+												duration: 0.2
+											}
+										}}
+										className={`flex px-6 items-center py-4 border-white/30 gap-x-4 ${activeItem === -1 && (location.pathname.split('/')[2] || "") === 'logout' ? "bg-white text-gray-800" : "bg-background cursor-pointer hover:text-white/80"}`}>
+										<div className='text-lg'>
+											<CgLogOut />
+										</div>
+										<AnimatePresence>
+											{
+												isOpen &&
+												<motion.div
+													initial="initial"
+													animate="animate"
+													exit="initial"
+													variants={eleDesktopVariants}
+													className='overflow-hidden'>
+													Logout
+												</motion.div>
+											}
+										</AnimatePresence>
+									</motion.div>
+
 								</motion.div>
 							}
 						</AnimatePresence>

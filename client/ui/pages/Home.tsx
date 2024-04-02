@@ -3,7 +3,7 @@ import HomeLayout from "@/ui/layouts/HomeLayout"
 const Home = () => {
 	return (
 		<HomeLayout>
-			<div className="flex flex-col h-full w-full items-center pt-10 gap-y-4">
+			<div className="flex flex-col w-full items-center pt-10 gap-y-4">
 				<div className="text-2xl uppercase tracking-wider w-[98%] md:w-10/12 base:w-9/12 lg:w-8/12 xl:w-7/12 2xl:w-6/12 text-white/90">
 					Activity
 				</div>

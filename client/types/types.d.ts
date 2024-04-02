@@ -14,3 +14,12 @@ interface sortConfig {
 interface searchConfig {
 	active: boolean;
 }
+
+interface ProductCardData {
+	imageSource?: string
+}
+
+interface ProductsCardContextMenu {
+	active:boolean;
+	activeIdx:number;
+}

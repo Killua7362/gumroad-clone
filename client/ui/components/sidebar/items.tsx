@@ -16,34 +16,12 @@ export const SideBarTopItems = [
 	{
 		title: "Products",
 		icon: <IoBagRemove />,
-		linkUrl: "/products"
-	},
-	{
-		title: "Collaborators",
-		icon: <FaHandshake />,
-		linkUrl: "/collaborators"
+		linkUrl: "/products/home"
 	},
 	{
 		title: "Checkout",
 		icon: <IoMdCart />,
-		linkUrl: "/checkout"
+		linkUrl: "/checkout/form"
 	},
 ]
 
-export const SideBarBottomItems = [
-	{
-		title: "Settings",
-		icon: <IoSettingsSharp />,
-		linkUrl: '/account/settings'
-	},
-	{
-		title: "Profile",
-		icon: <SiAboutdotme />,
-		linkUrl: '/account/profile'
-	},
-	{
-		title: "Logout",
-		icon: <CgLogOut />,
-		linkUrl: '/account/logout'
-	},
-]
