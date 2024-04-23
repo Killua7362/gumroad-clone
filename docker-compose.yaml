@@ -10,5 +10,15 @@ services:
       POSTGRES_PASSWORD: base_password
     ports:
       - "5432:5432"
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: base_user@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: base_password
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
 volumes:
   postgres_data: {}
+  pgadmin_data: {}

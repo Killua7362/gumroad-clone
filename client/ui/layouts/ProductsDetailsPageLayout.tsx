@@ -7,7 +7,7 @@ interface ProductDetailsPageLayoutProps {
 
 const ProductsDetailsPageLayout = ({ children, preview }: ProductDetailsPageLayoutProps) => {
 	return (
-		<div className="h-full w-full mb-20">
+		<div className="w-full mb-20">
 			<ProfileNavbar />
 			{children}
 		</div>

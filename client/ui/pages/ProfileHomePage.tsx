@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import ProfilePageLayout from "@/ui/layouts/ProfilePageLayout"
 import ProfilePageProductCard from "@/ui/components/cards/ProfilePageProductCard"
 
-const ProfileHomePage = ({ preview = false }: { preview?: boolean }) => {
+const ProfileHomePage = ({ preview = false, name, bio, productCategories }: { preview?: boolean, name?: string, bio?: string, productCategories?: productCategories[] }) => {
 	const [rendered, setRendered] = useState(false)
 	const navigate = useNavigate()
 	const params = useParams()
@@ -23,13 +23,19 @@ const ProfileHomePage = ({ preview = false }: { preview?: boolean }) => {
 				<div className="min-h-[5rem] w-[100%] flex justify-center items-center bg-accent/30 shadow-xl shadow-black/60">
 					<div className="w-10/12 xl:w-8/12 text-xl">
 						<span className="w-full">
-							This is the awesome bio we are talking about yayyy
+							{bio}
 						</span>
 					</div>
 				</div>
 				<div className="w-10/12 xl:w-8/12 mx-auto h-full flex flex-col mt-2 gap-y-8">
-					<ProfilePageProductCard />
-					<ProfilePageProductCard />
+					{
+						productCategories &&
+						productCategories.map((e, i) => {
+							return !e.hide && (
+								<ProfilePageProductCard name={e.name} />
+							)
+						})
+					}
 				</div>
 			</div>
 		</ProfilePageLayout>

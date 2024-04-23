@@ -6,7 +6,9 @@ const ProfileNavbar = () => {
 	return (
 		<div className="fixed border-b-[0.1px] border-white/30 min-h-[6rem] w-full top-0 bg-background z-30">
 			<div className="w-10/12 xl:w-8/12 h-full mx-auto flex items-center justify-between md:flex-row flex-col gap-y-6 my-6">
-				<div className="text-3xl w-full">
+				<div className="text-3xl w-full cursor-pointer" onClick={() => {
+					navigate('/profile/123')
+				}}>
 					Akshay Bhat
 				</div>
 				<div className="flex gap-x-3 items-center justify-between md:justify-start w-full md:w-fit">

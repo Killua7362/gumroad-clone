@@ -3,6 +3,8 @@ import { Fragment, useState } from "react"
 import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { modalBaseActive } from "@/atoms/states";
 
 const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 	const [sortConfig, setSortConfig] = useState<sortConfig>({
@@ -16,6 +18,8 @@ const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 	})
 
 	const params = useParams()
+
+	const [modalActive, setModalActive] = useRecoilState(modalBaseActive)
 
 	return (
 		<div className="h-full w-full mb-14">
@@ -38,6 +42,16 @@ const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 					</div>
 				</div>
 				<div className="flex gap-x-3 items-center">
+					<div className={`px-4 py-2 w-fit text-black rounded-xl hover:bg-white/70 cursor-pointer bg-white hover:text-gray-800`}
+						onClick={() => {
+							setModalActive({
+								active: true,
+								type: "new_product"
+							})
+						}}
+					>
+						New Product
+					</div>
 					<div className={`px-4 py-2 w-fit text-black rounded-xl hover:bg-white/70 cursor-pointer bg-white hover:text-gray-800`}
 						onClick={() => {
 						}}

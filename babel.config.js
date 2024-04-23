@@ -14,7 +14,8 @@ module.exports = function(api) {
 					modules: false,
 					runtime: "automatic",
 					development: !isProductionEnv,
-					useBuiltIns: true
+					useBuiltIns: true,
+					"importSource": "@emotion/react"
 				}
 			]
 		].filter(Boolean),

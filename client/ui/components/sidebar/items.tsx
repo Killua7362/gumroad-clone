@@ -6,6 +6,7 @@ import { MdAccountCircle } from "react-icons/md";
 import { IoSettingsSharp } from "react-icons/io5";
 import { SiAboutdotme } from "react-icons/si";
 import { CgLogOut } from "react-icons/cg";
+import { MdOutlinePriceChange } from "react-icons/md";
 
 export const SideBarTopItems = [
 	{
@@ -23,5 +24,10 @@ export const SideBarTopItems = [
 		icon: <IoMdCart />,
 		linkUrl: "/checkout/form"
 	},
+	{
+		title: "Sales",
+		icon: <MdOutlinePriceChange />,
+		linkUrl: ""
+	}
 ]
 

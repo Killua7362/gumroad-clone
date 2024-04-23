@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment, useEffect } from 'react';
 import style from './global.module.css';
 import {
 	BrowserRouter as Router,
@@ -17,6 +17,9 @@ import CheckoutPage from '@/ui/pages/Checkout';
 import ProfileHomePage from '@/ui/pages/ProfileHomePage';
 import ProductsDetailsPage from '@/ui/pages/ProductDetailsPage';
 import ProfileCheckoutPage from '@/ui/pages/ProfileCheckoutPage';
+import ProductEditPage from '@/ui/pages/ProductEditPage';
+import SignInPage from '@/ui/pages/SignInPage';
+import SignUpPage from '@/ui/pages/SignUpPage';
 
 const productsPageRoute = () => {
 	const params = useParams();
@@ -40,7 +43,18 @@ const checkoutPageRoute = () => {
 	return <Navigate to='/notfound' replace />
 }
 
+const ProductEditPageRoute = () => {
+	const params = useParams()
+	if (params.page && (params.page === 'home' || params.page === 'content')) {
+		return (
+			<ProductEditPage />
+		)
+	}
+	return <Navigate to='/notfound' replace />
+}
+
 const RootPage = () => {
+
 	return (
 		<RecoilRoot>
 			<Router>
@@ -49,6 +63,9 @@ const RootPage = () => {
 						<Route path='/' element={
 							< Home />
 						} />
+						<Route path="/signin" element={<SignInPage />} />
+						<Route path="/signup" element={<SignUpPage />} />
+						<Route path="/products/edit/:id/:page" Component={ProductEditPageRoute} />
 						<Route path="/products/:page" Component={productsPageRoute} />
 						<Route path="/checkout/:page" Component={checkoutPageRoute} />
 						<Route path="/profile/:id" element={

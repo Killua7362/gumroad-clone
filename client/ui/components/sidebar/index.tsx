@@ -3,19 +3,24 @@ import { SideBarTopItems } from '@/ui/components/sidebar/items';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { AnimatePresence, Variants, motion } from 'framer-motion'
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { MdAccountCircle } from "react-icons/md";
 import { IoSettingsSharp } from "react-icons/io5";
 import { SiAboutdotme } from "react-icons/si";
 import { CgLogOut } from "react-icons/cg";
+import { useSetRecoilState } from 'recoil';
+import { loginStatuFetcher } from '@/atoms/states';
+import axios from 'axios'
 
 const SideBar = () => {
 	const [activeItem, setActiveItem] = useState(0)
 	const [isOpen, setIsOpen] = useState(false)
 	const [isAccountOpen, setIsAccountOpen] = useState(false)
 
+	const loginStatusSetter = useSetRecoilState(loginStatuFetcher)
 	const location = useLocation();
 
+	const navigate = useNavigate();
 	document.title = (SideBarTopItems[activeItem]?.title || "Account")
 
 	const eleDesktopVariants = {
@@ -112,7 +117,7 @@ const SideBar = () => {
 		<motion.div className={`p-4 sm:bg-background fixed sm:relative bg-background`}
 			layout
 			style={{
-				zIndex: '999'
+				zIndex: '30'
 			}}
 			initial='initial'
 			animate='animate'
@@ -296,6 +301,14 @@ const SideBar = () => {
 
 									</Link>
 									<motion.div
+										onClick={async () => {
+											axios.delete(`${window.location.origin}/api/sessions/logout`).then((res) => {
+												loginStatusSetter({
+													...res.data
+												})
+												navigate('/signin')
+											}).catch((err) => console.log(err))
+										}}
 										whileHover={{
 											scale: activeItem === -1 && (location.pathname.split('/')[2] || "") === 'logout' ? 1 : 1.03,
 											transition: {
