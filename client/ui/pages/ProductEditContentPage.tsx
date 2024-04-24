@@ -1,13 +1,61 @@
+/** @jsxImportSource @emotion/react */
 import { Fragment } from "react/jsx-runtime"
 import { CiStar } from "react-icons/ci";
 import { FaStar } from "react-icons/fa";
 import { useState } from "react";
 
 import { PlaceholderExtension } from 'remirror/extensions';
-import { EditorComponent, Remirror, useRemirror } from '@remirror/react';
+import { EditorComponent, Remirror, Toolbar, useRemirror } from '@remirror/react';
 import { MarkdownToolbar } from '@remirror/react'
-import { MarkdownEditor } from '@remirror/react-editors/markdown';
 import { css } from '@emotion/css';
+import { MarkdownEditor } from '@/ui/misc/markdown-editor'
+
+const markDownStyle = css`
+		width:100%;
+		.remirror-theme{
+			.ProseMirror{
+				min-height:60vh !important;
+				overflow-y:hidden !important;
+			}
+			.ProseMirror:focus{
+				box-shadow:none;
+			}
+			.MuiStack-root{
+				background-color:#09090B;
+				border:rgba(255,255,255,0.6) 0.3px solid;
+				padding:4px;
+				border-radius:0.375rem;
+				display:flex;
+				gap:8px;
+				width:fit-content;
+				.MuiDivider-root{
+					border-color:rgba(255,255,255,0.6);
+				}
+				.MuiBox-root{
+					display:flex;
+					gap:5px;
+					background-color:#09090B;
+					.MuiButtonBase-root{
+						background-color:#09090B;
+						svg{
+							color:white;
+							height:1.2rem;
+							width:1.2rem;
+						}
+					}
+					.Mui-selected{
+						background-color:white;
+						svg{
+							color:black;
+							height:1.2rem;
+							width:1.2rem;
+						}
+					}
+				}
+			}
+
+		}
+		`
 
 const ProductEditContentPage = () => {
 	const [reviewScore, setReviewScore] = useState(1)
@@ -86,32 +134,19 @@ const ProductEditContentPage = () => {
 					}
 				</div>
 			</div>
-			<div className="w-full h-full focus-within:outline-none">
-				<Remirror manager={manager} initialContent={state} autoFocus autoRender="end" classNames={[
-					css`
-						&.ProseMirror {
-							padding: 0;
-							height:70vh;
-							outline:0;
-
-							.remirror-is-empty:first-of-type::before{
-								  color: #aaa;
-								  content: attr(data-placeholder);
-								  font-style: italic;
-								  height: 0;
-								  pointer-events: none;
-								  position: absolute;
-							}
-
-						}
-
-					`
-				]}>
-
-				</Remirror>
+			<div className={markDownStyle}>
+				<MarkdownEditor placeholder="start typing..."
+					theme={{
+						color: {
+							outline: '#09090B',
+							text: 'white'
+						},
+					}}>
+				</MarkdownEditor>
 			</div>
 		</Fragment>
 	)
 }
+
 
 export default ProductEditContentPage

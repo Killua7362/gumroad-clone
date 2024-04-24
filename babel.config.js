@@ -11,15 +11,16 @@ module.exports = function(api) {
 			[
 				'@babel/preset-react',
 				{
-					modules: false,
 					runtime: "automatic",
+					importSource: "@emotion/react",
+					modules: false,
 					development: !isProductionEnv,
 					useBuiltIns: true,
-					"importSource": "@emotion/react"
 				}
 			]
 		].filter(Boolean),
 		plugins: [
+			"@emotion/babel-plugin",
 			process.env.WEBPACK_SERVE && 'react-refresh/babel',
 			isProductionEnv && ['babel-plugin-transform-react-remove-prop-types',
 				{

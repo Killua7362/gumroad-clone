@@ -10,6 +10,7 @@
     "target": "es5",
     "jsx": "react-jsx",
     "noEmit": false,
+"jsxImportSource": "@emotion/react",
     "noEmitOnError": false,
 	"noImplicitAny":true,
 	"strictNullChecks":true,
