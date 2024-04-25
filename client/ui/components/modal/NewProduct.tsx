@@ -28,10 +28,8 @@ const NewProductModal = () => {
 
 	return (
 		<form className="bg-background border-white/30 rounded-xl w-[25rem] border-[0.1px] p-6 text-lg flex flex-col gap-y-6" onSubmit={handleSubmit(async (data) => {
-			const id = uuidv4()
 			let payload: ProductType =
 			{
-				id: id,
 				title: data.name,
 				description: "",
 				summary: "",
@@ -45,8 +43,12 @@ const NewProductModal = () => {
 			await axios.post(`${window.location.origin}/api/products`, {
 				...payload
 			}, { withCredentials: true }).then(res => {
-				payload.id = res.data.data.id
-				setAllProducts([...allProductsValue, payload])
+				setAllProducts({
+					...allProductsValue,
+					[res.data.data.id]: {
+						...payload
+					}
+				})
 				setModalActive({
 					active: false,
 					type: ""

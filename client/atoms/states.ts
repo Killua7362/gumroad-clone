@@ -10,6 +10,15 @@ export const productsCardContextMenu = atom({
 	} as ProductsCardContextMenu
 })
 
+export const productsEditContentContextMenu = atom({
+	key: 'productsEditContentContextMenu',
+	default: {
+		active: false,
+		pageId: '0',
+		points: [0, 0]
+	}
+})
+
 export const modalBaseActive = atom({
 	key: 'modalBaseActive',
 	default: {
@@ -18,25 +27,24 @@ export const modalBaseActive = atom({
 	}
 })
 
-const allProductsSetFunction = (set: SetRecoilState, get: GetRecoilValue, product: ProductType[]) => {
-	set(AllProdctsForUser, [...product] as ProductType[])
+const allProductsSetFunction = (set: SetRecoilState, get: GetRecoilValue, product: ProductTypePayload) => {
+	set(AllProdctsForUser, { ...product })
 }
 
 export const AllProdctsForUserFetcher = selector({
 	key: 'AllProdctsForUserFetcher',
 	get: async () => {
-		let result: ProductType[] = []
+		let result: ProductTypePayload = {}
 		await axios.get(`${window.location.origin}/api/products`, { withCredentials: true }).then(res => {
-			console.log(res)
 			for (let i = 0; i < res.data.data.length; i++) {
-				result = [...result, { ...res.data.data[i].attributes, id: res.data.data[i].id }]
+				result[res.data.data[i].id] = { ...res.data.data[i].attributes }
 			}
 		}).catch((err) => {
 			console.log(err)
 		})
 		return result
 	},
-	set: ({ get, set }, product: ProductType[]) => {
+	set: ({ get, set }, product: ProductTypePayload) => {
 		allProductsSetFunction(set, get, product)
 	}
 })
@@ -44,6 +52,11 @@ export const AllProdctsForUserFetcher = selector({
 export const AllProdctsForUser = atom({
 	key: 'AllProdctsForUser',
 	default: AllProdctsForUserFetcher,
+})
+
+export const ContentPage = atom({
+	key: 'ContentPage',
+	default: {}
 })
 
 export const loginStatuFetcher = selector({

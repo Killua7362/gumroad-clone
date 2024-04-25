@@ -29,25 +29,25 @@ const ProductsHomePage = () => {
 
 	return (
 		<Fragment>
-			{allProducts.map((e, i) => {
+			{Object.keys(allProducts).map((key, i) => {
 				return (
 					<ProductCard productData={{
-						...e
+						...allProducts[key]
 					}} >
 						<Fragment>
 							<div className="absolute right-[1rem] top-[1rem] cursor-pointer hover:text-white/70 text-xl" onClick={(event) => {
 								event.preventDefault()
 								event.stopPropagation()
-
+								console.log(key)
 								contextMenuConfig.active ? setContextMenuConfig({
 									active: false,
 									activeIdx: i,
-									id: e.id
+									id: key
 								}) :
 									setContextMenuConfig({
 										active: true,
 										activeIdx: i,
-										id: e.id
+										id: key
 									})
 							}}>
 								<IoMdSettings />
@@ -81,9 +81,9 @@ const ProductsHomePage = () => {
 												setContextMenuConfig({
 													active: false,
 													activeIdx: i,
-													id: e.id
+													id: key
 												})
-												navigate(`/products/edit/${e.id}/home`)
+												navigate(`/products/edit/${key}/home`)
 											}}
 										>Edit</div>
 										<div className="px-4 py-3 hover:bg-accent/50 cursor-pointer"
@@ -91,7 +91,7 @@ const ProductsHomePage = () => {
 												setContextMenuConfig({
 													active: false,
 													activeIdx: i,
-													id: e.id
+													id: key
 												})
 												setModalActive({
 													active: true,

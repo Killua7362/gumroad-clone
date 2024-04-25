@@ -28,7 +28,8 @@ const DeleteProduct = () => {
 				<div className="cursor-pointer hover:text-red-400 text-red-500 border-red-500 border-[0.1px] rounded-md p-2"
 					onClick={async () => {
 						axios.delete(`${window.location.origin}/api/products/${contextMenuValue.id}`).then(res => {
-							let tempAllProducts = allProductsValue.filter((e) => e.id !== contextMenuValue.id)
+							let tempAllProducts: ProductTypePayload = { ...allProductsValue }
+							delete tempAllProducts[contextMenuValue.id!]
 							setAllProducts(tempAllProducts)
 							setModalActive({
 								active: false,

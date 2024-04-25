@@ -13,7 +13,7 @@ const ProductEditPage = () => {
 	const allProducts = useRecoilValue(AllProdctsForUser)
 
 	useEffect(() => {
-		if (params.id && allProducts.some((e) => e.id === params.id)) {
+		if (params.id && params.id in allProducts) {
 			setRendered(true)
 		} else {
 			navigate('/notfound')

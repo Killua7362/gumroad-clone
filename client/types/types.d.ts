@@ -20,7 +20,11 @@ interface ProductsCardContextMenu {
 	activeIdx: number;
 	id?: string;
 }
-
+interface productsEditContentContextMenu {
+	active: boolean;
+	pageId: string;
+	points: number[];
+}
 
 interface productCategories {
 	name: string;
@@ -34,8 +38,14 @@ interface IndividualCollab {
 	approved: boolean;
 }
 
+interface ProductContetPage {
+	[id: string]: {
+		name: string;
+		content: string;
+	}
+}
+
 interface ProductType {
-	id: string;
 	title: string;
 	type: string;
 	live: boolean;
@@ -46,6 +56,11 @@ interface ProductType {
 	coverimageSource?: string;
 	description: string;
 	summary: string;
+	product_content?: ProductContetPage
+}
+
+interface ProductTypePayload {
+	[id: string]: ProductType
 }
 
 interface authSchema {
@@ -53,3 +68,4 @@ interface authSchema {
 	email?: string;
 	name?: string;
 }
+
