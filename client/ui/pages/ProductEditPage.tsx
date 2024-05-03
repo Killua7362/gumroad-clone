@@ -6,14 +6,17 @@ import { useRecoilValue } from "recoil";
 import ProductEditHomePage from "@/ui/pages/ProductEditHomePage";
 import ProductEditContentPage from "@/ui/pages/ProductEditContentPage";
 
+
 const ProductEditPage = () => {
 	const navigate = useNavigate()
 	const params = useParams()
 	const [rendered, setRendered] = useState(false)
+	const [editProductState, setEditProductState] = useState<ProductType>()
 	const allProducts = useRecoilValue(AllProdctsForUser)
 
 	useEffect(() => {
 		if (params.id && params.id in allProducts) {
+			setEditProductState({ ...allProducts[params.id] })
 			setRendered(true)
 		} else {
 			navigate('/notfound')
@@ -24,7 +27,7 @@ const ProductEditPage = () => {
 		<ProductEditPageLayout>
 			{
 				params.page === 'home' ?
-					<ProductEditHomePage />
+					<ProductEditHomePage editProductState={editProductState!} setEditProductState={setEditProductState} />
 					:
 					<ProductEditContentPage />
 			}

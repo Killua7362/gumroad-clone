@@ -13,6 +13,7 @@ interface sortConfig {
 
 interface searchConfig {
 	active: boolean;
+	startsWith:string;
 }
 
 interface ProductsCardContextMenu {
@@ -44,6 +45,15 @@ interface ProductContetPage {
 		content: string;
 	}
 }
+
+interface Review {
+	[id: string]: {
+		title: string;
+		description: string;
+		score: number;
+	}
+}
+
 
 interface ProductType {
 	title: string;

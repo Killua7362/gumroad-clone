@@ -33,7 +33,7 @@ module Api
       if @current_user 
         product = Product.new(products_params.merge(:user_id => @current_user.id))
 
-        if product.save
+        if product.save!
           render json: ProductSerializer.new(product,options).serializable_hash.to_json
         else
           render json: {error: product.errors.messages }, status: 401
@@ -47,6 +47,23 @@ module Api
       product = Product.find_by(id: params[:id])
       if @current_user and @current_user.id == product.user_id
         if product.update(products_params.merge(:user_id => @current_user.id))
+          if params.has_key?(:collab)
+            # params.dig(:collab)&.each { |collab| collab[:product_id] = product.id }
+            collabs = Collab.where(product_id: product.id).each do |q|
+              collab = params.to_unsafe_h[:collab].find { |n| puts n; q.email == n[:email] }
+              if collab.present?
+                q.update(collab)
+              else
+                q.destroy()
+              end
+            end
+
+            params.to_unsafe_h[:collab].each do |q|
+              if not collabs.any? { |n| q[:email] == n.email }
+                collab = Collab.create!(q.merge(:product_id => product.id))
+              end
+            end
+          end
           render json: ProductSerializer.new(product,options).serializable_hash.to_json
         else
           render json: {error: product.errors.messages }, status: 401

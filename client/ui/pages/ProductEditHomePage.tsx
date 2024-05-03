@@ -4,25 +4,105 @@ import MDEditor from '@uiw/react-md-editor';
 import { Fragment, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useRecoilValue } from "recoil";
+import { IoTrashBin } from "react-icons/io5";
+import { z } from 'zod'
+import { useFieldArray, useForm, useFormState, useWatch } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import axios from 'axios'
 
-const ProductEditHomePage = () => {
+const ProductEditHomePage = ({ editProductState, setEditProductState }: { editProductState: ProductType, setEditProductState: React.Dispatch<React.SetStateAction<ProductType>> }) => {
 	const [description, setDescription] = useState<string>()
 	const [thumbnailImage, setThumbnailImage] = useState<File>()
 	const [coverImage, setCoverImage] = useState<File>()
+	const [customError, setCustomError] = useState("")
 	const allProducts = useRecoilValue(AllProdctsForUser)
 
-	const params = useParams()
 	const navigate = useNavigate()
+	const params = useParams()
 
+	const CollabSchema = z.object({
+		email: z.string().email(),
+		share: z.coerce.number().min(0).max(100),
+		approved: z.boolean().optional().default(false)
+	})
+
+	const EditProductSchema = z.object({
+		title: z.string().min(2).max(30),
+		price: z.coerce.number().min(0),
+		summary: z.string().min(10),
+		description: z.string().min(10),
+		collab: z.array(CollabSchema).superRefine((data, ctx) => {
+			if (data.reduce((a, { share }) => a + (Number(share) || 0), 0) > 100) {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					message: 'Sum of shares should add upto 100'
+				})
+			}
+		})
+	})
+
+	type EditProductSchemaType = z.infer<typeof EditProductSchema>
+
+	const {
+		register,
+		handleSubmit,
+		setError,
+		control,
+		reset,
+		setValue,
+		formState: { errors }
+	} = useForm<EditProductSchemaType>({
+		resolver: zodResolver(EditProductSchema), defaultValues: {
+			title: editProductState.title,
+			description: editProductState.description,
+			summary: editProductState.summary,
+			price: editProductState.price,
+			collab: editProductState.collab || []
+		},
+		shouldUnregister: false
+	})
+
+	const { append, remove, fields } = useFieldArray({
+		name: 'collab',
+		control
+	})
+
+	const { isDirty, dirtyFields } = useFormState({ control })
+
+	const allFormStates = useWatch({
+		control
+	})
+
+	useEffect(() => {
+		setDescription(editProductState.description)
+	}, [])
+
+	useEffect(() => {
+		setEditProductState(prev => {
+			return { ...prev, description: description!, ...allFormStates, collab: allFormStates.collab as IndividualCollab[] }
+		})
+	}, [allFormStates])
+
+	useEffect(() => {
+		console.log(errors)
+	}, [errors])
 	return (
 		<Fragment>
-			<div>
+			<form className="flex flex-col gap-y-2" onSubmit={handleSubmit(async (data) => {
+				await axios.patch(`${window.location.origin}/api/products/${params.id!}`, { ...editProductState, ...data }, { withCredentials: true }).then(res => {
+					console.log(res)
+				}).catch(err => console.log(err))
+			})}>
+				<div className="text-2xl">
+					Main
+				</div>
 				<div className="flex flex-col gap-y-2">
 					<div>
 						Name
 					</div>
 					<fieldset className="border-white/30 border-[0.1px] rounded-md">
-						<input className="outline-none bg-background text-white w-full text-lg" />
+						<input className="outline-none bg-background text-white w-full text-lg" {...register('title')} />
+						{errors.title && <legend className="text-sm text-red-500">{errors.title.message}</legend>}
 					</fieldset>
 				</div>
 				<div className="flex flex-col gap-y-2">
@@ -30,7 +110,8 @@ const ProductEditHomePage = () => {
 						Summary
 					</div>
 					<fieldset className="border-white/30 border-[0.1px] rounded-md">
-						<input className="outline-none bg-background text-white w-full text-lg" />
+						<input className="outline-none bg-background text-white w-full text-lg" {...register('summary')} />
+						{errors.summary && <legend className="text-sm text-red-500">{errors.summary.message}</legend>}
 					</fieldset>
 				</div>
 				<div className="flex flex-col gap-y-2">
@@ -39,26 +120,30 @@ const ProductEditHomePage = () => {
 					</div>
 					<MDEditor
 						value={description}
-						onChange={setDescription}
+						onChange={(data) => {
+							setValue('description', data!)
+							setDescription(data)
+						}}
 						preview="edit"
 						className='w-full'
 					/>
+					{errors.description && description?.length! <= 10 && <legend className="text-sm text-red-500">{errors.description.message}</legend>}
 				</div>
 				<div className="flex flex-col gap-y-2">
 					<div>
 						Thumbnail
 					</div>
-					<div className="border-white/30 border-dashed border-[0.1px] p-10 flex items-center justify-center flex-col gap-y-4">
+					<div className="border-white/30 border-dashed border-[0.1px] p-10 flex cursor-not-allowed items-center justify-center flex-col gap-y-4">
 						{
 							thumbnailImage ?
 								<img alt="thumbnailImage" width={200} height={200} src={URL.createObjectURL(thumbnailImage)} />
 								:
 								<div>
-									No Image
+									Too poor for cdn
 								</div>
 						}
-						<label htmlFor='thumbimage' className="p-2 cursor-pointer hover:text-white/70 border-white/30 border-[0.1px] rounded-md overflow-none">Upload...</label>
-						<input type="file" id='thumbimage' name='thumnail' accept="image/png, image/gif, image/jpeg" style={{ display: 'none' }} onChange={(e) => {
+						<label htmlFor='thumbimage' className="p-2 hover:text-white/70 border-white/30 border-[0.1px] rounded-md overflow-none text-white/70">Upload...</label>
+						<input type="file" id='thumbimage' name='thumnail' accept="image/png, image/gif, image/jpeg" style={{ display: 'none' }} disabled onChange={(e) => {
 							if (e.target.files && e.target.files[0]) {
 								setThumbnailImage(e.target.files[0])
 							}
@@ -69,17 +154,17 @@ const ProductEditHomePage = () => {
 					<div>
 						Cover
 					</div>
-					<div className="border-white/30 border-dashed border-[0.1px] p-10 flex items-center justify-center flex-col gap-y-4">
+					<div className="border-white/30 border-dashed border-[0.1px] p-10 flex cursor-not-allowed items-center justify-center flex-col gap-y-4">
 						{
 							coverImage ?
 								<img alt="coverImage" width={200} height={200} src={URL.createObjectURL(coverImage)} />
 								:
 								<div>
-									No Image
+									Too poor for cdn
 								</div>
 						}
-						<label htmlFor='coverImage' className="p-2 cursor-pointer hover:text-white/70 border-white/30 border-[0.1px] rounded-md overflow-none">Upload...</label>
-						<input type="file" id='coverImage' name='coverImage' accept="image/png, image/gif, image/jpeg" style={{ display: 'none' }} onChange={(e) => {
+						<label htmlFor='coverImage' className="p-2 cursor-pointer hover:text-white/70 border-white/30 border-[0.1px] text-white/70 rounded-md overflow-none">Upload...</label>
+						<input type="file" id='coverImage' name='coverImage' accept="image/png, image/gif, image/jpeg" disabled style={{ display: 'none' }} onChange={(e) => {
 							if (e.target.files && e.target.files[0]) {
 								setCoverImage(e.target.files[0])
 							}
@@ -91,24 +176,110 @@ const ProductEditHomePage = () => {
 						Price
 					</div>
 					<fieldset className="border-white/30 border-[0.1px] rounded-md p-2 focus-within:border-white">
-						<input className="  text-lg bg-background text-white outline-none px-4" type="number" step='any' />
+						<input className="w-full text-lg bg-background text-white outline-none px-4" type="number" step='any' {...register('price')} />
+						{errors.price && <legend className="text-sm text-red-500">{errors.price.message}</legend>}
 					</fieldset>
+				</div>
+				<div className="flex flex-col gap-y-3">
+					<div>
+						Collabs
+					</div>
 					<div className="flex gap-x-4">
-						<input type="checkbox" className=" bg-background text-white border-white/30 border-[0.1px] p-1 w-fit" />
+						<input type="checkbox" className=" bg-background text-white border-white/30 border-[0.1px] p-1 w-fit" defaultChecked={editProductState.collab_active} onChange={(e) => {
+							setEditProductState(prev => {
+								return { ...prev, collab_active: e.target.checked }
+							})
+						}} />
 						<div className="text-base">
-							Allow customers to pay whatever they want
+							Activate Collab
+						</div>
+					</div>
+					{
+						editProductState.collab_active &&
+						<Fragment>
+							<div className='flex gap-x-4 items-center text-lg text-white/70'>
+								<fieldset className="border-white/30 w-full border-[0.1px] rounded-md p-2 focus-within:border-white">
+									<legend className="text-sm">member</legend>
+									<div className="w-full">
+										Me
+									</div>
+								</fieldset>
+								<fieldset className="border-white/30 w-full border-[0.1px] rounded-md p-2 focus-within:border-white">
+									<legend className="text-sm">Share(in %)</legend>
+									<div className="w-full">
+										{allFormStates.collab === undefined ? 100 : 100 - allFormStates.collab.reduce((a, { share }) => a + (Number(share) || 0), 0)}
+									</div>
+								</fieldset>
+							</div>
+							{errors.collab && errors.collab['root'] && <div className="text-red-500 text-sm">{errors.collab['root']?.message}</div>}
+							{
+								fields.map((collab, index) => {
+									return (
+										<div className='flex gap-x-4 items-center' id={collab.id}>
+											<div>
+												{index + 1}
+											</div>
+											<fieldset className="border-white/30 border-[0.1px] rounded-md p-2 focus-within:border-white">
+												<input className="text-lg bg-background text-white outline-none px-4" {...register(`collab.${index}.email`)} />
+												{errors.collab && errors.collab[index]?.email && <legend className="text-red-500 text-sm">{errors.collab[index]?.email?.message}</legend>}
+											</fieldset>
+											<fieldset className="border-white/30 border-[0.1px] rounded-md p-2 focus-within:border-white">
+												<input className="text-lg bg-background text-white outline-none px-4"  {...register(`collab.${index}.share`)} />
+												{errors.collab && errors.collab[index]?.share && <legend className="text-red-500 text-sm">{errors.collab[index]?.share?.message}</legend>}
+											</fieldset>
+											<IoTrashBin className="text-red-500 cursor-pointer" onClick={() => {
+												remove(index)
+											}} />
+										</div>
+									)
+								})
+							}
+							<div className="w-full text-center bg-white text-black py-2 rounded-md hover:text-accent/80 cursor-pointer" onClick={() => {
+								append({ email: '', share: 1, approved: false })
+							}}>
+								Add new member
+								{errors.collab && <div className="text-red-500 text-sm">{errors.collab.message}</div>}
+							</div>
+						</Fragment>
+					}
+				</div>
+				<div className="flex flex-col gap-y-3">
+					<div>
+						Settings
+					</div>
+					<div className="flex flex-col gap-y-2">
+						<div className="flex gap-x-4">
+							<input type="checkbox" className=" bg-background text-white border-white/30 border-[0.1px] p-1 w-fit" />
+							<div className="text-base">
+								Allow customers to pay whatever they want
+							</div>
+						</div>
+						<div className="flex gap-x-4">
+							<input type="checkbox" className=" bg-background text-white border-white/30 border-[0.1px] p-1 w-fit" />
+							<div className="text-base">
+								Allow customers to leave Reviews
+							</div>
+						</div>
+						<div className="flex gap-x-4">
+							<input type="checkbox" className=" bg-background text-white border-white/30 border-[0.1px] p-1 w-fit" />
+							<div className="text-base">
+								Show number of sales
+							</div>
 						</div>
 					</div>
 				</div>
 				<div className="flex gap-x-4 w-full justify-end">
-					<div className="px-4 py-2 border-white/30 border-[0.1px] rounded-md hover:text-white/70 cursor-pointer">
-						Cancel
+					<div className="px-4 py-2 border-white/30 border-[0.1px] rounded-md hover:text-white/70 cursor-pointer" onClick={() => {
+						setEditProductState({ ...allProducts[params.id!] })
+						reset()
+					}}>
+						Revert
 					</div>
-					<div className="px-4 py-2 border-white/30 border-[0.1px] rounded-md hover:text-white/70 cursor-pointer">
+					<button type="submit" className="px-4 py-2 bg-background text-white text-xl border-white/30 border-[0.1px] rounded-md hover:text-white/70 cursor-pointer">
 						Save
-					</div>
+					</button>
 				</div>
-			</div>
+			</form>
 			<div>
 				Testing
 			</div>

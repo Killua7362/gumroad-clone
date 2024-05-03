@@ -12,7 +12,8 @@ const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
 	})
 
 	const [searchConfig, setSearchConfig] = useState<searchConfig>({
-		active: false
+		active: false,
+		startsWith: ""
 	})
 
 	const params = useParams()
