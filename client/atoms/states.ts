@@ -27,10 +27,6 @@ export const modalBaseActive = atom({
 	}
 })
 
-const allProductsSetFunction = (set: SetRecoilState, get: GetRecoilValue, product: ProductTypePayload) => {
-	set(AllProdctsForUser, { ...product })
-}
-
 export const AllProdctsForUserFetcher = selector({
 	key: 'AllProdctsForUserFetcher',
 	get: async () => {
@@ -39,19 +35,52 @@ export const AllProdctsForUserFetcher = selector({
 			for (let i = 0; i < res.data.data.length; i++) {
 				result[res.data.data[i].id] = { ...res.data.data[i].attributes }
 			}
+			for (let i = 0; i < res.data.included.length; i++) {
+				if (res.data.included[i].type === 'collab') {
+					const { product_id, ...temp } = { ...res.data.included[i].attributes, product_id: "1" }
+					result[res.data.included[i].attributes.product_id] = { ...result[res.data.included[i].attributes.product_id], collab: [...result[res.data.included[i].attributes.product_id].collab || [], { ...temp }] }
+				}
+			}
 		}).catch((err) => {
 			console.log(err)
 		})
 		return result
 	},
 	set: ({ get, set }, product: ProductTypePayload) => {
-		allProductsSetFunction(set, get, product)
+		set(AllProdctsForUser, { ...product })
 	}
 })
 
 export const AllProdctsForUser = atom({
 	key: 'AllProdctsForUser',
 	default: AllProdctsForUserFetcher,
+})
+
+export const CollabProductsSelector = selector({
+	key: 'CollabProductsSelector',
+	get: async () => {
+		let result: ProductTypePayload = {}
+		await axios.get(`${window.location.origin}/api/collabs/products`, { withCredentials: true }).then(res => {
+			for (let i = 0; i < res.data.data.length; i++) {
+				result[res.data.data[i].id] = { ...res.data.data[i].attributes }
+			}
+
+			for (let i = 0; i < res.data.included.length; i++) {
+				if (res.data.included[i].type === 'collab') {
+					const { product_id, ...temp } = { ...res.data.included[i].attributes, product_id: "1" }
+					result[res.data.included[i].attributes.product_id] = { ...result[res.data.included[i].attributes.product_id], collab: [...result[res.data.included[i].attributes.product_id].collab || [], { ...temp }] }
+				}
+			}
+		}).catch(err => console.log(err))
+		return result
+	},
+	set: ({ get, set }, product: ProductTypePayload) => {
+		set(CollabProducts, { ...product })
+	}
+})
+export const CollabProducts = atom({
+	key: 'CollabProducts',
+	default: CollabProductsSelector
 })
 
 export const ContentPage = atom({
@@ -73,4 +102,12 @@ export const loginStatuFetcher = selector({
 export const loginStatuState = atom({
 	key: 'loginStatuState',
 	default: loginStatuFetcher
+})
+
+export const hideToastState = atom({
+	key: 'hideToastState',
+	default: {
+		active: true,
+		message: ''
+	}
 })

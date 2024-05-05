@@ -11,5 +11,9 @@ Rails.application.routes.draw do
   delete '/api/sessions/logout', to: 'api/sessions#logout'
   get '/api/sessions/logged_in', to: 'api/sessions#logged_in'
 
+  post '/api/collabs/validate_user', to: 'api/collabs#validate_user'
+  get '/api/collabs/products', to: 'api/collabs#index'
+  post '/api/collabs/:id/approve', to: 'api/collabs#approve'
+
   get '*path', to: 'page#index', via: :all
 end

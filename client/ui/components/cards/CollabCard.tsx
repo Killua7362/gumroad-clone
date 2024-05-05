@@ -1,13 +1,13 @@
 import { GoLink } from "react-icons/go"
 import { FaDotCircle } from "react-icons/fa";
 
-const CollabCard = ({ children }: { children: React.ReactNode }) => {
+const CollabCard = ({ children, productData }: { children: React.ReactNode, productData: ProductType }) => {
 	return (
-		<div className="flex justify-between flex-wrap flex-row gap-4  border-white/30 border-[0.1px] rounded-xl p-8 h-fit w-full relative">
+		<div className="flex justify-between h-full flex-wrap flex-row gap-4  border-white/30 border-[0.1px] rounded-xl p-8 h-fit w-full relative flex-wrap">
 			<div className="flex flex-col gap-y-2 ">
 				<div className="text-2xl tracking-wider flex gap-x-2 items-center">
 					<span>
-						First Product
+						{productData.title}
 					</span>
 					<span className="text-lg">
 						<GoLink />
@@ -22,34 +22,34 @@ const CollabCard = ({ children }: { children: React.ReactNode }) => {
 					</div>
 				</div>
 				<div className="flex gap-x-6 mt-1">
-					<div className="text-green-400 flex items-center gap-x-1">
+					<div className={`${(productData.collab!).some(e => e.approved === false) ? "text-red-400" : "text-green-400 "} flex items-center gap-x-1`}>
 						<div className="text-sm relative top-[0.1rem]">
 							<FaDotCircle />
 						</div>
-						<div>
-							Live
-						</div>
-					</div>
-
-					<div className="text-green-400 flex items-center gap-x-1">
-						<div className="text-sm relative top-[0.1rem]">
-							<FaDotCircle />
-						</div>
-						<div>
-							Pending Approval
-						</div>
+						{
+							(productData.collab!).some(e => e.approved === false) ? "Pending Approval" : "Approved"
+						}
 					</div>
 				</div>
 			</div>
 			<div>
-				<div className="gap-x-4 gap-y-2 grid grid-cols-5 mr-8">
-					<div className="col-span-4">
-						bhat7362@gmail.com
-					</div>
-					<div className="col-span-1">
-						50%
-					</div>
+				<div className="mb-1">
+					Shares
 				</div>
+				{
+					productData.collab!.map((e, i) => {
+						return (
+							<div className="gap-x-4 gap-y-2 grid grid-cols-5 mr-8">
+								<div className="col-span-4">
+									{e.email}
+								</div>
+								<div className="col-span-1">
+									{e.share} %
+								</div>
+							</div>
+						)
+					})
+				}
 			</div>
 			{children}
 		</div>

@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router"
 import ModalBase from "@/ui/components/modal"
 import { useRecoilValue } from "recoil"
 import { loginStatuState } from "@/atoms/states"
+import Toast from "@/ui/components/toast"
 
 const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 	const location = useLocation()
@@ -35,6 +36,7 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<div className="min-h-screen w-screen flex flex-col sm:flex-row">
 			<ModalBase />
+			<Toast />
 			{
 				sidebarActive
 				&&

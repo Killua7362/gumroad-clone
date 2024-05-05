@@ -1,9 +1,9 @@
-import { AllProdctsForUser } from "@/atoms/states";
+import { AllProdctsForUser, AllProdctsForUserFetcher, hideToastState } from "@/atoms/states";
 import ProductEditPageLayout from "@/ui/layouts/ProductEditPageLayout"
 import MDEditor from '@uiw/react-md-editor';
 import { Fragment, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { IoTrashBin } from "react-icons/io5";
 import { z } from 'zod'
 import { useFieldArray, useForm, useFormState, useWatch } from 'react-hook-form'
@@ -14,8 +14,9 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 	const [description, setDescription] = useState<string>()
 	const [thumbnailImage, setThumbnailImage] = useState<File>()
 	const [coverImage, setCoverImage] = useState<File>()
-	const [customError, setCustomError] = useState("")
 	const allProducts = useRecoilValue(AllProdctsForUser)
+	const setAllProducts = useSetRecoilState(AllProdctsForUserFetcher)
+	const setToastRender = useSetRecoilState(hideToastState)
 
 	const navigate = useNavigate()
 	const params = useParams()
@@ -38,6 +39,13 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 					message: 'Sum of shares should add upto 100'
 				})
 			}
+
+			if (new Set(data.map(e => e.email)).size < data.length) {
+				ctx.addIssue({
+					message: 'Duplicate users detected',
+					code: z.ZodIssueCode.custom
+				})
+			}
 		})
 	})
 
@@ -57,7 +65,7 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 			description: editProductState.description,
 			summary: editProductState.summary,
 			price: editProductState.price,
-			collab: editProductState.collab || []
+			collab: editProductState.collab
 		},
 		shouldUnregister: false
 	})
@@ -83,15 +91,39 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 		})
 	}, [allFormStates])
 
-	useEffect(() => {
-		console.log(errors)
-	}, [errors])
 	return (
 		<Fragment>
 			<form className="flex flex-col gap-y-2" onSubmit={handleSubmit(async (data) => {
+				let valid = true;
+				data.collab.map(async (ele, index) => {
+					valid = await axios.post(`${window.location.origin}/api/collabs/validate_user`, { email: ele.email }, { withCredentials: true }).then(res => {
+						return valid
+					}).catch(err => {
+						setError(`collab.${index}.email`, {
+							type: `collab.${index}.email`,
+							message: err.response.data.error
+						})
+						return false;
+					})
+				})
+
+				if (!valid) {
+					return;
+				}
+
 				await axios.patch(`${window.location.origin}/api/products/${params.id!}`, { ...editProductState, ...data }, { withCredentials: true }).then(res => {
-					console.log(res)
+					setAllProducts({ ...allProducts, [params.id!]: { ...res.data.data.attributes!, collab: [...data.collab] as IndividualCollab[] } })
+					setEditProductState(prev => {
+						return { ...prev, ...res.data.data.attributes!, collab: [...data.collab] }
+					})
+					setToastRender(
+						{
+							active: false,
+							message: 'Product updated successfully'
+						}
+					)
 				}).catch(err => console.log(err))
+
 			})}>
 				<div className="text-2xl">
 					Main
@@ -212,6 +244,7 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 								</fieldset>
 							</div>
 							{errors.collab && errors.collab['root'] && <div className="text-red-500 text-sm">{errors.collab['root']?.message}</div>}
+							{errors.collab && <div className="text-red-500 text-sm">{errors.collab.message}</div>}
 							{
 								fields.map((collab, index) => {
 									return (
@@ -238,7 +271,6 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 								append({ email: '', share: 1, approved: false })
 							}}>
 								Add new member
-								{errors.collab && <div className="text-red-500 text-sm">{errors.collab.message}</div>}
 							</div>
 						</Fragment>
 					}
@@ -283,7 +315,7 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 			<div>
 				Testing
 			</div>
-		</Fragment>
+		</Fragment >
 	)
 }
 

@@ -13,7 +13,12 @@ interface sortConfig {
 
 interface searchConfig {
 	active: boolean;
-	startsWith:string;
+	startsWith: string;
+}
+
+interface toastMessage {
+	active: boolean;
+	message?: string;
 }
 
 interface ProductsCardContextMenu {
