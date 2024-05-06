@@ -40,8 +40,6 @@ module Api
       end
     end
 
-    private
-    
     def options
       @options ||= {include: %i[reviews collabs]}
     end

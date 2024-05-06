@@ -2,7 +2,7 @@ import ProductLayout from "@/ui/layouts/ProductsLayout"
 import ProductCard from "@/ui/components/cards/ProductCard"
 import { Fragment } from "react/jsx-runtime"
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRecoilState } from "recoil";
 import { productsCardContextMenu } from "@/atoms/states";
@@ -18,9 +18,13 @@ const ProductsPage = () => {
 		<ProductLayout>
 			{
 				params.page && params.page === 'collaborators' ?
-					<CollaboratorsPage />
+					<Suspense>
+						<CollaboratorsPage />
+					</Suspense>
 					:
-					<ProductsHomePage />
+					<Suspense>
+						<ProductsHomePage />
+					</Suspense>
 			}
 		</ProductLayout>
 	)

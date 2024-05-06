@@ -29,7 +29,6 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 		}
 
 		setSideBarActive(!siderbarActivePaths.has(location.pathname.split('/')[1]))
-		// location.pathname.split('/')[1]
 	}, [location.pathname])
 
 

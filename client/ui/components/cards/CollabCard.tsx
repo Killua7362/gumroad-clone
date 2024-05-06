@@ -1,7 +1,11 @@
 import { GoLink } from "react-icons/go"
 import { FaDotCircle } from "react-icons/fa";
+import { useMemo } from "react";
 
 const CollabCard = ({ children, productData }: { children: React.ReactNode, productData: ProductType }) => {
+
+	const collabApproved = useMemo(() => (productData.collab!).some(e => e.approved === false), [productData.collab!])
+
 	return (
 		<div className="flex justify-between h-full flex-wrap flex-row gap-4  border-white/30 border-[0.1px] rounded-xl p-8 h-fit w-full relative flex-wrap">
 			<div className="flex flex-col gap-y-2 ">
@@ -22,12 +26,12 @@ const CollabCard = ({ children, productData }: { children: React.ReactNode, prod
 					</div>
 				</div>
 				<div className="flex gap-x-6 mt-1">
-					<div className={`${(productData.collab!).some(e => e.approved === false) ? "text-red-400" : "text-green-400 "} flex items-center gap-x-1`}>
+					<div className={`${collabApproved ? "text-red-400" : "text-green-400 "} flex items-center gap-x-1`}>
 						<div className="text-sm relative top-[0.1rem]">
 							<FaDotCircle />
 						</div>
 						{
-							(productData.collab!).some(e => e.approved === false) ? "Pending Approval" : "Approved"
+							collabApproved ? "Pending Approval" : "Approved"
 						}
 					</div>
 				</div>
@@ -39,7 +43,7 @@ const CollabCard = ({ children, productData }: { children: React.ReactNode, prod
 				{
 					productData.collab!.map((e, i) => {
 						return (
-							<div className="gap-x-4 gap-y-2 grid grid-cols-5 mr-8">
+							<div className={`gap-x-4 gap-y-2 grid grid-cols-5 mr-8 ${e.approved ? "text-green-400" : "text-red-400"}`} id={`collab_${productData.title}_${i}`}>
 								<div className="col-span-4">
 									{e.email}
 								</div>

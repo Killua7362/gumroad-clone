@@ -113,6 +113,7 @@ const SideBar = () => {
 			}
 		}
 	}, [location])
+
 	return (
 		<motion.div className={`p-4 sm:bg-background fixed sm:relative bg-background`}
 			layout
@@ -271,7 +272,7 @@ const SideBar = () => {
 										</motion.div>
 
 									</Link>
-									<Link to="/profile?id=123" className='no-underline text-white' target='_blank'
+									<Link to="/profile/123" className='no-underline text-white' target='_blank'
 										rel='noopener noreferrer'>
 										<motion.div
 											whileHover={{

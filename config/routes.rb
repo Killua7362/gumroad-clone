@@ -15,5 +15,7 @@ Rails.application.routes.draw do
   get '/api/collabs/products', to: 'api/collabs#index'
   post '/api/collabs/:id/approve', to: 'api/collabs#approve'
 
+  get '/api/profiles/:id', to: 'api/profiles#index'
+
   get '*path', to: 'page#index', via: :all
 end

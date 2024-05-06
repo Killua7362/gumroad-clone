@@ -20,9 +20,9 @@ const ProductCard = ({ children, productData }: { children: React.ReactNode, pro
 					<span>
 						{productData.title}
 					</span>
-					<span className="text-lg text-sky-400">
+					{productData.live && <span className="text-lg text-sky-400 cursor-pointer">
 						<GoLink />
-					</span>
+					</span>}
 				</div>
 				<div className="text-white/70 text-lg tracking-wide font-thin text-justify">
 					tldr; This is the best product you can buy

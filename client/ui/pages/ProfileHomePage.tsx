@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import ProfilePageLayout from "@/ui/layouts/ProfilePageLayout"
 import ProfilePageProductCard from "@/ui/components/cards/ProfilePageProductCard"
+import axios from "axios"
 
 const ProfileHomePage = ({ preview = false, name, bio, productCategories }: { preview?: boolean, name?: string, bio?: string, productCategories?: productCategories[] }) => {
 	const [rendered, setRendered] = useState(false)
@@ -11,6 +12,7 @@ const ProfileHomePage = ({ preview = false, name, bio, productCategories }: { pr
 	document.title = "Profile"
 
 	useEffect(() => {
+		axios.get(`${window.location.origin}/api/profiles/${params.id!}`, { withCredentials: true }).then(res => { console.log(res) }).catch(err => console.log(err))
 		const checkId = async () => {
 			setRendered(true)
 		}

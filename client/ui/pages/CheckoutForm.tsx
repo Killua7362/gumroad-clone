@@ -3,6 +3,7 @@ import ProfileHomePage from '@/ui/pages/ProfileHomePage'
 import { useState } from 'react'
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Button from '@/ui/components/button';
 
 const CheckoutForm = () => {
 
@@ -134,27 +135,23 @@ const CheckoutForm = () => {
 								})
 							}
 							<div className='gap-x-4 items-center flex w-full justify-end'>
-								<div className='text-base flex justify-center items-center rounded-xl border-white/30 border-[0.1px] w-full py-4 hover:text-white/80 cursor-pointer' onClick={() => {
+								<Button buttonName='Add new category' onClickHandler={() => {
 									setTempProductCategories(prev => {
 										return [...prev, {
 											name: '',
 											hide: true
 										}]
 									})
-								}}>
-									Add new category
-								</div>
+								}}
+									extraClasses={['w-full py-4']}
+								/>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div className='flex gap-x-4 w-full justify-end'>
-					<div className='border-white/30 border-[0.1px] px-4 py-2 rounded-xl'>
-						Revert
-					</div>
-					<div className='border-white/30 border-[0.1px] px-4 py-2 rounded-xl'>
-						Save
-					</div>
+					<Button buttonName='Revert' />
+					<Button buttonName='Save' />
 				</div>
 			</div>
 			<div className={`w-5/12 h-[50rem] overflow-x-auto overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white scrollbar-track-background hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}

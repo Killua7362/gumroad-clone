@@ -3,14 +3,14 @@ import CollabCard from "@/ui/components/cards/CollabCard"
 import { Fragment } from "react/jsx-runtime"
 import { AnimatePresence, motion } from "framer-motion"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { AllProdctsForUser, CollabProducts, CollabProductsSelector, loginStatuState } from "@/atoms/states"
 import axios from 'axios'
 import { useParams } from "react-router"
 import { useSearchParams } from "react-router-dom"
+import Button from "@/ui/components/button"
 
 const CollaboratorsPage = () => {
-
 	const allProducts = useRecoilValue(AllProdctsForUser)
 	const collabProducts = useRecoilValue(CollabProducts)
 	const setCollabProducts = useSetRecoilState(CollabProductsSelector)
@@ -30,25 +30,28 @@ const CollaboratorsPage = () => {
 		if (rendered === false) {
 			setRendered(true)
 		}
-	}, [params])
+	}, [params, collabProducts, allProducts])
+
+	const collabApproved = useMemo(() => {
+		let result: { [id: string]: boolean; } = {}
+		Object.keys(productsCollection! || {}).filter(key => !(key in allProducts)).map((key, i) => {
+			result[key] = productsCollection![key].collab_active && Object.keys(productsCollection![key].collab!).length !== 0 && (collabProducts[key]?.collab || []).filter(e => e.email === loginStatus.email)[0]?.approved || false
+		})
+		return result;
+	}, [productsCollection])
 
 	return rendered && (
 		<Fragment>
 			<div className="flex gap-x-3 items-center">
-				<div className={`px-4 py-2 w-fit text-black rounded-xl hover:bg-white/70 cursor-pointer ${(params.get('type') === 'outgoing') ? 'bg-white/70' : 'bg-white'} hover:text-gray-800`}
-					onClick={() => {
-						setSearchParams({ type: 'outgoing' })
-					}}
-				>
-					Outgoing
-				</div>
-				<div className={`px-4 py-2 w-fit text-black rounded-xl hover:bg-white/70 cursor-pointer ${(!params.get('type') || params.get('type') === 'incoming') ? 'bg-white/70' : 'bg-white'} hover:text-gray-800`}
-					onClick={async () => {
+				<Button buttonName="Outgoing" extraClasses={['rounded-xl', `${(params.get('type') === 'outgoing') && '!border-white'} `]} onClickHandler={() => {
+					setSearchParams({ type: 'outgoing' })
+				}} />
+				<Button
+					buttonName="Incoming"
+					extraClasses={['rounded-xl', `${(!params.get('type') || params.get('type') === 'incoming') && '!border-white'} `]}
+					onClickHandler={() => {
 						setSearchParams({ type: 'incoming' })
-					}}
-				>
-					Incoming
-				</div>
+					}} />
 			</div>
 			<div className="w-full mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
 				{Object.keys(productsCollection!).map((key, i) => {
@@ -57,7 +60,7 @@ const CollaboratorsPage = () => {
 							<div className="w-full flex justify-end">
 								{
 									!(key in allProducts) &&
-									<div className="w-fit border-white/30 border-[0.1px] px-4 py-2 rounded-md hover:text-white/80 cursor-pointer" onClick={async () => {
+									<Button buttonName={collabApproved[key] ? 'Disapprove' : 'Approve'} onClickHandler={async () => {
 										await axios.post(`${window.location.origin}/api/collabs/${key}/approve`, {}, { withCredentials: true }).then(res => {
 											let tempCollab: IndividualCollab[] = [...collabProducts[key].collab!];
 											for (let j = 0; j < (collabProducts[key].collab!).length; j++) {
@@ -68,11 +71,7 @@ const CollaboratorsPage = () => {
 												}
 											}
 										}).catch(err => console.log(err))
-									}}>
-										{
-											(collabProducts[key]?.collab || []).filter(e => e.email === loginStatus.email)[0]?.approved ? 'Disapprove' : 'Approve'
-										}
-									</div>
+									}} />
 								}
 							</div>
 						</CollabCard>

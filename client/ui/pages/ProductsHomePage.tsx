@@ -4,18 +4,24 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { AllProdctsForUser, modalBaseActive, productsCardContextMenu } from "@/atoms/states";
+import { AllProdctsForUser, AllProdctsForUserFetcher, hideToastState, modalBaseActive, productsCardContextMenu } from "@/atoms/states";
 import { IoMdSettings } from "react-icons/io";
 import { useNavigate } from "react-router";
 import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
+import { EditProductSchema } from "@/schema/edit_product_schema";
+import axios from 'axios'
 
 const ProductsHomePage = () => {
 	const [contextMenuConfig, setContextMenuConfig] = useRecoilState(productsCardContextMenu)
 	const setModalActive = useSetRecoilState(modalBaseActive)
 
 	const allProducts = useRecoilValue(AllProdctsForUser)
+	const setAllProducts = useSetRecoilState(AllProdctsForUserFetcher)
+
 	const navigate = useNavigate()
+
+	const setToastRender = useSetRecoilState(hideToastState)
 
 	const [searchConfig, setSearchConfig] = useState<searchConfig>({
 		active: false,
@@ -220,6 +226,40 @@ const ProductsHomePage = () => {
 												e.stopPropagation()
 											}}>
 											<div className="px-4 py-3 hover:bg-accent/50 cursor-pointer"
+												onClick={async () => {
+													setContextMenuConfig({
+														active: false,
+														activeIdx: i,
+														id: key
+													})
+													try {
+														EditProductSchema.parse({
+															title: allProducts[key].title,
+															price: allProducts[key].price,
+															summary: allProducts[key].summary,
+															description: allProducts[key].description,
+															collab: allProducts[key].collab,
+														})
+
+														await axios.patch(`${window.location.origin}/api/products/${key}`, { live: !allProducts[key].live }, { withCredentials: true }).then(res => {
+															setAllProducts({ ...allProducts, [key]: { ...allProducts[key], live: res.data.data.attributes.live } })
+														}).catch(err => {
+															setToastRender({
+																active: false,
+																message: err.response.data.error
+															})
+														})
+													} catch (e) {
+														setToastRender({
+															active: false,
+															message: 'Some fields are empty'
+														})
+													}
+												}}
+											>
+												Go Live
+											</div>
+											<div className="px-4 py-3 hover:bg-accent/50 cursor-pointer"
 												onClick={() => {
 													setContextMenuConfig({
 														active: false,
@@ -250,7 +290,7 @@ const ProductsHomePage = () => {
 					)
 				})}
 			</div>
-		</Fragment>
+		</Fragment >
 	)
 }
 
