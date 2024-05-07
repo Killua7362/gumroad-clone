@@ -9,15 +9,13 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { SiAboutdotme } from "react-icons/si";
 import { CgLogOut } from "react-icons/cg";
 import { useSetRecoilState } from 'recoil';
-import { loginStatuFetcher } from '@/atoms/states';
-import axios from 'axios'
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const SideBar = () => {
 	const [activeItem, setActiveItem] = useState(0)
 	const [isOpen, setIsOpen] = useState(false)
 	const [isAccountOpen, setIsAccountOpen] = useState(false)
-
-	const loginStatusSetter = useSetRecoilState(loginStatuFetcher)
+	const queryClient = useQueryClient()
 	const location = useLocation();
 
 	const navigate = useNavigate();
@@ -113,6 +111,28 @@ const SideBar = () => {
 			}
 		}
 	}, [location])
+
+
+	const { mutate: loginStatusSetter } = useMutation({
+		mutationFn: () => fetch(`${window.location.origin}/api/sessions/logout`, {
+			method: 'DELETE',
+			credentials: 'include',
+			headers: { 'Content-type': 'application/json' },
+		}).then(async (res) => {
+			if (!res.ok) {
+				const errorMessage: string = await res.json().then(data => data.error)
+				return Promise.reject(new Error(errorMessage))
+			}
+			return res.json()
+		}),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['loginStatus'] })
+			navigate('/signin')
+		},
+		onError: (err) => {
+
+		}
+	})
 
 	return (
 		<motion.div className={`p-4 sm:bg-background fixed sm:relative bg-background`}
@@ -302,13 +322,8 @@ const SideBar = () => {
 
 									</Link>
 									<motion.div
-										onClick={async () => {
-											axios.delete(`${window.location.origin}/api/sessions/logout`).then((res) => {
-												loginStatusSetter({
-													...res.data
-												})
-												navigate('/signin')
-											}).catch((err) => console.log(err))
+										onClick={() => {
+											loginStatusSetter()
 										}}
 										whileHover={{
 											scale: activeItem === -1 && (location.pathname.split('/')[2] || "") === 'logout' ? 1 : 1.03,

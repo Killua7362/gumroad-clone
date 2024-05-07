@@ -1,13 +1,13 @@
-import { AllProdctsForUser, AllProdctsForUserFetcher, modalBaseActive } from "@/atoms/states"
+import { modalBaseActive } from "@/atoms/states"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { z } from 'zod'
 import { UseFormRegister, useForm, FieldValues, FieldErrors, FieldPath } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from "react"
 import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios'
 import { NewProductSchema } from "@/schema/new_product_schema"
 import Button from '@/ui/components/button'
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 type NewProductSchemaType = z.infer<typeof NewProductSchema>
 
@@ -24,17 +24,41 @@ const FormInput = ({ name, errors, register }: { name: FieldPath<NewProductSchem
 const NewProductModal = () => {
 	const [modalActive, setModalActive] = useRecoilState(modalBaseActive)
 
-	const setAllProducts = useSetRecoilState(AllProdctsForUserFetcher)
-	const allProductsValue = useRecoilValue(AllProdctsForUser)
-
 	const {
 		register,
 		handleSubmit,
 		formState: { errors }
 	} = useForm<NewProductSchemaType>({ resolver: zodResolver(NewProductSchema) })
 
+	const queryClient = useQueryClient()
+
+	const { mutate: productSetter } = useMutation({
+		mutationFn: (payload: ProductType) => fetch(`${window.location.origin}/api/products`, {
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify(payload),
+			headers: { 'Content-type': 'application/json' },
+		}).then(async (res) => {
+			if (!res.ok) {
+				const errorMessage: string = await res.json().then(data => data.error)
+				return Promise.reject(new Error(errorMessage))
+			}
+			return res.json()
+		}),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['allProducts'] })
+		},
+		onError: (err) => { },
+		onSettled: () => {
+			setModalActive({
+				active: false,
+				type: ""
+			})
+		}
+	})
+
 	return (
-		<form className="bg-background border-white/30 rounded-xl w-[25rem] border-[0.1px] p-6 text-lg flex flex-col gap-y-6" onSubmit={handleSubmit(async (data) => {
+		<form className="bg-background border-white/30 rounded-xl w-[25rem] border-[0.1px] p-6 text-lg flex flex-col gap-y-6" onSubmit={handleSubmit((data) => {
 			let payload: ProductType =
 			{
 				title: data.name,
@@ -47,21 +71,7 @@ const NewProductModal = () => {
 				thumbimageSource: "",
 				coverimageSource: "",
 			}
-			await axios.post(`${window.location.origin}/api/products`, {
-				...payload
-			}, { withCredentials: true }).then(res => {
-				setAllProducts({
-					...allProductsValue,
-					[res.data.data.id]: {
-						...payload
-					}
-				})
-				setModalActive({
-					active: false,
-					type: ""
-				})
-			}).catch(err => console.log(err))
-
+			productSetter(payload)
 		})}>
 			<div className="uppercase">
 				Publish your product

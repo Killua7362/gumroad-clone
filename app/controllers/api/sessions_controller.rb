@@ -4,11 +4,11 @@ module Api
 
     def create
       begin
-        user = User.where(email: params['user']['email']).first!
+        user = User.where(email: params[:email]).first!
         if user.provider == 'rails_login'
-          if user and user.try(:authenticate,params['user']['password'])
+          if user and user.try(:authenticate,params[:password])
             session[:user_id] = user.id 
-            if not params['user']['remember']
+            if not params[:remember]
               session[:expires_at] = Time.current + 7.days
             end
             render json: {

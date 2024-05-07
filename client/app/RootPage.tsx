@@ -20,6 +20,10 @@ import ProfileCheckoutPage from '@/ui/pages/ProfileCheckoutPage';
 import ProductEditPage from '@/ui/pages/ProductEditPage';
 import SignInPage from '@/ui/pages/SignInPage';
 import SignUpPage from '@/ui/pages/SignUpPage';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+
+
+const queryClient = new QueryClient({})
 
 const productsPageRoute = () => {
 	const params = useParams();
@@ -57,27 +61,29 @@ const RootPage = () => {
 
 	return (
 		<RecoilRoot>
-			<Router>
-				<BaseLayout>
-					<Routes>
-						<Route path='/' element={
-							< Home />
-						} />
-						<Route path="/signin" element={<SignInPage />} />
-						<Route path="/signup" element={<SignUpPage />} />
-						<Route path="/products/edit/:id/:page" Component={ProductEditPageRoute} />
-						<Route path="/products/:page" Component={productsPageRoute} />
-						<Route path="/checkout/:page" Component={checkoutPageRoute} />
-						<Route path="/profile/:id" element={
-							< ProfileHomePage />
-						} />
-						<Route path="/profile/:id/product" element={< ProductsDetailsPage />} />
-						<Route path="/profile/:id/checkout" element={< ProfileCheckoutPage />} />
-						<Route path='/notfound' element={< NotFoundPage />} />
-						<Route path='*' element={<Navigate to='/notfound' replace />} />
-					</Routes>
-				</BaseLayout>
-			</Router >
+			<QueryClientProvider client={queryClient}>
+				<Router>
+					<BaseLayout>
+						<Routes>
+							<Route path='/' element={
+								< Home />
+							} />
+							<Route path="/signin" element={<SignInPage />} />
+							<Route path="/signup" element={<SignUpPage />} />
+							<Route path="/products/edit/:id/:page" Component={ProductEditPageRoute} />
+							<Route path="/products/:page" Component={productsPageRoute} />
+							<Route path="/checkout/:page" Component={checkoutPageRoute} />
+							<Route path="/profile/:id" element={
+								< ProfileHomePage />
+							} />
+							<Route path="/profile/:id/product" element={< ProductsDetailsPage />} />
+							<Route path="/profile/:id/checkout" element={< ProfileCheckoutPage />} />
+							<Route path='/notfound' element={< NotFoundPage />} />
+							<Route path='*' element={<Navigate to='/notfound' replace />} />
+						</Routes>
+					</BaseLayout>
+				</Router >
+			</QueryClientProvider>
 		</RecoilRoot>
 	);
 };

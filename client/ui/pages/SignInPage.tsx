@@ -2,14 +2,13 @@ import { useNavigate } from "react-router"
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
 import { useSetRecoilState } from "recoil"
-import { loginStatuFetcher } from "@/atoms/states"
 import { useState } from "react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 const SignInPage = () => {
-	const loginStatusSetter = useSetRecoilState(loginStatuFetcher)
 	const navigate = useNavigate()
+	const queryClient = useQueryClient()
 	const [customError, setCustomError] = useState("")
 
 	const signInSchema = z.object({
@@ -26,22 +25,32 @@ const SignInPage = () => {
 		formState: { errors }
 	} = useForm<signInSchemaType>({ resolver: zodResolver(signInSchema) })
 
+	const { mutate: loginStatusSetter } = useMutation({
+		mutationFn: (payload: signInSchemaType) => fetch(`${window.location.origin}/api/sessions`, {
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify(payload),
+			headers: { 'Content-type': 'application/json' },
+		}).then(async (res) => {
+			if (!res.ok) {
+				const errorMessage: string = await res.json().then(data => data.error)
+				return Promise.reject(new Error(errorMessage))
+			}
+			return res.json()
+		}),
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: ['loginStatus'] })
+			navigate('/')
+		},
+		onError: (err) => {
+			setCustomError(err.message)
+		}
+	})
+
 	return (
 		<div className="w-full h-full flex items-center justify-center text-xl">
-			<form className="flex gap-x-4 border-white/30 border-[0.1px] rounded-md p-6 w-5/12 divide-x-[0.1px] divide-white/30" onSubmit={handleSubmit(async (data) => {
-				axios.post(`${window.location.origin}/api/sessions`, {
-					user: {
-						email: data.email,
-						password: data.password,
-					}
-				}, { withCredentials: true }).then(res => {
-					loginStatusSetter({
-						...res.data
-					})
-					navigate('/')
-				}).catch(err => {
-					setCustomError(err.response.data.error)
-				})
+			<form className="flex gap-x-4 border-white/30 border-[0.1px] rounded-md p-6 w-5/12 divide-x-[0.1px] divide-white/30" onSubmit={handleSubmit((data) => {
+				loginStatusSetter({ ...data })
 			})}>
 				<div className='flex flex-col gap-y-4 p-4 w-full'>
 					<div className="text-3xl text-center">

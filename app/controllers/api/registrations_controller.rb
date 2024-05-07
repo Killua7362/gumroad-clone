@@ -1,7 +1,7 @@
 module Api
   class RegistrationsController < ApplicationController
     def create
-      check_user = User.find_by(email: params['user']['email'])
+      check_user = User.find_by(email: params[:email])
       if check_user
         if check_user.provider == 'google'
           render json:{
@@ -13,12 +13,7 @@ module Api
           }, status: 500
         end
       else
-        user = User.create(
-          name: params['user']['name'],
-          email: params['user']['email'],
-          password: params['user']['password'],
-          password_confirmation: params['user']['password_confirmation']
-        )
+        user = User.create(users_params)
 
         if user and user.errors.messages.empty?
           head :no_content
@@ -30,7 +25,11 @@ module Api
       end
     end
   
+    private
 
+    def users_params
+      params.require(:user).permit(:name,:email,:password,:password_confirmation)
+    end
 
   end
 end

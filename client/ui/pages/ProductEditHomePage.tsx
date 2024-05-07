@@ -1,4 +1,4 @@
-import { AllProdctsForUser, AllProdctsForUserFetcher, hideToastState } from "@/atoms/states";
+import { hideToastState } from "@/atoms/states";
 import ProductEditPageLayout from "@/ui/layouts/ProductEditPageLayout"
 import MDEditor from '@uiw/react-md-editor';
 import { Fragment, useEffect, useState } from "react";
@@ -8,20 +8,22 @@ import { IoTrashBin } from "react-icons/io5";
 import { z } from 'zod'
 import { useFieldArray, useForm, useFormState, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
 import { EditProductSchema } from "@/schema/edit_product_schema";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const ProductEditHomePage = ({ editProductState, setEditProductState }: { editProductState: ProductType, setEditProductState: React.Dispatch<React.SetStateAction<ProductType>> }) => {
 	const [description, setDescription] = useState<string>()
 	const [thumbnailImage, setThumbnailImage] = useState<File>()
 	const [coverImage, setCoverImage] = useState<File>()
-	const allProducts = useRecoilValue(AllProdctsForUser)
-	const setAllProducts = useSetRecoilState(AllProdctsForUserFetcher)
 	const setToastRender = useSetRecoilState(hideToastState)
 
 	const navigate = useNavigate()
 	const params = useParams()
+	const queryClient = useQueryClient()
 
+	const { data: allProducts, isLoading: productsIsLoading } = useQuery({
+		queryKey: ['allProducts']
+	})
 
 	type EditProductSchemaType = z.infer<typeof EditProductSchema>
 
@@ -49,8 +51,6 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 		control
 	})
 
-	const { isDirty, dirtyFields } = useFormState({ control })
-
 	const allFormStates = useWatch({
 		control
 	})
@@ -65,38 +65,73 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 		})
 	}, [allFormStates])
 
+	const { mutateAsync: collabChecker, isSuccess: collabSuccess } = useMutation({
+		mutationFn: (payload: { collabs: string[]; }) => fetch(`${window.location.origin}/api/collabs/validate_user`, {
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify(payload),
+			headers: { 'Content-type': 'application/json' },
+		}).then(async (res) => {
+			if (!res.ok) {
+				const errorMessage: string = await res.json().then(data => data.error)
+				return Promise.reject(new Error(errorMessage))
+			}
+			return res.json()
+		})
+	})
+
+
+	const { mutateAsync: editProductSetter, isSuccess: editSuccessfull } = useMutation({
+		mutationFn: (payload: ProductType) => fetch(`${window.location.origin}/api/products/${params.id!}`, {
+			method: 'PATCH',
+			credentials: 'include',
+			body: JSON.stringify(payload),
+			headers: { 'Content-type': 'application/json' },
+		}).then(async (res) => {
+			if (!res.ok) {
+				const errorMessage: string = await res.json().then(data => data.error)
+				return Promise.reject(new Error(errorMessage))
+			}
+			return res.json()
+		}),
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: ['allProducts'] })
+			setToastRender({
+				active: false,
+				message: 'Product updated successfully'
+			})
+		},
+		onError: (err) => {
+			setToastRender({
+				active: false,
+				message: err.message
+			})
+		}
+	})
+
 	return (
 		<Fragment>
 			<form className="flex flex-col gap-y-2" onSubmit={handleSubmit(async (data) => {
-				let valid = true;
-				data.collab.map(async (ele, index) => {
-					valid = await axios.post(`${window.location.origin}/api/collabs/validate_user`, { email: ele.email }, { withCredentials: true }).then(res => {
-						return valid
-					}).catch(err => {
-						setError(`collab.${index}.email`, {
-							type: `collab.${index}.email`,
-							message: err.response.data.error
-						})
-						return false;
-					})
-				})
+				const collabValid = await collabChecker({ collabs: [...data.collab!].map(e => e.email) })
 
-				if (!valid) {
-					return;
+				if (!collabValid.valid) {
+					(collabValid.data || []).map((e: string, index: number) => {
+						e &&
+							setError(`collab.${index}.email`, {
+								type: `collab.${index}.email`,
+								message: e
+							})
+					})
 				}
+				if (!collabValid.valid || !collabSuccess) return;
 
-				await axios.patch(`${window.location.origin}/api/products/${params.id!}`, { ...editProductState, ...data }, { withCredentials: true }).then(res => {
-					setAllProducts({ ...allProducts, [params.id!]: { ...res.data.data.attributes!, collab: [...data.collab] as IndividualCollab[] } })
+				const editProductValues = await editProductSetter({ ...editProductState, ...data })
+
+				if (editSuccessfull) {
 					setEditProductState(prev => {
-						return { ...prev, ...res.data.data.attributes!, collab: [...data.collab] }
+						return { ...prev, ...editProductValues.data.attributes!, collab: [...data.collab] }
 					})
-					setToastRender(
-						{
-							active: false,
-							message: 'Product updated successfully'
-						}
-					)
-				}).catch(err => console.log(err))
+				}
 
 			})}>
 				<div className="text-2xl">
@@ -276,7 +311,7 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 				</div>
 				<div className="flex gap-x-4 w-full justify-end">
 					<div className="px-4 py-2 border-white/30 border-[0.1px] rounded-md hover:text-white/70 cursor-pointer" onClick={() => {
-						setEditProductState({ ...allProducts[params.id!] })
+						setEditProductState({ ...(allProducts as ProductTypePayload)[params.id!] })
 						reset()
 					}}>
 						Revert

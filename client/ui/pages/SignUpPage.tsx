@@ -2,8 +2,8 @@ import { useNavigate } from "react-router"
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
 import { useState } from "react"
+import { useMutation } from "@tanstack/react-query"
 
 const SignUpPage = () => {
 	const navigate = useNavigate()
@@ -13,13 +13,34 @@ const SignUpPage = () => {
 		name: z.string().min(1).max(30),
 		email: z.coerce.string().email().min(5),
 		password: z.string().min(5).max(12),
-		password_confirm: z.string().min(5).max(12),
-	}).refine((data) => data.password === data.password_confirm, {
+		password_confirmation: z.string().min(5).max(12),
+	}).refine((data) => data.password === data.password_confirmation, {
 		message: "Password don't match",
-		path: ['password_confirm']
+		path: ['password_confirmation']
 	})
 
 	type signUpSchemaType = z.infer<typeof signUpSchema>
+
+	const { mutate: signUpSetter } = useMutation({
+		mutationFn: (payload: signUpSchemaType) => fetch(`${window.location.origin}/api/registrations`, {
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify(payload),
+			headers: { 'Content-type': 'application/json' },
+		}).then(async (res) => {
+			if (!res.ok) {
+				const errorMessage: string = await res.json().then(data => data.error)
+				return Promise.reject(new Error(errorMessage))
+			}
+			return res.json()
+		}),
+		onSuccess: () => {
+			navigate('/signin')
+		},
+		onError: (err) => {
+			setCustomError(err.message)
+		},
+	})
 
 	const {
 		register,
@@ -30,19 +51,8 @@ const SignUpPage = () => {
 	return (
 		<div className="w-full h-full flex items-center justify-center text-xl">
 			<form className="flex gap-x-4 border-white/30 border-[0.1px] rounded-md p-6 w-5/12 divide-x-[0.1px] divide-white/30"
-				onSubmit={handleSubmit(async (data) => {
-					axios.post(`${window.location.origin}/api/registrations`, {
-						user: {
-							name: data.name,
-							email: data.email,
-							password: data.password,
-							password_confirmation: data.password_confirm
-						}
-					}, { withCredentials: true }).then(res => {
-						navigate('/signin')
-					}).catch(err => {
-						setCustomError(err.response.data.error)
-					})
+				onSubmit={handleSubmit((data) => {
+					signUpSetter({ ...data })
 				})}
 			>
 				<div className='flex flex-col gap-y-4 p-4 w-full'>
@@ -81,9 +91,9 @@ const SignUpPage = () => {
 							<div>
 								Confirm Password
 							</div>
-							<fieldset className={`${errors.password_confirm ? "border-red-500" : "border-white/30 focus-within:border-white"} border-[0.1px] rounded-md overflow-none`}>
-								<input className="bg-background outline-none text-white text-lg" type="password" {...register('password_confirm')} />
-								{errors.password_confirm && <legend className="text-sm">{errors.password_confirm.message}</legend>}
+							<fieldset className={`${errors.password_confirmation ? "border-red-500" : "border-white/30 focus-within:border-white"} border-[0.1px] rounded-md overflow-none`}>
+								<input className="bg-background outline-none text-white text-lg" type="password" {...register('password_confirmation')} />
+								{errors.password_confirmation && <legend className="text-sm">{errors.password_confirmation.message}</legend>}
 							</fieldset>
 						</div>
 						{

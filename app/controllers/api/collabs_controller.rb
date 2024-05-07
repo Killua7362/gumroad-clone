@@ -5,15 +5,21 @@ module Api
 
     def validate_user
       if @current_user 
-        if @current_user.email == params[:email]
-          render json: {error: "Current user's email is not usable"}, status: 404
-        elsif not User.find_by_email(params[:email])
-          render json: {error: "This user does not exist"}, status: 404
-        else
-          head :no_content
+        valid = true
+        result = params[:collabs].map do |mail|
+          if @current_user.email ==mail 
+            valid = false 
+            "Current user's email is not usable"
+          elsif not User.find_by_email(mail)
+            valid = false 
+            "This user does not exist"
+          else
+            nil
+          end
         end
+        render json: {valid:valid,data:result }
       else
-          render json: {error: "Not authorized"}, status: 401
+        render json: {error: "Not authorized"}, status: 401
       end
     end
 
