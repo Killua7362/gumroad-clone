@@ -32,7 +32,7 @@ const ProfileHomePage = ({ preview = false, name, bio, productCategories }: { pr
 						productCategories &&
 						productCategories.map((e, i) => {
 							return !e.hide && (
-								<ProfilePageProductCard name={e.name} />
+								<ProfilePageProductCard key={`profile_page_product_${i}`} name={e.name} />
 							)
 						})
 					}

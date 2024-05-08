@@ -21,7 +21,7 @@ const DeleteProduct = () => {
 			return res.json()
 		}),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['allProducts'] })
+			return queryClient.invalidateQueries({ queryKey: ['allProducts'] })
 		},
 		onError: (err) => {
 

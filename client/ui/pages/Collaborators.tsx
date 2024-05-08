@@ -14,9 +14,13 @@ const CollaboratorsPage = () => {
 
 	const [params, setSearchParams] = useSearchParams()
 
-	const { data: loginStatus, isSuccess: isLoginSuccess, isError: isLoginError } = useQuery({
+	const { data: loginStatusData, isSuccess: isLoginSuccess, isError: isLoginError } = useQuery({
 		queryKey: ['loginStatus'],
 	});
+
+	const loginStatus = useMemo(() => {
+		return { ...loginStatusData as authSchema }
+	}, [])
 
 	queryClient.setQueryDefaults(['collabProducts'], {
 		queryFn: () => fetch(`${window.location.origin}/api/collabs/products`).then(async (res) => {
@@ -37,7 +41,8 @@ const CollaboratorsPage = () => {
 				}
 				return result;
 			})
-		})
+		}),
+		enabled: (loginStatus && loginStatus?.logged_in),
 	})
 
 	const { data: collabProductsData, error: collabProductErrors, isLoading: collabProductsIsLoading } = useQuery({
@@ -62,7 +67,7 @@ const CollaboratorsPage = () => {
 			return res.json()
 		}),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['allProducts'] })
+			return queryClient.invalidateQueries({ queryKey: ['allProducts'] })
 		},
 		onError: (err) => { },
 	})
@@ -87,7 +92,7 @@ const CollaboratorsPage = () => {
 		Object.keys(productsCollection).filter(key => !(key in allProducts)).map((key, i) => {
 			result[key] = productsCollection![key].collab_active &&
 				Object.keys(productsCollection![key].collab!).length !== 0 &&
-				(collabProducts![key]?.collab || []).filter(e => e.email === (loginStatus as authSchema).email)[0]?.approved || false
+				(collabProducts![key]?.collab || []).filter(e => e.email === loginStatus?.email)[0]?.approved || false
 		})
 		return result;
 	}, [productsCollection, loginStatus])
@@ -113,7 +118,7 @@ const CollaboratorsPage = () => {
 			<div className="w-full mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
 				{Object.keys(productsCollection!).map((key, i) => {
 					return productsCollection![key].collab_active && Object.keys(productsCollection![key].collab!).length !== 0 && (
-						<CollabCard productData={{ ...productsCollection![key] }}>
+						<CollabCard key={key} productData={{ ...productsCollection![key] }}>
 							<div className="w-full flex justify-end">
 								{
 									!(key in allProducts!) &&

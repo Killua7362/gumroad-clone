@@ -23,7 +23,13 @@ import SignUpPage from '@/ui/pages/SignUpPage';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 
 
-const queryClient = new QueryClient({})
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: Infinity,
+		},
+	}
+})
 
 const productsPageRoute = () => {
 	const params = useParams();

@@ -45,6 +45,14 @@ const ProductsHomePage = () => {
 		return () => document.body.removeEventListener('click', closeContextMenu)
 	}, [])
 
+	const { data: loginStatusData, isSuccess: isLoginSuccess, isError: isLoginError } = useQuery({
+		queryKey: ['loginStatus'],
+	});
+
+	const loginStatus = useMemo(() => {
+		return { ...loginStatusData as authSchema }
+	}, [loginStatusData])
+
 	queryClient.setQueryDefaults(['allProducts'], {
 		queryFn: () => fetch(`${window.location.origin}/api/products`).then(async (res) => {
 			if (!res.ok) {
@@ -64,8 +72,10 @@ const ProductsHomePage = () => {
 				}
 				return result;
 			})
-		})
+		}),
+		enabled: (loginStatus && loginStatus?.logged_in),
 	})
+
 
 	const { data: allProductsData, error: productErrors, isLoading: productsIsLoading } = useQuery({
 		queryKey: ['allProducts'],
@@ -88,11 +98,11 @@ const ProductsHomePage = () => {
 			return res.json()
 		}),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['allProducts'] })
 			setModalActive({
 				active: false,
 				type: ""
 			})
+			return queryClient.invalidateQueries({ queryKey: ['allProducts'] })
 		},
 		onError: (err) => { }
 	})
@@ -175,8 +185,14 @@ const ProductsHomePage = () => {
 									exit={{
 										width: 0
 									}}
-									placeholder="Start typing..."
-									className="h-full rounded-xl outline-none text-lg bg-background text-white" />
+									onChange={(e) => {
+										e.preventDefault()
+										setSearchConfig(prev => {
+											return { ...prev, startsWith: e.target.value }
+										})
+									}}
+									placeholder="Enter title or summary..."
+									className="h-full left-0 rounded-xl outline-none text-lg bg-background text-white" />
 							}
 						</AnimatePresence>
 					</motion.div>
@@ -234,7 +250,7 @@ const ProductsHomePage = () => {
 			<div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
 				{Object.keys(allProducts!).map((key, i) => {
 					return (
-						<ProductCard productData={{
+						<ProductCard key={key} productData={{
 							...allProducts![key]
 						}} >
 							<Fragment>

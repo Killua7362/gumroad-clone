@@ -2,7 +2,6 @@ import { Link } from "react-router-dom"
 import { Fragment } from "react/jsx-runtime"
 
 const ProfilePageProductCard = ({ name }: { name: string }) => {
-
 	return (
 		<Fragment>
 			<div className="text-xl">

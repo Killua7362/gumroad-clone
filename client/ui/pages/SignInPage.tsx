@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSetRecoilState } from "recoil"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 const SignInPage = () => {
@@ -38,9 +38,11 @@ const SignInPage = () => {
 			}
 			return res.json()
 		}),
-		onSuccess: (data) => {
-			queryClient.invalidateQueries({ queryKey: ['loginStatus'] })
+		onSuccess: () => {
 			navigate('/')
+			queryClient.resetQueries({ queryKey: ['loginStatus'] })
+			queryClient.resetQueries({ queryKey: ['allProducts'] })
+			queryClient.resetQueries({ queryKey: ['collabProducts'] })
 		},
 		onError: (err) => {
 			setCustomError(err.message)

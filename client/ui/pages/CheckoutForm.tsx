@@ -71,7 +71,7 @@ const CheckoutForm = () => {
 							{
 								tempProductCategories.map((e, i) => {
 									return (
-										<div className='gap-x-4 items-center flex'>
+										<div className='gap-x-4 items-center flex' id={`product_categories_${i}`}>
 											{
 												i !== 0 &&
 												<div>

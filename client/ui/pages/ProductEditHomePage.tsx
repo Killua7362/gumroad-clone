@@ -95,11 +95,11 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 			return res.json()
 		}),
 		onSuccess: (data) => {
-			queryClient.invalidateQueries({ queryKey: ['allProducts'] })
 			setToastRender({
 				active: false,
 				message: 'Product updated successfully'
 			})
+			return queryClient.invalidateQueries({ queryKey: ['allProducts'] })
 		},
 		onError: (err) => {
 			setToastRender({

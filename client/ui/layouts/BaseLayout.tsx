@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react"
+import { Fragment, useEffect, useMemo, useState } from "react"
 import SideBar from "@/ui/components/sidebar"
 import Footer from "@/ui/components/Footer"
 import { Navigate, useLocation, useNavigate } from "react-router"
@@ -19,26 +19,40 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 	const queryClient = useQueryClient()
 
 	queryClient.setQueryDefaults(['loginStatus'], {
-		queryFn: () => fetch(`${window.location.origin}/api/sessions/logged_in`).then(res => res.json()),
+		queryFn: () => fetch(`${window.location.origin}/api/sessions/logged_in`).then(async (res) => {
+			if (!res.ok) {
+				const errorMessage: string = await res.json().then(data => data.error)
+				return Promise.reject(new Error(errorMessage))
+			}
+			return res.json()
+		}),
+		retry: false,
+		refetchOnWindowFocus: false,
 	})
 
-	const { data: loginStatusData, isSuccess: isLoginSuccess, isError: isLoginError } = useQuery({
+	const { data: loginStatusData, isSuccess: isLoginSuccess, isLoading: isLoginStatusLoading, fetchStatus, isRefetching, isFetched, isFetchedAfterMount } = useQuery({
 		queryKey: ['loginStatus'],
 	});
 
+	const loginStatus = useMemo(() => {
+		return { ...loginStatusData as authSchema }
+	}, [loginStatusData])
+
 	useEffect(() => {
+		if (!isLoginStatusLoading) {
+			if (!authPaths.has(location.pathname.split('/')[1]) && (!isLoginSuccess || loginStatus?.logged_in === false)) {
+				navigate('/signin')
+			}
+
+			if ((isLoginSuccess && loginStatus?.logged_in) && new Set(['signin', 'signup']).has(location.pathname.split('/')[1])) {
+				navigate('/')
+			}
+		}
 		setSideBarActive(!siderbarActivePaths.has(location.pathname.split('/')[1]))
-	}, [location.pathname])
+	}, [location.pathname, isLoginStatusLoading, isLoginSuccess, loginStatus?.logged_in!])
 
-	if (!authPaths.has(location.pathname.split('/')[1]) && (isLoginError || (loginStatusData as authSchema)?.logged_in === false)) {
-		return <Navigate to='/signin' replace />
-	}
 
-	if ((isLoginSuccess && (loginStatusData as authSchema)?.logged_in) && new Set(['signin', 'signup']).has(location.pathname.split('/')[1])) {
-		return <Navigate to='/' replace />
-	}
-
-	return (
+	return !isLoginStatusLoading && (
 		<div className="min-h-screen w-screen flex flex-col sm:flex-row">
 			<ModalBase />
 			<Toast />

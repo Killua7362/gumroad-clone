@@ -126,8 +126,10 @@ const SideBar = () => {
 			return res.json()
 		}),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['loginStatus'] })
 			navigate('/signin')
+			queryClient.resetQueries({ queryKey: ['loginStatus'] })
+			queryClient.resetQueries({ queryKey: ['allProducts'] })
+			queryClient.resetQueries({ queryKey: ['collabProducts'] })
 		},
 		onError: (err) => {
 
@@ -209,7 +211,7 @@ const SideBar = () => {
 						{
 							SideBarTopItems.map((e, i) => {
 								return (
-									<Link to={e.linkUrl} className='no-underline text-white'>
+									<Link to={e.linkUrl} key={`sidebar_items_${i}`} className='no-underline text-white'>
 										<motion.div
 											className={`flex px-6 items-center py-4 border-white/30 gap-x-4 ${i === activeItem ? "bg-white text-gray-800" : "cursor-pointer hover:text-white/80 "}`}
 											id={`$sidebarTopitems_${i}`}
