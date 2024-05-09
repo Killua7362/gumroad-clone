@@ -40,9 +40,9 @@ const SignInPage = () => {
 		}),
 		onSuccess: () => {
 			navigate('/')
-			queryClient.resetQueries({ queryKey: ['loginStatus'] })
-			queryClient.resetQueries({ queryKey: ['allProducts'] })
-			queryClient.resetQueries({ queryKey: ['collabProducts'] })
+			queryClient.removeQueries({ queryKey: ['allProducts'] })
+			queryClient.removeQueries({ queryKey: ['collabProducts'] })
+			return queryClient.resetQueries({ queryKey: ['loginStatus'] })
 		},
 		onError: (err) => {
 			setCustomError(err.message)

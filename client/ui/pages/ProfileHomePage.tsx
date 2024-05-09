@@ -2,15 +2,18 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import ProfilePageLayout from "@/ui/layouts/ProfilePageLayout"
 import ProfilePageProductCard from "@/ui/components/cards/ProfilePageProductCard"
+import { useQueryClient } from "@tanstack/react-query"
 
 const ProfileHomePage = ({ preview = false, name, bio, productCategories }: { preview?: boolean, name?: string, bio?: string, productCategories?: productCategories[] }) => {
 	const [rendered, setRendered] = useState(false)
 	const navigate = useNavigate()
 	const params = useParams()
+	const queryClient = useQueryClient()
 
 	document.title = "Profile"
 
 	useEffect(() => {
+		console.log(queryClient.getQueryData(['allProducts']))
 		const checkId = async () => {
 			setRendered(true)
 		}
