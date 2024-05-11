@@ -82,5 +82,6 @@ interface authSchema {
 	logged_in: boolean;
 	email?: string;
 	name?: string;
+	user_id?: string;
 }
 

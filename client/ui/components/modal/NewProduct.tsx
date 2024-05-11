@@ -32,7 +32,7 @@ const NewProductModal = () => {
 
 	const queryClient = useQueryClient()
 
-	const { mutate: productSetter } = useMutation({
+	const { mutate: productSetter, isPending: productIsSetting } = useMutation({
 		mutationFn: (payload: ProductType) => fetch(`${window.location.origin}/api/products`, {
 			method: 'POST',
 			credentials: 'include',
@@ -91,13 +91,16 @@ const NewProductModal = () => {
 				</div>
 			</div>
 			<div className="w-full flex justify-end gap-x-4">
-				<Button buttonName="Cancel" onClickHandler={() => {
-					setModalActive({
-						active: false,
-						type: ""
-					})
-				}} />
-				<Button buttonName="Save" type="submit" />
+				<Button
+					buttonName="Cancel"
+					onClickHandler={() => {
+						setModalActive({
+							active: false,
+							type: ""
+						})
+					}} />
+				<Button buttonName="Save" type="submit" isLoading={productIsSetting}
+				/>
 			</div>
 		</form>
 	)

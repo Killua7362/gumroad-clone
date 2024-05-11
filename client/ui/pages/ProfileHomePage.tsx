@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import ProfilePageLayout from "@/ui/layouts/ProfilePageLayout"
 import ProfilePageProductCard from "@/ui/components/cards/ProfilePageProductCard"
-import { useQueryClient } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 
 const ProfileHomePage = ({ preview = false, name, bio, productCategories }: { preview?: boolean, name?: string, bio?: string, productCategories?: productCategories[] }) => {
 	const [rendered, setRendered] = useState(false)
@@ -12,13 +12,54 @@ const ProfileHomePage = ({ preview = false, name, bio, productCategories }: { pr
 
 	document.title = "Profile"
 
+	const { data: profileProductsData, error: productErrors, isPending: productsIsLoading, isSuccess: productIsSuccess, status } = useQuery({
+		queryKey: ['profileProducts', params.id!],
+		queryFn: () => fetch(`${window.location.origin}/api/profiles/${params.id!}`).then(async (res) => {
+			if (!res.ok) {
+				const errorMessage: string = await res.json().then(data => data.error)
+				return Promise.reject(new Error(errorMessage))
+			}
+			return res.json().then(data => {
+				let result: ProductTypePayload = {}
+				for (let i = 0; i < data.data.length; i++) {
+					result[data.data[i].id] = { ...data.data[i].attributes }
+				}
+				for (let i = 0; i < data.included.length; i++) {
+					if (data.included[i].type === 'collab') {
+						const { product_id, ...temp } = { ...data.included[i].attributes, product_id: "1" }
+						result[data.included[i].attributes.product_id] = { ...result[data.included[i].attributes.product_id], collab: [...result[data.included[i].attributes.product_id].collab || [], { ...temp }] }
+					}
+				}
+				return result;
+			})
+		}),
+		meta: {
+			persist: false
+		},
+		enabled: !!params.id && !preview,
+	})
+
+	const profileProducts = useMemo(() => {
+		return { ...profileProductsData as ProductTypePayload }
+	}, [profileProductsData])
+
 	useEffect(() => {
-		console.log(queryClient.getQueryData(['allProducts']))
-		const checkId = async () => {
+		if (preview) {
 			setRendered(true)
+		} else {
+			if (!params.id) {
+				navigate('/notfound')
+			}
 		}
-		checkId()
-	}, [])
+
+		if (!productsIsLoading) {
+			if (productIsSuccess) {
+				setRendered(true)
+			} else {
+				navigate('/notfound')
+			}
+		}
+	}, [params, productsIsLoading, productIsSuccess])
 
 	return rendered && (
 		<ProfilePageLayout preview={preview}>
@@ -32,11 +73,17 @@ const ProfileHomePage = ({ preview = false, name, bio, productCategories }: { pr
 				</div>
 				<div className="w-10/12 xl:w-8/12 mx-auto h-full flex flex-col mt-2 gap-y-8">
 					{
-						productCategories &&
+						preview && productCategories &&
 						productCategories.map((e, i) => {
 							return !e.hide && (
 								<ProfilePageProductCard key={`profile_page_product_${i}`} name={e.name} />
 							)
+						})
+					}
+					{
+						!preview &&
+						Object.keys(profileProducts).map((key, i) => {
+							return <></>
 						})
 					}
 				</div>

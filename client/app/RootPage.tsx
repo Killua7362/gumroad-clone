@@ -20,15 +20,22 @@ import ProfileCheckoutPage from '@/ui/pages/ProfileCheckoutPage';
 import ProductEditPage from '@/ui/pages/ProductEditPage';
 import SignInPage from '@/ui/pages/SignInPage';
 import SignUpPage from '@/ui/pages/SignUpPage';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
-
+import { QueryClient } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
 			staleTime: Infinity,
+			gcTime: Infinity
 		},
+
 	}
+})
+
+const persister = createSyncStoragePersister({
+	storage: window.localStorage
 })
 
 const productsPageRoute = () => {
@@ -67,7 +74,16 @@ const RootPage = () => {
 
 	return (
 		<RecoilRoot>
-			<QueryClientProvider client={queryClient}>
+			<PersistQueryClientProvider
+				persistOptions={{
+					persister,
+					dehydrateOptions: {
+						// persist only offlineFirst queries
+						shouldDehydrateQuery: (query) => {
+							return query?.meta?.persist === true;
+						},
+					},
+				}} client={queryClient}>
 				<Router>
 					<BaseLayout>
 						<Routes>
@@ -89,7 +105,7 @@ const RootPage = () => {
 						</Routes>
 					</BaseLayout>
 				</Router >
-			</QueryClientProvider>
+			</PersistQueryClientProvider>
 		</RecoilRoot>
 	);
 };

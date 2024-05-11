@@ -27,6 +27,15 @@ module Api
       end
     end
 
+    def show
+      product = Product.find_by(id: params[:id])
+      if @current_user and @current_user.id == product.user_id
+        render json: ProductSerializer.new(product,options).serializable_hash.to_json
+      else
+        render json: {error: "Not Authorized"}, status: 401
+      end
+    end
+
     def update
       Product.transaction(joinable:false) do 
         product = Product.find_by(id: params[:id])

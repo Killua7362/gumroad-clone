@@ -14,7 +14,8 @@ module Api
             render json: {
               logged_in: true,
               name: user.name,
-              email: user.email
+              email: user.email,
+              user_id: user.id
             }
           else
             render json: {
@@ -38,7 +39,8 @@ module Api
         render json:{
           logged_in: true,
           name: @current_user.name,
-          email: @current_user.email
+          email: @current_user.email,
+          user_id: @current_user.id
         }
       else
         reset_session

@@ -31,7 +31,6 @@ const CheckoutForm = () => {
 
 	const { element, error } = useRunner({ code, scope })
 
-
 	return (
 		<div className="flex justify-center w-full h-full gap-x-0">
 			<div className="w-full xl:w-7/12 xl:h-[50rem] py-10 px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background flex flex-col justify-between gap-y-4">

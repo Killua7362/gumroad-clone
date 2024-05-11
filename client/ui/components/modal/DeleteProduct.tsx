@@ -8,7 +8,7 @@ const DeleteProduct = () => {
 	const setModalActive = useSetRecoilState(modalBaseActive)
 	const contextMenuValue = useRecoilValue(productsCardContextMenu)
 
-	const { mutate: productDeleter } = useMutation({
+	const { mutate: productDeleter, isPending: productIsDeleting } = useMutation({
 		mutationFn: () => fetch(`${window.location.origin}/api/products/${contextMenuValue.id}`, {
 			method: 'DELETE',
 			credentials: 'include',
@@ -18,13 +18,13 @@ const DeleteProduct = () => {
 				const errorMessage: string = await res.json().then(data => data.error)
 				return Promise.reject(new Error(errorMessage))
 			}
-			return res.json()
+			return {}
 		}),
 		onSuccess: () => {
 			return queryClient.invalidateQueries({ queryKey: ['allProducts'] })
 		},
 		onError: (err) => {
-
+			console.log(err)
 		},
 		onSettled: () => {
 			setModalActive({
@@ -40,14 +40,18 @@ const DeleteProduct = () => {
 				Confirm Delete?
 			</div>
 			<div className="flex gap-x-4">
-				<Button buttonName="Cancel" type="button" onClickHandler={() => {
-					setModalActive({
-						active: false,
-						type: ""
-					})
-				}}
+				<Button
+					buttonName="Cancel"
+					type="button" onClickHandler={() => {
+						setModalActive({
+							active: false,
+							type: ""
+						})
+					}}
 				/>
-				<Button buttonName="Confirm" type="button" onClickHandler={() => { productDeleter() }} extraClasses={['!border-red-500/70 !text-red-500 hover:text-red-500/70']} />
+				<Button buttonName="Confirm"
+					isLoading={productIsDeleting}
+					type="button" onClickHandler={() => { productDeleter() }} extraClasses={['!border-red-500/70 !text-red-500 hover:text-red-500/70']} />
 			</div>
 		</div>
 	)

@@ -11,19 +11,16 @@ interface ButtonSchema {
 	onClickHandler?: () => void;
 	children?: React.ReactNode;
 	isActive?: boolean;
+	isLoading?: boolean;
 }
 
-const Button = ({ buttonName, extraClasses = [""], type = 'button', onClickHandler, children, isActive = false }: ButtonSchema) => {
-	const [isLoading, setIsLoading] = useState(false)
-
+const Button = ({ buttonName, extraClasses = [""], type = 'button', onClickHandler, children, isActive = false, isLoading = false }: ButtonSchema) => {
 	return (
 		<button
 			onClick={async () => {
-				setIsLoading(true)
 				if (onClickHandler) {
 					await onClickHandler()
 				}
-				setIsLoading(false)
 			}}
 			type={type}
 			className={cx(`save-button px-4 py-2 flex justify-center gap-x-3 items-center ${isActive ? 'border-white' : 'border-white/30 cursor-pointer'} rounded-md border-[0.1px] bg-background text-white text-lg w-fit`, css`

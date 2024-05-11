@@ -1,6 +1,6 @@
 import '@/ui/styles/sidebar.css'
 import { SideBarTopItems } from '@/ui/components/sidebar/items';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { AnimatePresence, Variants, motion } from 'framer-motion'
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -9,7 +9,7 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { SiAboutdotme } from "react-icons/si";
 import { CgLogOut } from "react-icons/cg";
 import { useSetRecoilState } from 'recoil';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const SideBar = () => {
 	const [activeItem, setActiveItem] = useState(0)
@@ -113,6 +113,14 @@ const SideBar = () => {
 	}, [location])
 
 
+	const { data: loginStatusData, isSuccess: isLoginSuccess, isLoading: isLoginStatusLoading, fetchStatus, isRefetching, isFetched, isFetchedAfterMount } = useQuery({
+		queryKey: ['loginStatus'],
+	});
+
+	const loginStatus = useMemo(() => {
+		return { ...loginStatusData as authSchema }
+	}, [loginStatusData])
+
 	const { mutate: loginStatusSetter } = useMutation({
 		mutationFn: () => fetch(`${window.location.origin}/api/sessions/logout`, {
 			method: 'DELETE',
@@ -127,9 +135,7 @@ const SideBar = () => {
 		}),
 		onSuccess: () => {
 			navigate('/signin')
-			queryClient.removeQueries({ queryKey: ['allProducts'] })
-			queryClient.removeQueries({ queryKey: ['collabProducts'] })
-			return queryClient.resetQueries({ queryKey: ['loginStatus'] })
+			return queryClient.clear()
 		},
 		onError: (err) => {
 
@@ -294,7 +300,7 @@ const SideBar = () => {
 										</motion.div>
 
 									</Link>
-									<Link to="/profile/123" className='no-underline text-white' target='_blank'
+									<Link to={`/profile/${loginStatus.user_id!}`} className='no-underline text-white' target='_blank'
 										rel='noopener noreferrer'>
 										<motion.div
 											whileHover={{

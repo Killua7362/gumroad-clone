@@ -45,48 +45,17 @@ const ProductsHomePage = () => {
 		return () => document.body.removeEventListener('click', closeContextMenu)
 	}, [])
 
-	const { data: loginStatusData, isSuccess: isLoginSuccess, isError: isLoginError } = useQuery({
-		queryKey: ['loginStatus'],
-	});
-
-	const loginStatus = useMemo(() => {
-		return { ...loginStatusData as authSchema }
-	}, [loginStatusData])
-
-	queryClient.setQueryDefaults(['allProducts'], {
-		queryFn: () => fetch(`${window.location.origin}/api/products`).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json().then(data => {
-				let result: ProductTypePayload = {}
-				for (let i = 0; i < data.data.length; i++) {
-					result[data.data[i].id] = { ...data.data[i].attributes }
-				}
-				for (let i = 0; i < data.included.length; i++) {
-					if (data.included[i].type === 'collab') {
-						const { product_id, ...temp } = { ...data.included[i].attributes, product_id: "1" }
-						result[data.included[i].attributes.product_id] = { ...result[data.included[i].attributes.product_id], collab: [...result[data.included[i].attributes.product_id].collab || [], { ...temp }] }
-					}
-				}
-				return result;
-			})
-		}),
-		enabled: (loginStatus && loginStatus?.logged_in),
-	})
-
-
 	const { data: allProductsData, error: productErrors, isLoading: productsIsLoading } = useQuery({
 		queryKey: ['allProducts'],
 	})
+
 	const allProducts = useMemo(() => {
 		return { ...allProductsData as ProductTypePayload }
 	}, [allProductsData])
 
 	const { mutateAsync: liveSetter } = useMutation({
 		mutationFn: (payload: { key: string, live: boolean }) => fetch(`${window.location.origin}/api/products/${payload.key}`, {
-			method: 'POST',
+			method: 'PATCH',
 			credentials: 'include',
 			body: JSON.stringify({ live: payload.live }),
 			headers: { 'Content-type': 'application/json' },
@@ -307,7 +276,7 @@ const ProductsHomePage = () => {
 															price: allProducts![key].price,
 															summary: allProducts![key].summary,
 															description: allProducts![key].description,
-															collab: allProducts![key].collab,
+															collab: allProducts![key].collab || [],
 														})
 														await liveSetter({ key: key, live: !allProducts![key].live })
 													} catch (e) {

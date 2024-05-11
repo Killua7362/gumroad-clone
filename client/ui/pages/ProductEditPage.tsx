@@ -6,7 +6,6 @@ import ProductEditHomePage from "@/ui/pages/ProductEditHomePage";
 import ProductEditContentPage from "@/ui/pages/ProductEditContentPage";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-
 const ProductEditPage = () => {
 	const navigate = useNavigate()
 	const params = useParams()
@@ -15,21 +14,42 @@ const ProductEditPage = () => {
 	const [rendered, setRendered] = useState(false)
 	const [editProductState, setEditProductState] = useState<ProductType>()
 
-	const { data: allProductsData, error: productErrors, isLoading: productsIsLoading } = useQuery({
-		queryKey: ['allProducts'],
+	const { data: currentProductData, error: productErrors, isPending: productsIsLoading, isSuccess: productIsSuccess } = useQuery({
+		queryKey: ['allProducts', params.id!],
+		queryFn: () => {
+			if (queryClient.getQueryData(['allProducts'])) {
+				return (queryClient.getQueryData(['allProducts']) as ProductTypePayload)[params.id!]
+			} else {
+				return fetch(`${window.location.origin}/api/products/${params.id!}`).then(async (res) => {
+					if (!res.ok) {
+						const errorMessage: string = await res.json().then(data => data.error);
+						return Promise.reject(new Error(errorMessage));
+					}
+					return res.json().then(data => {
+						const { id, ...temp } = { ...data.data.attributes, id: '' }
+						return temp;
+					});
+				})
+			}
+		},
+		meta: { persist: true },
+		enabled: !!params.id,
 	})
-	const allProducts = useMemo(() => {
-		return { ...allProductsData as ProductTypePayload }
-	}, [allProductsData])
+
+	const currentProduct = useMemo(() => {
+		return { ...currentProductData as ProductType }
+	}, [currentProductData])
 
 	useEffect(() => {
-		if (params.id && params.id in allProducts) {
-			setEditProductState({ ...allProducts[params.id] })
-			setRendered(true)
-		} else {
-			navigate('/notfound')
+		if (!productsIsLoading) {
+			if (productIsSuccess) {
+				setEditProductState({ ...currentProduct })
+				setRendered(true)
+			} else {
+				navigate('/notfound')
+			}
 		}
-	}, [params.id])
+	}, [params.id, productsIsLoading, currentProduct, productIsSuccess])
 
 	return rendered && (
 		<ProductEditPageLayout>
