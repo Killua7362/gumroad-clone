@@ -276,7 +276,7 @@ const ProductsHomePage = () => {
 															price: allProducts![key].price,
 															summary: allProducts![key].summary,
 															description: allProducts![key].description,
-															collab: allProducts![key].collab || [],
+															collabs: allProducts![key].collabs || [],
 														})
 														await liveSetter({ key: key, live: !allProducts![key].live })
 													} catch (e) {

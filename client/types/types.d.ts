@@ -66,7 +66,7 @@ interface ProductType {
 	live: boolean;
 	price: number;
 	collab_active: boolean;
-	collab?: IndividualCollab[];
+	collabs?: IndividualCollab[];
 	thumbimageSource?: string;
 	coverimageSource?: string;
 	description: string;

@@ -49,12 +49,6 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 				for (let i = 0; i < data.data.length; i++) {
 					result[data.data[i].id] = { ...data.data[i].attributes }
 				}
-				for (let i = 0; i < data.included.length; i++) {
-					if (data.included[i].type === 'collab') {
-						const { product_id, ...temp } = { ...data.included[i].attributes, product_id: "1" }
-						result[data.included[i].attributes.product_id] = { ...result[data.included[i].attributes.product_id], collab: [...result[data.included[i].attributes.product_id].collab || [], { ...temp }] }
-					}
-				}
 				return result;
 			})
 		}),
@@ -74,12 +68,6 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 				let result: ProductTypePayload = {}
 				for (let i = 0; i < data.data.length; i++) {
 					result[data.data[i].id] = { ...data.data[i].attributes }
-				}
-				for (let i = 0; i < data.included.length; i++) {
-					if (data.included[i].type === 'collab') {
-						const { product_id, ...temp } = { ...data.included[i].attributes, product_id: "1" }
-						result[data.included[i].attributes.product_id] = { ...result[data.included[i].attributes.product_id], collab: [...result[data.included[i].attributes.product_id].collab || [], { ...temp }] }
-					}
 				}
 				return result;
 			})

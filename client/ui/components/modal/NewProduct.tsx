@@ -70,6 +70,7 @@ const NewProductModal = () => {
 				collab_active: false,
 				thumbimageSource: "",
 				coverimageSource: "",
+				collabs: [] as IndividualCollab[]
 			}
 			productSetter(payload)
 		})}>

@@ -11,7 +11,7 @@ export const EditProductSchema = z.object({
 	price: z.coerce.number().min(0),
 	summary: z.string().min(10),
 	description: z.string().min(10),
-	collab: z.array(CollabSchema).superRefine((data, ctx) => {
+	collabs: z.array(CollabSchema).superRefine((data, ctx) => {
 		if (data.reduce((a, { share }) => a + (Number(share) || 0), 0) > 100) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,

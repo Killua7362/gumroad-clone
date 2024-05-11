@@ -15,7 +15,7 @@ module Api
     private 
 
     def options
-      @options ||= {include: %i[reviews collabs]}
+      @options ||= {include: %i[reviews]}
     end
 
   end

@@ -69,8 +69,8 @@ const CollaboratorsPage = () => {
 		let result: { [id: string]: boolean; } = {}
 		Object.keys(productsCollection).filter(key => !(key in allProducts)).map((key, i) => {
 			result[key] = productsCollection![key].collab_active &&
-				Object.keys(productsCollection![key].collab!).length !== 0 &&
-				(collabProducts![key]?.collab || []).filter(e => e.email === loginStatus?.email)[0]?.approved || false
+				Object.keys(productsCollection![key].collabs!).length !== 0 &&
+				(collabProducts![key]?.collabs || []).filter(e => e.email === loginStatus?.email)[0]?.approved || false
 		})
 		return result;
 	}, [productsCollection, loginStatus])
@@ -95,7 +95,7 @@ const CollaboratorsPage = () => {
 			</div>
 			<div className="w-full mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
 				{Object.keys(productsCollection!).map((key, i) => {
-					return productsCollection![key].collab_active && Object.keys(productsCollection![key].collab!).length !== 0 && (
+					return productsCollection![key].collab_active && Object.keys(productsCollection![key].collabs!).length !== 0 && (
 						<CollabCard key={key} productData={{ ...productsCollection![key] }}>
 							<div className="w-full flex justify-end">
 								{

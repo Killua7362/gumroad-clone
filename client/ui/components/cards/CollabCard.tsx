@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 const CollabCard = ({ children, productData }: { children: React.ReactNode, productData: ProductType }) => {
 
-	const collabApproved = useMemo(() => (productData.collab!).some(e => e.approved === false), [productData.collab!])
+	const collabApproved = useMemo(() => (productData.collabs!).some(e => e.approved === false), [productData.collabs!])
 
 	return (
 		<div className="flex justify-between h-full flex-wrap flex-row gap-4  border-white/30 border-[0.1px] rounded-xl p-8 h-fit w-full relative flex-wrap">
@@ -41,7 +41,7 @@ const CollabCard = ({ children, productData }: { children: React.ReactNode, prod
 					Shares
 				</div>
 				{
-					productData.collab!.map((e, i) => {
+					productData.collabs!.map((e, i) => {
 						return (
 							<div className={`gap-x-4 gap-y-2 grid grid-cols-5 mr-8 ${e.approved ? "text-green-400" : "text-red-400"}`} id={`collab_${productData.title}_${i}`}>
 								<div className="col-span-4">

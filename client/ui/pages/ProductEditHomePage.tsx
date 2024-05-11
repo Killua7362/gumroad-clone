@@ -38,13 +38,13 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 			description: editProductState.description,
 			summary: editProductState.summary,
 			price: editProductState.price,
-			collab: editProductState.collab
+			collabs: editProductState.collabs
 		},
 		shouldUnregister: false
 	})
 
 	const { append, remove, fields } = useFieldArray({
-		name: 'collab',
+		name: 'collabs',
 		control
 	})
 
@@ -58,7 +58,7 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 
 	useEffect(() => {
 		setEditProductState(prev => {
-			return { ...prev, description: description!, ...allFormStates, collab: allFormStates.collab as IndividualCollab[] }
+			return { ...prev, description: description!, ...allFormStates, collabs: allFormStates.collabs as IndividualCollab[] }
 		})
 	}, [allFormStates])
 
@@ -77,7 +77,7 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 		}),
 		onSuccess: (data, payload) => {
 			setEditProductState(prev => {
-				return { ...prev, ...data.data.attributes!, collab: [...payload.collab!] }
+				return { ...prev, ...data.data.attributes! }
 			})
 
 			setToastRender({
@@ -99,7 +99,7 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 		mutationFn: (payload: ProductType) => fetch(`${window.location.origin}/api/collabs/validate_user`, {
 			method: 'POST',
 			credentials: 'include',
-			body: JSON.stringify({ collabs: [...payload.collab!].map(e => e.email) }),
+			body: JSON.stringify({ collabs: [...payload.collabs!].map(e => e.email) }),
 			headers: { 'Content-type': 'application/json' },
 		}).then(async (res) => {
 			if (!res.ok) {
@@ -114,8 +114,8 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 			} else {
 				(data.data || []).map((e: string, index: number) => {
 					e &&
-						setError(`collab.${index}.email`, {
-							type: `collab.${index}.email`,
+						setError(`collabs.${index}.email`, {
+							type: `collabs.${index}.email`,
 							message: e
 						})
 				})
@@ -245,12 +245,12 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 								<fieldset className="border-white/30 w-full border-[0.1px] rounded-md p-2 focus-within:border-white">
 									<legend className="text-sm">Share(in %)</legend>
 									<div className="w-full">
-										{allFormStates.collab === undefined ? 100 : 100 - allFormStates.collab.reduce((a, { share }) => a + (Number(share) || 0), 0)}
+										{allFormStates.collabs === undefined ? 100 : 100 - allFormStates.collabs.reduce((a, { share }) => a + (Number(share) || 0), 0)}
 									</div>
 								</fieldset>
 							</div>
-							{errors.collab && errors.collab['root'] && <div className="text-red-500 text-sm">{errors.collab['root']?.message}</div>}
-							{errors.collab && <div className="text-red-500 text-sm">{errors.collab.message}</div>}
+							{errors.collabs && errors.collabs['root'] && <div className="text-red-500 text-sm">{errors.collabs['root']?.message}</div>}
+							{errors.collabs && <div className="text-red-500 text-sm">{errors.collabs.message}</div>}
 							{
 								fields.map((collab, index) => {
 									return (
@@ -259,12 +259,12 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 												{index + 1}
 											</div>
 											<fieldset className="border-white/30 border-[0.1px] rounded-md p-2 focus-within:border-white">
-												<input className="text-lg bg-background text-white outline-none px-4" {...register(`collab.${index}.email`)} />
-												{errors.collab && errors.collab[index]?.email && <legend className="text-red-500 text-sm">{errors.collab[index]?.email?.message}</legend>}
+												<input className="text-lg bg-background text-white outline-none px-4" {...register(`collabs.${index}.email`)} />
+												{errors.collabs && errors.collabs[index]?.email && <legend className="text-red-500 text-sm">{errors.collabs[index]?.email?.message}</legend>}
 											</fieldset>
 											<fieldset className="border-white/30 border-[0.1px] rounded-md p-2 focus-within:border-white">
-												<input className="text-lg bg-background text-white outline-none px-4"  {...register(`collab.${index}.share`)} />
-												{errors.collab && errors.collab[index]?.share && <legend className="text-red-500 text-sm">{errors.collab[index]?.share?.message}</legend>}
+												<input className="text-lg bg-background text-white outline-none px-4"  {...register(`collabs.${index}.share`)} />
+												{errors.collabs && errors.collabs[index]?.share && <legend className="text-red-500 text-sm">{errors.collabs[index]?.share?.message}</legend>}
 											</fieldset>
 											<IoTrashBin className="text-red-500 cursor-pointer" onClick={() => {
 												remove(index)

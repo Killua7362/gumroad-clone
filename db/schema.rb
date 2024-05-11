@@ -10,19 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_20_071955) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_11_150506) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "collabs", force: :cascade do |t|
-    t.string "email"
-    t.integer "share"
-    t.boolean "approved"
-    t.bigint "product_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["product_id"], name: "index_collabs_on_product_id"
-  end
 
   create_table "products", force: :cascade do |t|
     t.text "title"
@@ -37,6 +27,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_20_071955) do
     t.boolean "collab_active"
     t.string "thumbimageSource"
     t.string "coverimageSource"
+    t.jsonb "collabs", default: [], array: true
     t.index ["user_id"], name: "index_products_on_user_id"
   end
 
@@ -61,7 +52,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_20_071955) do
     t.string "provider", default: "rails_login"
   end
 
-  add_foreign_key "collabs", "products"
   add_foreign_key "products", "users"
   add_foreign_key "reviews", "products"
   add_foreign_key "reviews", "users"
