@@ -7,7 +7,7 @@ class Product < ApplicationRecord
 
   def can_go_live
     self[:collabs].map do |item|
-      return false if item[:approved] == false
+      return false if item.approved == false
     end
     true
   end

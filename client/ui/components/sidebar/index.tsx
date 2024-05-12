@@ -9,13 +9,14 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { SiAboutdotme } from "react-icons/si";
 import { CgLogOut } from "react-icons/cg";
 import { useSetRecoilState } from 'recoil';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
+import { queryClient } from '@/app/RootPage';
+import { loginStatusFetcher } from '@/query';
 
 const SideBar = () => {
 	const [activeItem, setActiveItem] = useState(0)
 	const [isOpen, setIsOpen] = useState(false)
 	const [isAccountOpen, setIsAccountOpen] = useState(false)
-	const queryClient = useQueryClient()
 	const location = useLocation();
 
 	const navigate = useNavigate();
@@ -113,9 +114,7 @@ const SideBar = () => {
 	}, [location])
 
 
-	const { data: loginStatusData, isSuccess: isLoginSuccess, isLoading: isLoginStatusLoading, fetchStatus, isRefetching, isFetched, isFetchedAfterMount } = useQuery({
-		queryKey: ['loginStatus'],
-	});
+	const { data: loginStatusData, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
 
 	const loginStatus = useMemo(() => {
 		return { ...loginStatusData as authSchema }

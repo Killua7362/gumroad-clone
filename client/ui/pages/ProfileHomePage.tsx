@@ -2,36 +2,17 @@ import { useEffect, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import ProfilePageLayout from "@/ui/layouts/ProfilePageLayout"
 import ProfilePageProductCard from "@/ui/components/cards/ProfilePageProductCard"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { queryClient } from "@/app/RootPage"
+import { profileProductsFetcher } from "@/query"
 
 const ProfileHomePage = ({ preview = false, name, bio, productCategories }: { preview?: boolean, name?: string, bio?: string, productCategories?: productCategories[] }) => {
 	const [rendered, setRendered] = useState(false)
 	const navigate = useNavigate()
 	const params = useParams()
-	const queryClient = useQueryClient()
 
 	document.title = "Profile"
 
-	const { data: profileProductsData, error: productErrors, isPending: productsIsLoading, isSuccess: productIsSuccess, status } = useQuery({
-		queryKey: ['profileProducts', params.id!],
-		queryFn: () => fetch(`${window.location.origin}/api/profiles/${params.id!}`).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json().then(data => {
-				let result: ProductTypePayload = {}
-				for (let i = 0; i < data.data.length; i++) {
-					result[data.data[i].id] = { ...data.data[i].attributes }
-				}
-				return result;
-			})
-		}),
-		meta: {
-			persist: false
-		},
-		enabled: !!params.id && !preview,
-	})
+	const { data: profileProductsData, isPending: productsIsLoading, isSuccess: productIsSuccess } = profileProductsFetcher({ productId: params.id, preview: preview })
 
 	const profileProducts = useMemo(() => {
 		return { ...profileProductsData as ProductTypePayload }

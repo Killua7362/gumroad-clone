@@ -11,10 +11,12 @@ import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { EditProductSchema } from "@/schema/edit_product_schema";
 import Button from "@/ui/components/button";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/app/RootPage";
+import { z } from "zod";
+import { allProductsFetcher } from "@/query";
 
 const ProductsHomePage = () => {
-	const queryClient = useQueryClient()
 	const [contextMenuConfig, setContextMenuConfig] = useRecoilState(productsCardContextMenu)
 	const setModalActive = useSetRecoilState(modalBaseActive)
 
@@ -45,9 +47,7 @@ const ProductsHomePage = () => {
 		return () => document.body.removeEventListener('click', closeContextMenu)
 	}, [])
 
-	const { data: allProductsData, error: productErrors, isLoading: productsIsLoading } = useQuery({
-		queryKey: ['allProducts'],
-	})
+	const { data: allProductsData, isSuccess:productIsSuccess , isPending: productsIsLoading } = allProductsFetcher()
 
 	const allProducts = useMemo(() => {
 		return { ...allProductsData as ProductTypePayload }
@@ -73,7 +73,12 @@ const ProductsHomePage = () => {
 			})
 			return queryClient.invalidateQueries({ queryKey: ['allProducts'] })
 		},
-		onError: (err) => { }
+		onError: (err) => {
+			setToastRender({
+				active: false,
+				message: err.message
+			})
+		}
 	})
 
 	return !productsIsLoading && (
@@ -280,10 +285,12 @@ const ProductsHomePage = () => {
 														})
 														await liveSetter({ key: key, live: !allProducts![key].live })
 													} catch (e) {
-														setToastRender({
-															active: false,
-															message: 'Some fields are empty'
-														})
+														if (e instanceof z.ZodError) {
+															setToastRender({
+																active: false,
+																message: 'Some fields are empty'
+															})
+														}
 													}
 												}}
 											>

@@ -22,7 +22,7 @@ module Api
 
     def index
       if @current_user
-        products = Product.where('collabs @> ARRAY[?]::jsonb[]', [{ 'email': @current_user.email }].to_json)
+        products = Product.where('collabs @> ?', [{ email: @current_user.email }].to_json)
         render json: ProductSerializer.new(products, options).serializable_hash.to_json
       else
         render json: { error: 'Not logged in' }, status: 401

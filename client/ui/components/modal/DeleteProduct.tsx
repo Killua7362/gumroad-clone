@@ -1,10 +1,10 @@
 import { modalBaseActive, productsCardContextMenu } from "@/atoms/states"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import Button from "@/ui/components/button"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
+import { queryClient } from "@/app/RootPage"
 
 const DeleteProduct = () => {
-	const queryClient = useQueryClient()
 	const setModalActive = useSetRecoilState(modalBaseActive)
 	const contextMenuValue = useRecoilValue(productsCardContextMenu)
 
@@ -21,7 +21,8 @@ const DeleteProduct = () => {
 			return {}
 		}),
 		onSuccess: () => {
-			return queryClient.invalidateQueries({ queryKey: ['allProducts'] })
+			queryClient.invalidateQueries({ queryKey: ['allProducts', contextMenuValue.id!], exact: true })
+			return queryClient.invalidateQueries({ queryKey: ['allProducts'], exact: true })
 		},
 		onError: (err) => {
 			console.log(err)
@@ -34,6 +35,7 @@ const DeleteProduct = () => {
 
 		}
 	})
+
 	return (
 		<div className="bg-background border-white/30 rounded-xl min-w-[15rem] border-[0.1px] p-6 text-lg flex flex-col gap-y-6 items-center">
 			<div className="text-xl">

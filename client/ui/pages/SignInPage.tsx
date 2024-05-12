@@ -4,11 +4,11 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSetRecoilState } from "recoil"
 import { useEffect, useState } from "react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
+import { queryClient } from "@/app/RootPage"
 
 const SignInPage = () => {
 	const navigate = useNavigate()
-	const queryClient = useQueryClient()
 	const [customError, setCustomError] = useState("")
 
 	const signInSchema = z.object({

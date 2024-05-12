@@ -7,25 +7,22 @@ import { useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router"
 import { useSearchParams } from "react-router-dom"
 import Button from "@/ui/components/button"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
+import { allProductsFetcher, collabsProductFetcher, loginStatusFetcher } from "@/query"
+import { queryClient } from "@/app/RootPage"
 
 const CollaboratorsPage = () => {
-	const queryClient = useQueryClient()
 
 	const [params, setSearchParams] = useSearchParams()
 
-	const { data: loginStatusData, isSuccess: isLoginSuccess, isError: isLoginError } = useQuery({
-		queryKey: ['loginStatus'],
-	});
+	const { data: loginStatusData, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
 
 	const loginStatus = useMemo(() => {
 		return { ...loginStatusData as authSchema }
 	}, [])
 
 
-	const { data: collabProductsData, error: collabProductErrors, isLoading: collabProductsIsLoading } = useQuery({
-		queryKey: ['collabProducts']
-	})
+	const { data: collabProductsData, isSuccess: collabIsSuccess, isPending: collabProductsIsLoading } = collabsProductFetcher()
 
 	const collabProducts = useMemo(() => {
 		return { ...collabProductsData as ProductTypePayload }
@@ -50,9 +47,8 @@ const CollaboratorsPage = () => {
 		onError: (err) => { },
 	})
 
-	const { data: allProductsData, error: productErrors, isLoading: productsIsLoading } = useQuery({
-		queryKey: ['allProducts'],
-	})
+	const { data: allProductsData, isSuccess: productIsSuccess, isPending: productsIsLoading } = allProductsFetcher()
+
 	const allProducts = useMemo(() => {
 		return { ...allProductsData as ProductTypePayload }
 	}, [allProductsData])

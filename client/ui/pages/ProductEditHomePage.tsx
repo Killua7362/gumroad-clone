@@ -9,7 +9,8 @@ import { z } from 'zod'
 import { useFieldArray, useForm, useFormState, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EditProductSchema } from "@/schema/edit_product_schema";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/app/RootPage";
 import Button from "@/ui/components/button";
 
 const ProductEditHomePage = ({ editProductState, setEditProductState }: { editProductState: ProductType, setEditProductState: React.Dispatch<React.SetStateAction<ProductType>> }) => {
@@ -20,7 +21,6 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 
 	const navigate = useNavigate()
 	const params = useParams()
-	const queryClient = useQueryClient()
 
 	type EditProductSchemaType = z.infer<typeof EditProductSchema>
 

@@ -5,8 +5,9 @@ import { Navigate, useLocation, useNavigate } from "react-router"
 import ModalBase from "@/ui/components/modal"
 import { useRecoilValue } from "recoil"
 import Toast from "@/ui/components/toast"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { isError } from "remirror"
+import { queryClient } from "@/app/RootPage"
+import { loginStatusFetcher } from "@/query"
 
 const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 	const location = useLocation()
@@ -16,70 +17,16 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 	const authPaths = new Set(['signin', 'signup', 'profile'])
 
 	const navigate = useNavigate()
-	const queryClient = useQueryClient()
 
-	queryClient.setQueryDefaults(['loginStatus'], {
-		queryFn: () => fetch(`${window.location.origin}/api/sessions/logged_in`).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json()
-		}),
-		retry: false,
-		refetchOnWindowFocus: false,
-	})
-
-	const { data: loginStatusData, isSuccess: isLoginSuccess, isLoading: isLoginStatusLoading, fetchStatus, isRefetching, isFetched, isFetchedAfterMount } = useQuery({
-		queryKey: ['loginStatus'],
-	});
+	const { data: loginStatusData, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
 
 	const loginStatus = useMemo(() => {
 		return { ...loginStatusData as authSchema }
 	}, [loginStatusData])
 
-	queryClient.setQueryDefaults(['allProducts'], {
-		queryFn: () => fetch(`${window.location.origin}/api/products`).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json().then(data => {
-				let result: ProductTypePayload = {}
-				for (let i = 0; i < data.data.length; i++) {
-					result[data.data[i].id] = { ...data.data[i].attributes }
-				}
-				return result;
-			})
-		}),
-		meta: {
-			persist: true
-		},
-		enabled: (loginStatus && loginStatus.logged_in === true)
-	})
-
-	queryClient.setQueryDefaults(['collabProducts'], {
-		queryFn: () => fetch(`${window.location.origin}/api/collabs/products`).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json().then(data => {
-				let result: ProductTypePayload = {}
-				for (let i = 0; i < data.data.length; i++) {
-					result[data.data[i].id] = { ...data.data[i].attributes }
-				}
-				return result;
-			})
-		}),
-		meta: {
-			persist: true
-		},
-		enabled: (loginStatus && loginStatus.logged_in === true)
-	})
 
 	useEffect(() => {
-		if (!isLoginStatusLoading && loginStatusData) {
+		if (!isLoginStatusLoading) {
 			if (!authPaths.has(location.pathname.split('/')[1]) && (!isLoginSuccess || loginStatus?.logged_in === false)) {
 				navigate('/signin')
 			}

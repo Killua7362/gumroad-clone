@@ -7,7 +7,8 @@ import { useEffect } from "react"
 import { v4 as uuidv4 } from 'uuid';
 import { NewProductSchema } from "@/schema/new_product_schema"
 import Button from '@/ui/components/button'
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
+import { queryClient } from "@/app/RootPage"
 
 type NewProductSchemaType = z.infer<typeof NewProductSchema>
 
@@ -30,7 +31,6 @@ const NewProductModal = () => {
 		formState: { errors }
 	} = useForm<NewProductSchemaType>({ resolver: zodResolver(NewProductSchema) })
 
-	const queryClient = useQueryClient()
 
 	const { mutate: productSetter, isPending: productIsSetting } = useMutation({
 		mutationFn: (payload: ProductType) => fetch(`${window.location.origin}/api/products`, {
