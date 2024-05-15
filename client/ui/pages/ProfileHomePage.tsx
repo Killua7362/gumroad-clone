@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import ProfilePageLayout from "@/ui/layouts/ProfilePageLayout"
 import ProfilePageProductCard from "@/ui/components/cards/ProfilePageProductCard"
-import { queryClient } from "@/app/RootPage"
 import { profileProductsFetcher } from "@/query"
 
 const ProfileHomePage = ({ preview = false, name, bio, productCategories }: { preview?: boolean, name?: string, bio?: string, productCategories?: productCategories[] }) => {
@@ -12,11 +11,7 @@ const ProfileHomePage = ({ preview = false, name, bio, productCategories }: { pr
 
 	document.title = "Profile"
 
-	const { data: profileProductsData, isPending: productsIsLoading, isSuccess: productIsSuccess } = profileProductsFetcher({ productId: params.id, preview: preview })
-
-	const profileProducts = useMemo(() => {
-		return { ...profileProductsData as ProductTypePayload }
-	}, [profileProductsData])
+	const { data: profileProducts, isPending: productsIsLoading, isSuccess: productIsSuccess } = profileProductsFetcher({ productId: params.id, preview: preview })
 
 	useEffect(() => {
 		if (preview) {

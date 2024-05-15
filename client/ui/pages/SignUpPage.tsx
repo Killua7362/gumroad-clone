@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
+import Button from "@/ui/components/button"
 
 const SignUpPage = () => {
 	const navigate = useNavigate()
@@ -21,7 +22,7 @@ const SignUpPage = () => {
 
 	type signUpSchemaType = z.infer<typeof signUpSchema>
 
-	const { mutate: signUpSetter } = useMutation({
+	const { mutate: signUpSetter, isPending: isSignUpSetting } = useMutation({
 		mutationFn: (payload: signUpSchemaType) => fetch(`${window.location.origin}/api/registrations`, {
 			method: 'POST',
 			credentials: 'include',
@@ -50,7 +51,7 @@ const SignUpPage = () => {
 
 	return (
 		<div className="w-full h-full flex items-center justify-center text-xl">
-			<form className="flex gap-x-4 border-white/30 border-[0.1px] rounded-md p-6 w-5/12 divide-x-[0.1px] divide-white/30"
+			<form className="flex gap-x-4 border-white/30 border-[0.1px] flex-col lg:flex-row rounded-md p-6 w-11/12 sm:w-9/12 md:w-7/12 lg:w-9/12 xl:w-7/12 2xl:w-6/12 divide-y-[0.1px] lg:divide-y-0 lg:divide-x-[0.1px] divide-white/30"
 				onSubmit={handleSubmit((data) => {
 					signUpSetter({ ...data })
 				})}
@@ -102,20 +103,14 @@ const SignUpPage = () => {
 								{customError}
 							</div>
 						}
-						<button type="submit" className="w-full text-xl py-3 text-center text-black bg-white rounded-md hover:text-gray-500 cursor-pointer">
-							Sign Up
-						</button>
+						<Button buttonName="Sign Up" type="submit" extraClasses={[`!w-full !py-4`]} isLoading={isSignUpSetting} />
 					</div>
 
 				</div>
-				<div className="p-4 w-full flex flex-col justify-center gap-y-6 pl-8">
-					<div className="w-full py-3 text-center text-black bg-white rounded-md hover:text-gray-500 cursor-pointer"
-						onClick={() => {
-							navigate('/signin')
-						}}
-					>
-						Sign In
-					</div>
+				<div className="p-4 w-full flex flex-col justify-center gap-y-6 lg:pl-8">
+					<Button buttonName="Sign In" extraClasses={[`!w-full !py-4`]} onClickHandler={() => {
+						navigate('/signin')
+					}} />
 				</div>
 			</form>
 		</div>

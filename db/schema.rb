@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_11_150506) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_13_065159) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -27,7 +27,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_11_150506) do
     t.boolean "collab_active"
     t.string "thumbimageSource"
     t.string "coverimageSource"
-    t.jsonb "collabs", default: [], array: true
+    t.jsonb "collabs", default: []
     t.index ["user_id"], name: "index_products_on_user_id"
   end
 

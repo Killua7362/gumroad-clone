@@ -19,6 +19,13 @@ services:
       PGADMIN_DEFAULT_PASSWORD: base_password
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+  redis:
+    image: "redis:7.2-alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/var/lib/redis/data
 volumes:
   postgres_data: {}
   pgadmin_data: {}
+  redis_data: {}

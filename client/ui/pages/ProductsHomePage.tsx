@@ -1,7 +1,7 @@
 import ProductCard from "@/ui/components/cards/ProductCard"
 import { Fragment } from "react/jsx-runtime"
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { hideToastState, modalBaseActive, productsCardContextMenu } from "@/atoms/states";
@@ -15,6 +15,8 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/RootPage";
 import { z } from "zod";
 import { allProductsFetcher } from "@/query";
+import debounce from 'lodash.debounce'
+import { useSearchParams } from "react-router-dom";
 
 const ProductsHomePage = () => {
 	const [contextMenuConfig, setContextMenuConfig] = useRecoilState(productsCardContextMenu)
@@ -24,16 +26,14 @@ const ProductsHomePage = () => {
 
 	const setToastRender = useSetRecoilState(hideToastState)
 
-	const [searchConfig, setSearchConfig] = useState<searchConfig>({
-		active: false,
-		startsWith: ""
-	})
+	const [searchBarActive, setSearchBarActive] = useState<boolean>(false)
+	const [searchParams, setSearchParams] = useSearchParams()
 
-	const [sortConfig, setSortConfig] = useState<sortConfig>({
-		active: false,
-		byType: "date",
-		reverse: true
-	})
+	const debounceSearchInput = useCallback(debounce((value: string) => {
+		setSearchParams({ search_word: value })
+	}, 300), [])
+
+	const [sortBarActive, setSortBarActive] = useState(false)
 
 	useEffect(() => {
 		const closeContextMenu = () => {
@@ -47,11 +47,34 @@ const ProductsHomePage = () => {
 		return () => document.body.removeEventListener('click', closeContextMenu)
 	}, [])
 
-	const { data: allProductsData, isSuccess:productIsSuccess , isPending: productsIsLoading } = allProductsFetcher()
+	useEffect(() => {
+		if (!searchParams.get('search_word')) {
+			searchParams.delete('search_word')
+			setSearchParams(searchParams)
+		}
+	}, [searchParams.get('search_word')])
 
-	const allProducts = useMemo(() => {
-		return { ...allProductsData as ProductTypePayload }
-	}, [allProductsData])
+	const { data: allProducts, isSuccess: productIsSuccess, isPending: productsIsLoading } = allProductsFetcher()
+
+	const sortFunction = ([keyA, valueA]: [keyA: string, valueA: ProductType], [keyB, valueB]: [keyB: string, valueB: ProductType]) => {
+		switch (searchParams.get('sort_by')) {
+			case 'title':
+				return (((valueA.title as any) - (valueB.title as any)))
+			default:
+				return (valueA.price - valueB.price)
+		}
+	}
+
+	const searchFunction = ({ products }: { products: Entries<ProductTypePayload> }) => {
+		return products.filter(([key, value], id) => (value.title.toLowerCase().includes(searchParams.get('search_word') || "")))
+	}
+
+	const processProducts = ({ allProducts }: { allProducts: ProductTypePayload }) => {
+		const products: Entries<ProductTypePayload> = Object.entries(allProducts)
+		return searchFunction({ products }).sort((a, b) => {
+			return sortFunction(a, b) * (searchParams.get('sort_reverse') === 'true' ? -1 : 1)
+		})
+	}
 
 	const { mutateAsync: liveSetter } = useMutation({
 		mutationFn: (payload: { key: string, live: boolean }) => fetch(`${window.location.origin}/api/products/${payload.key}`, {
@@ -99,61 +122,39 @@ const ProductsHomePage = () => {
 					onClickHandler={() => {
 					}} />
 				<Button
-					extraClasses={['rounded-xl', `${sortConfig.active && "!border-white"}`]}
+					extraClasses={['rounded-xl', `${sortBarActive && "!border-white"}`]}
 					buttonName="Sort"
-					isActive={sortConfig.active}
+					isActive={sortBarActive}
 					onClickHandler={() => {
-						!sortConfig.active ?
-							setSortConfig(prev => {
-								return { ...prev, active: true }
-							})
-							:
-							setSortConfig(prev => {
-								return { ...prev, active: false }
-							})
+						setSortBarActive(!sortBarActive)
 					}} >
 
 				</Button>
 				<AnimatePresence>
 					<motion.div
-						initial={{
-							width: '0rem',
-						}}
-						animate={{
-							width: searchConfig.active ? '20rem' : '0rem',
-							transition: {
-								duration: 0.2
-							}
-						}}
-						exit={{
-							width: '0rem',
-						}}
 						layout={true}
-						className={`min-h-[2.4rem] w-fit border-white/30 flex rounded-xl items-center ${searchConfig.active && "focus-within:border-white border-[0.1px] bg-background text-white"}`}>
+						transition={{ duration: 0.1 }}
+						className={`min-h-[2.4rem] w-fit border-white/30 flex rounded-xl items-center ${searchBarActive && "focus-within:border-white border-[0.1px] bg-background text-white"}`}>
 						<Button buttonName=""
-							isActive={searchConfig.active}
-							extraClasses={["!text-lg !py-[0.82rem] !rounded-xl !border-0 !cursor-pointer", `${!searchConfig.active && "!border-[0.1px]"}`]}
+							isActive={searchBarActive}
+							extraClasses={["!text-lg !py-[0.82rem] !rounded-xl !cursor-pointer", `${searchBarActive && "!border-0"}`]}
 							onClickHandler={() => {
-								searchConfig.active ? setSearchConfig(prev => {
-									return { ...prev, active: false }
-								}) :
-									setSearchConfig(prev => {
-										return { ...prev, active: true }
-									})
+								setSearchBarActive(!searchBarActive)
 							}}
 						>
 							<FaSearch />
 						</Button>
 						<AnimatePresence>
-							{searchConfig.active &&
+							{searchBarActive &&
 								<motion.input
 									initial={{
 										width: 0
 									}}
 									animate={{
-										width: '100%',
+										width: '20rem',
 										transition: {
-											duration: 0.2
+											duration: 0.2,
+											delay: 0.2
 										}
 									}}
 									exit={{
@@ -161,11 +162,10 @@ const ProductsHomePage = () => {
 									}}
 									onChange={(e) => {
 										e.preventDefault()
-										setSearchConfig(prev => {
-											return { ...prev, startsWith: e.target.value }
-										})
+										debounceSearchInput(e.target.value)
+
 									}}
-									placeholder="Enter title or summary..."
+									placeholder="Enter title..."
 									className="h-full left-0 rounded-xl outline-none text-lg bg-background text-white" />
 							}
 						</AnimatePresence>
@@ -174,7 +174,7 @@ const ProductsHomePage = () => {
 			</div>
 
 			<AnimatePresence>
-				{sortConfig.active &&
+				{sortBarActive &&
 					<motion.div
 						initial={{
 							opacity: 0
@@ -195,23 +195,18 @@ const ProductsHomePage = () => {
 							className="rounded-xl text-base p-2 bg-background text-white border-white/30 border-[0.1px]" onChange={(e) => {
 
 							}}>
-							<option value="" >Sort By</option>
+							<option value="" >Title</option>
+							<option value="" >Price</option>
+							<option value="" >Created Date</option>
+							<option value="" >Modified Date</option>
 						</motion.select>
 						<Button buttonName=""
 							extraClasses={['!text-lg !rounded-xl']}
 							onClickHandler={() => {
-								sortConfig.reverse ? setSortConfig(prev => {
-									return {
-										...prev, reverse: false
-									}
-								}) : setSortConfig(prev => {
-									return {
-										...prev, reverse: true
-									}
-								})
+								searchParams.get('sort_reverse') === 'true' ? setSearchParams({ 'sort_reverse': 'false' }) : setSearchParams({ 'sort_reverse': 'true' })
 							}} >
 							{
-								sortConfig.reverse ?
+								searchParams.get('sort_reverse') === 'true' ?
 									<FaArrowUpShortWide />
 									:
 									<FaArrowDownWideShort />
@@ -222,10 +217,10 @@ const ProductsHomePage = () => {
 				}
 			</AnimatePresence>
 			<div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
-				{Object.keys(allProducts!).map((key, i) => {
+				{processProducts({ allProducts }).map(([key, value], i) => {
 					return (
 						<ProductCard key={key} productData={{
-							...allProducts![key]
+							...value
 						}} >
 							<Fragment>
 								<div className="absolute right-[1rem] top-[1rem] cursor-pointer hover:text-white/70 text-xl" onClick={(event) => {
@@ -277,13 +272,13 @@ const ProductsHomePage = () => {
 													})
 													try {
 														EditProductSchema.parse({
-															title: allProducts![key].title,
-															price: allProducts![key].price,
-															summary: allProducts![key].summary,
-															description: allProducts![key].description,
-															collabs: allProducts![key].collabs || [],
+															title: value.title,
+															price: value.price,
+															summary: value.summary,
+															description: value.description,
+															collabs: value.collabs || [],
 														})
-														await liveSetter({ key: key, live: !allProducts![key].live })
+														await liveSetter({ key: key, live: !value.live })
 													} catch (e) {
 														if (e instanceof z.ZodError) {
 															setToastRender({

@@ -1,10 +1,11 @@
 import { GoLink } from "react-icons/go"
 import { FaDotCircle } from "react-icons/fa";
-import { useMemo } from "react";
 
 const CollabCard = ({ children, productData }: { children: React.ReactNode, productData: ProductType }) => {
 
-	const collabApproved = useMemo(() => (productData.collabs!).some(e => e.approved === false), [productData.collabs!])
+	const collabApproved = () => {
+		return (productData.collabs!).some(e => e.approved === false)
+	}
 
 	return (
 		<div className="flex justify-between h-full flex-wrap flex-row gap-4  border-white/30 border-[0.1px] rounded-xl p-8 h-fit w-full relative flex-wrap">
@@ -26,12 +27,12 @@ const CollabCard = ({ children, productData }: { children: React.ReactNode, prod
 					</div>
 				</div>
 				<div className="flex gap-x-6 mt-1">
-					<div className={`${collabApproved ? "text-red-400" : "text-green-400 "} flex items-center gap-x-1`}>
+					<div className={`${collabApproved() ? "text-red-400" : "text-green-400 "} flex items-center gap-x-1`}>
 						<div className="text-sm relative top-[0.1rem]">
 							<FaDotCircle />
 						</div>
 						{
-							collabApproved ? "Pending Approval" : "Approved"
+							collabApproved() ? "Pending Approval" : "Approved"
 						}
 					</div>
 				</div>

@@ -85,3 +85,6 @@ interface authSchema {
 	user_id?: string;
 }
 
+type Entries<T> = {
+	[K in keyof T]: [key: K, value: T[K]];
+}[keyof T][];

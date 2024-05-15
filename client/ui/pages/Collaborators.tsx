@@ -3,7 +3,7 @@ import CollabCard from "@/ui/components/cards/CollabCard"
 import { Fragment } from "react/jsx-runtime"
 import { AnimatePresence, motion } from "framer-motion"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { useParams } from "react-router"
 import { useSearchParams } from "react-router-dom"
 import Button from "@/ui/components/button"
@@ -15,18 +15,9 @@ const CollaboratorsPage = () => {
 
 	const [params, setSearchParams] = useSearchParams()
 
-	const { data: loginStatusData, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
+	const { data: loginStatus, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
 
-	const loginStatus = useMemo(() => {
-		return { ...loginStatusData as authSchema }
-	}, [])
-
-
-	const { data: collabProductsData, isSuccess: collabIsSuccess, isPending: collabProductsIsLoading } = collabsProductFetcher()
-
-	const collabProducts = useMemo(() => {
-		return { ...collabProductsData as ProductTypePayload }
-	}, [collabProductsData])
+	const { data: collabProducts, isSuccess: collabIsSuccess, isPending: collabProductsIsLoading } = collabsProductFetcher()
 
 	const { mutate: collabProductSetter } = useMutation({
 		mutationFn: (key: string) => fetch(`${window.location.origin}/api/collabs/${key}/approve`, {
@@ -42,34 +33,33 @@ const CollaboratorsPage = () => {
 			return res.json()
 		}),
 		onSuccess: () => {
-			return queryClient.invalidateQueries({ queryKey: ['allProducts'] })
+			return queryClient.invalidateQueries({ queryKey: ['collabProducts'] })
 		},
 		onError: (err) => { },
 	})
 
-	const { data: allProductsData, isSuccess: productIsSuccess, isPending: productsIsLoading } = allProductsFetcher()
+	const { data: allProducts, isSuccess: productIsSuccess, isPending: productsIsLoading } = allProductsFetcher()
 
-	const allProducts = useMemo(() => {
-		return { ...allProductsData as ProductTypePayload }
-	}, [allProductsData])
-
-	const productsCollection: ProductTypePayload = useMemo(() => {
-		if (params.get('type') === 'outgoing') {
-			return { ...allProducts }
-		} else {
-			return { ...collabProducts }
+	const productsCollection = () => {
+		if (params.get('type') == 'outgoing') {
+			return allProducts;
 		}
-	}, [params, allProducts!, collabProducts!])
+		else {
+			return collabProducts
+		}
+	}
 
-	const collabApproved = useMemo(() => {
+	const collabApproved = () => {
 		let result: { [id: string]: boolean; } = {}
-		Object.keys(productsCollection).filter(key => !(key in allProducts)).map((key, i) => {
-			result[key] = productsCollection![key].collab_active &&
-				Object.keys(productsCollection![key].collabs!).length !== 0 &&
+		const productsCollectionData: ProductTypePayload = productsCollection()
+
+		Object.keys(productsCollectionData).filter(key => !(key in allProducts)).map((key, i) => {
+			result[key] = productsCollectionData![key].collab_active &&
+				Object.keys(productsCollectionData![key].collabs!).length !== 0 &&
 				(collabProducts![key]?.collabs || []).filter(e => e.email === loginStatus?.email)[0]?.approved || false
 		})
 		return result;
-	}, [productsCollection, loginStatus])
+	}
 
 	return !collabProductsIsLoading && (
 		<Fragment>
@@ -90,13 +80,13 @@ const CollaboratorsPage = () => {
 					}} />
 			</div>
 			<div className="w-full mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-				{Object.keys(productsCollection!).map((key, i) => {
-					return productsCollection![key].collab_active && Object.keys(productsCollection![key].collabs!).length !== 0 && (
-						<CollabCard key={key} productData={{ ...productsCollection![key] }}>
+				{Object.keys(productsCollection()!).map((key, i) => {
+					return productsCollection()![key].collab_active && Object.keys(productsCollection()![key].collabs!).length !== 0 && (
+						<CollabCard key={key} productData={{ ...productsCollection()![key] }}>
 							<div className="w-full flex justify-end">
 								{
 									!(key in allProducts!) &&
-									<Button buttonName={collabApproved[key] ? 'Disapprove' : 'Approve'} onClickHandler={async () => {
+									<Button buttonName={collabApproved()[key] ? 'Disapprove' : 'Approve'} onClickHandler={async () => {
 										collabProductSetter(key)
 									}} />
 								}

@@ -1,6 +1,6 @@
 import '@/ui/styles/sidebar.css'
 import { SideBarTopItems } from '@/ui/components/sidebar/items';
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { AnimatePresence, Variants, motion } from 'framer-motion'
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -114,11 +114,7 @@ const SideBar = () => {
 	}, [location])
 
 
-	const { data: loginStatusData, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
-
-	const loginStatus = useMemo(() => {
-		return { ...loginStatusData as authSchema }
-	}, [loginStatusData])
+	const { data: loginStatus, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
 
 	const { mutate: loginStatusSetter } = useMutation({
 		mutationFn: () => fetch(`${window.location.origin}/api/sessions/logout`, {

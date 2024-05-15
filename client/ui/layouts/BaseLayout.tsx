@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import SideBar from "@/ui/components/sidebar"
 import Footer from "@/ui/components/Footer"
 import { Navigate, useLocation, useNavigate } from "react-router"
@@ -18,12 +18,7 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 
 	const navigate = useNavigate()
 
-	const { data: loginStatusData, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
-
-	const loginStatus = useMemo(() => {
-		return { ...loginStatusData as authSchema }
-	}, [loginStatusData])
-
+	const { data: loginStatus, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
 
 	useEffect(() => {
 		if (!isLoginStatusLoading) {

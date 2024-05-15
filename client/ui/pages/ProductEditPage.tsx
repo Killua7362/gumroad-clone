@@ -1,5 +1,5 @@
 import ProductEditPageLayout from "@/ui/layouts/ProductEditPageLayout"
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useRecoilValue } from "recoil";
 import ProductEditHomePage from "@/ui/pages/ProductEditHomePage";
@@ -14,11 +14,7 @@ const ProductEditPage = () => {
 	const [rendered, setRendered] = useState(false)
 	const [editProductState, setEditProductState] = useState<ProductType>()
 
-	const { data: currentProductData, isPending: productsIsLoading, isSuccess: productIsSuccess } = singleProductFetcher({ productId: params.id })
-
-	const currentProduct = useMemo(() => {
-		return { ...currentProductData as ProductType }
-	}, [currentProductData])
+	const { data: currentProduct, isPending: productsIsLoading, isSuccess: productIsSuccess } = singleProductFetcher({ productId: params.id })
 
 	useEffect(() => {
 		if (!productsIsLoading) {

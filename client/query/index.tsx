@@ -16,7 +16,11 @@ export const loginStatusFetcher = () => {
 		queryKey: ['loginStatus'],
 	});
 
-	return { data, isSuccess, isPending };
+	return { data, isSuccess, isPending } as {
+		data: authSchema;
+		isSuccess: boolean;
+		isPending: boolean;
+	};
 }
 
 export const allProductsFetcher = () => {
@@ -41,7 +45,11 @@ export const allProductsFetcher = () => {
 		enabled: (queryClient.getQueryData(['loginStatus']) && (queryClient.getQueryData(['loginStatus']) as authSchema).logged_in == true) as boolean
 	})
 
-	return { data, isSuccess, isPending };
+	return { data, isSuccess, isPending } as {
+		data: ProductTypePayload;
+		isSuccess: boolean;
+		isPending: boolean;
+	};
 }
 
 export const collabsProductFetcher = () => {
@@ -54,7 +62,6 @@ export const collabsProductFetcher = () => {
 				return Promise.reject(new Error(errorMessage))
 			}
 			return res.json().then(data => {
-				console.log(data)
 				let result: ProductTypePayload = {}
 				for (let i = 0; i < data.data.length; i++) {
 					result[data.data[i].id] = { ...data.data[i].attributes }
@@ -68,7 +75,12 @@ export const collabsProductFetcher = () => {
 		enabled: (queryClient.getQueryData(['loginStatus']) && (queryClient.getQueryData(['loginStatus']) as authSchema).logged_in == true) as boolean
 	})
 
-	return { data, isSuccess, isPending };
+	return { data, isSuccess, isPending } as {
+		data: ProductTypePayload;
+		isSuccess: boolean;
+		isPending: boolean;
+	};
+
 
 }
 
@@ -95,7 +107,11 @@ export const singleProductFetcher = ({ productId }: { productId: string | undefi
 		enabled: !!productId,
 	})
 
-	return { data, isSuccess, isPending };
+	return { data, isSuccess, isPending } as {
+		data: ProductType;
+		isSuccess: boolean;
+		isPending: boolean;
+	};
 
 }
 
@@ -121,5 +137,10 @@ export const profileProductsFetcher = ({ productId, preview }: { productId: stri
 		enabled: !!productId && !preview,
 	})
 
-	return { data, isSuccess, isPending };
+	return { data, isSuccess, isPending } as {
+		data: ProductTypePayload;
+		isSuccess: boolean;
+		isPending: boolean;
+	};
+
 }
