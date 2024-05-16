@@ -65,7 +65,7 @@ const NewProductModal = () => {
 				description: "",
 				summary: "",
 				price: data.price,
-				type: "",
+				tags: "",
 				live: false,
 				collab_active: false,
 				thumbimageSource: "",

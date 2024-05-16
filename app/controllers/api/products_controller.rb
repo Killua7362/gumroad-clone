@@ -70,7 +70,7 @@ module Api
     private
 
     def products_params
-      params.require(:product).permit(:title, :description, :summary, :price, :type, :live, :collab_active,
+      params.require(:product).permit(:title, :description, :summary, :price, :tags, :live, :collab_active,
                                       :thumbimageSource, :coverimageSource, collabs: %i[email share approved])
     end
 

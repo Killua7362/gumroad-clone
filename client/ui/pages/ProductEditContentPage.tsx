@@ -63,10 +63,6 @@ const markDownStyle = css`
 
 		}
 		`
-interface PageSchema {
-	name: string;
-	content: string;
-}
 
 const ProductEditContentPage = () => {
 	const [reviewScore, setReviewScore] = useState(1)
@@ -76,15 +72,7 @@ const ProductEditContentPage = () => {
 	const [tempReviewDescription, setTempReviewDescription] = useState('')
 	const [reviewDescription, setReviewDescripition] = useState('')
 
-	const [value, setValue] = useState('<p></p>')
 	const [searchParams, setSearchParams] = useSearchParams()
-
-	const { manager, state } = useRemirror({
-		extensions: () => [new PlaceholderExtension({ placeholder: `Start Typing here` })],
-		content: "",
-		selection: "end",
-		stringHandler: "html"
-	});
 
 	const [pages, setPages] = useState<PageSchema[]>([
 		{
@@ -136,9 +124,22 @@ const ProductEditContentPage = () => {
 													<IonReorder className='mt-[0.35rem] mr-[0.3rem]'>
 													</IonReorder>
 													<IonLabel>
-														<input className={`text-lg outline-none ${inputRefs[i]?.current?.readOnly === false ? "cursor-text" : 'cursor-pointer'} ${Number(searchParams.get('page')) === i + 1 ? "bg-accent/80 text-white" : "bg-background text-white"}`} placeholder='Untitled...' ref={inputRefs[i]} readOnly={true} onBlur={(event) => {
-															event.currentTarget.readOnly = true
-														}} />
+														<input
+															className={`text-lg outline-none ${inputRefs[i]?.current?.readOnly === false ? "cursor-text" : 'cursor-pointer'} ${Number(searchParams.get('page')) === i + 1 ? "bg-accent/80 text-white" : "bg-background text-white"}`}
+															placeholder='Untitled...'
+															ref={inputRefs[i]}
+															readOnly={true}
+															value={pages[i].name}
+															onChange={(e) => {
+																setPages(prev => {
+																	let temp = [...prev]
+																	temp[i].name = e.target.value
+																	return [...temp]
+																})
+															}}
+															onBlur={(event) => {
+																event.currentTarget.readOnly = true
+															}} />
 													</IonLabel>
 													<BsThreeDotsVertical className='cursor-pointer hover:text-accent/50' onClick={(event) => {
 														event.stopPropagation();
@@ -167,7 +168,7 @@ const ProductEditContentPage = () => {
 																exit={{
 																	opacity: 0,
 																}}
-																className='absolute bg-background text-white flex flex-col mt-[6.5rem] left-[12.5rem] rounded-md text-base border-white/30 border-[0.1px]'
+																className={`absolute bg-background text-white flex flex-col ${pages.length > 1 ? 'mt-[6rem]' : 'mt-[3.5rem]'}  left-[11.5rem] rounded-md text-base border-white/30 border-[0.1px]`}
 																onClick={(event) => {
 																	event.stopPropagation()
 																}}
@@ -185,9 +186,21 @@ const ProductEditContentPage = () => {
 																}}>
 																	Rename
 																</div>
-																<div className='hover:text-white/80 cursor-pointer px-5 py-2 hover:bg-accent/50'>
-																	Delete
-																</div>
+																{
+																	pages.length > 1 &&
+																	<div className='hover:text-white/80 cursor-pointer px-5 py-2 hover:bg-accent/50'
+																		onClick={() => {
+																			setPages((prev) => {
+																				return prev.filter((_, index) => index !== i)
+																			})
+																			setContextMenu(prev => {
+																				return { ...prev, active: false }
+																			})
+																		}}
+																	>
+																		Delete
+																	</div>
+																}
 															</motion.div>
 														}
 													</AnimatePresence>
@@ -272,7 +285,11 @@ const ProductEditContentPage = () => {
 				</div>
 			</div>
 			<div className={markDownStyle}>
-				<MarkdownEditor placeholder="start typing..."
+				<MarkdownEditor
+					pageContent={pages[(searchParams.get('page') || 1) as number - 1]?.content as string}
+					setPages={setPages}
+					key={searchParams.get('page')}
+					placeholder="start typing..."
 					theme={{
 						color: {
 							outline: '#09090B',

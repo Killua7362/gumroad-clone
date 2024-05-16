@@ -62,7 +62,7 @@ interface Review {
 
 interface ProductType {
 	title: string;
-	type: string;
+	tags: string;
 	live: boolean;
 	price: number;
 	collab_active: boolean;
@@ -71,7 +71,7 @@ interface ProductType {
 	coverimageSource?: string;
 	description: string;
 	summary: string;
-	product_content?: ProductContetPage
+	product_content?: ProductContetPage;
 }
 
 interface ProductTypePayload {
@@ -88,3 +88,9 @@ interface authSchema {
 type Entries<T> = {
 	[K in keyof T]: [key: K, value: T[K]];
 }[keyof T][];
+
+interface PageSchema {
+	name: string;
+	content: string;
+}
+

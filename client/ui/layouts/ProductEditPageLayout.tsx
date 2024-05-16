@@ -23,13 +23,23 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 					<div className="text-2xl sm:text-3xl md:text-4xl uppercase tracking-wide">
 						Edit Product
 					</div>
-					<div className="border-b-[1px] h-5 border-white/30 flex gap-x-4">
-						<Link to={`/products/edit/${params.id}/home`} className={`no-underline ${params.page && params.page === 'home' && 'cursor-default pointer-events-none'}`}>
-							<Button type='button' buttonName="Product" extraClasses={[`!text-base !rounded-2xl ${params.page && params.page === 'home' && '!border-white'}`]} />
-						</Link>
-						<Link to={`/products/edit/${params.id}/content?page=1`} className={`no-underline ${params.page && params.page === 'content' && 'cursor-default pointer-events-none'}`}>
-							<Button type='button' buttonName="Content" extraClasses={[`!text-base !rounded-2xl ${params.page && params.page === 'content' && '!border-white'}`]} />
-						</Link>
+					<div className="border-b-[1px] h-5 border-white/30 flex gap-x-4 w-full justify-between">
+						<div className="flex gap-x-4">
+							<Link to={`/products/edit/${params.id}/home`} className={`no-underline ${params.page && params.page === 'home' && 'cursor-default pointer-events-none'}`}>
+								<Button type='button' buttonName="Product" extraClasses={[`!text-base !rounded-2xl ${params.page && params.page === 'home' && '!border-white'}`]} />
+							</Link>
+							<Link to={`/products/edit/${params.id}/content?page=1`} className={`no-underline ${params.page && params.page === 'content' && 'cursor-default pointer-events-none'}`}>
+								<Button type='button' buttonName="Content" extraClasses={[`!text-base !rounded-2xl ${params.page && params.page === 'content' && '!border-white'}`]} />
+							</Link>
+						</div>
+						<div className="flex gap-x-4">
+							<Link to={`/products/edit/${params.id}/home`} className={`no-underline ${params.page && params.page === 'home' && 'cursor-default pointer-events-none'}`}>
+								<Button type='button' buttonName="Product" extraClasses={[`!text-base !rounded-2xl ${params.page && params.page === 'home' && '!border-white'}`]} />
+							</Link>
+							<Link to={`/products/edit/${params.id}/content?page=1`} className={`no-underline ${params.page && params.page === 'content' && 'cursor-default pointer-events-none'}`}>
+								<Button type='button' buttonName="Content" extraClasses={[`!text-base !rounded-2xl ${params.page && params.page === 'content' && '!border-white'}`]} />
+							</Link>
+						</div>
 					</div>
 				</div>
 				<div className="w-full mt-8 text-xl flex gap-4 relative">

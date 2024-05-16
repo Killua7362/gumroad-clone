@@ -3,6 +3,11 @@ import { FaImage } from "react-icons/fa6";
 import { GoLink } from "react-icons/go";
 
 const ProductCard = ({ children, productData }: { children: React.ReactNode, productData: ProductType }) => {
+
+	const collabApproved = () => {
+		return (productData.collabs!).some(e => e.approved === false)
+	}
+
 	return (
 		<div className="flex flex-col sm:flex-row gap-y-4 gap-x-6 sm:items-center border-white/30 border-[0.1px] rounded-xl p-6 relative">
 			<div>
@@ -25,13 +30,13 @@ const ProductCard = ({ children, productData }: { children: React.ReactNode, pro
 					</span>}
 				</div>
 				<div className="text-white/70 text-lg tracking-wide font-thin text-justify">
-					tldr; This is the best product you can buy
+					{productData.summary || "No summary"}
 				</div>
 				<div className="flex gap-x-3">
-					{productData.type !== "" && productData.type.split(' ').map((e, i) => {
+					{productData.tags !== "" && productData.tags.split(',').map((e, i) => {
 						return (
 							<div className="text-xs px-3 py-[0.2rem] bg-white text-black w-fit h-fit rounded-xl">
-								Type
+								{e}
 							</div>
 						)
 					})}
@@ -45,6 +50,17 @@ const ProductCard = ({ children, productData }: { children: React.ReactNode, pro
 							Live
 						</div>
 					</div>
+					{
+						productData.collab_active && productData.collabs?.length !== 0 &&
+						<div className={`${!collabApproved() ? "text-green-400" : "text-red-400"}  flex items-center gap-x-1`}>
+							<div className="text-sm relative top-[0.1rem]">
+								<FaDotCircle />
+							</div>
+							<div>
+								Collab Approved
+							</div>
+						</div>
+					}
 				</div>
 			</div>
 			{children}

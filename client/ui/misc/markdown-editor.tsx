@@ -1,6 +1,6 @@
 import '@remirror/styles/all.css';
 
-import React, { FC, PropsWithChildren, useCallback } from 'react';
+import React, { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import jsx from 'refractor/lang/jsx.js';
 import typescript from 'refractor/lang/typescript.js';
 import { ExtensionPriority } from 'remirror';
@@ -30,6 +30,7 @@ import {
 	HistoryButtonGroup,
 	ListButtonGroup,
 	MarkdownToolbar,
+	OnChangeJSON,
 	Remirror,
 	TableComponents,
 	ThemeProvider,
@@ -45,8 +46,9 @@ import {
 } from '@remirror/react';
 import { AllStyledComponent } from '@remirror/styles/emotion';
 
-import type { CreateEditorStateProps } from 'remirror';
+import type { CreateEditorStateProps, RemirrorJSON } from 'remirror';
 import type { RemirrorProps, UseThemeProps } from '@remirror/react';
+import { useSearchParams } from 'react-router-dom';
 
 interface ReactEditorProps
 	extends Pick<CreateEditorStateProps, 'stringHandler'>,
@@ -55,14 +57,17 @@ interface ReactEditorProps
 	theme?: UseThemeProps['theme'];
 }
 
-export default { title: 'Editors / Markdown' };
-
-export interface MarkdownEditorProps extends Partial<Omit<ReactEditorProps, 'stringHandler'>> { }
+export interface MarkdownEditorProps extends Partial<Omit<ReactEditorProps, 'stringHandler'>> {
+	pageContent: string;
+	setPages: React.Dispatch<React.SetStateAction<PageSchema[]>>;
+}
 
 /**
  * The editor which is used to create the annotation. Supports formatting.
  */
 export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
+	pageContent,
+	setPages,
 	placeholder,
 	children,
 	theme,
@@ -97,15 +102,26 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
 		[placeholder],
 	);
 
-	const { manager } = useRemirror({
+	const { manager, state, setState } = useRemirror({
 		extensions,
 		stringHandler: 'markdown',
 	});
 
+	const [searchParams, setSearchParams] = useSearchParams()
+	const [initContent] = useState<RemirrorJSON | undefined>(() => {
+		if (pageContent) {
+			return JSON.parse(pageContent);
+		}
+		return undefined;
+	})
+
 	return (
 		<AllStyledComponent>
 			<ThemeProvider theme={theme}>
-				<Remirror manager={manager} autoFocus {...rest}>
+				<Remirror
+					initialContent={initContent}
+					manager={manager}
+					autoFocus {...rest}>
 					<Toolbar>
 						<CommandButtonGroup>
 							<ToggleBoldButton />
@@ -130,6 +146,13 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
 					<EditorComponent />
 					<TableComponents />
 					{children}
+					<OnChangeJSON onChange={(data) => {
+						setPages(prev => {
+							let temp = [...prev]
+							temp[(searchParams.get('page') || 1) as number - 1].content = JSON.stringify(data);
+							return [...temp]
+						})
+					}} />
 				</Remirror>
 			</ThemeProvider>
 		</AllStyledComponent>

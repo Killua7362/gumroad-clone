@@ -12,9 +12,25 @@ import { EditProductSchema } from "@/schema/edit_product_schema";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/RootPage";
 import Button from "@/ui/components/button";
+import Select, { OptionProps } from 'react-select'
+import { cx, css } from '@emotion/css'
+import { productTypeOptions } from "@/schema/edit_product_schema";
+
+const tagsToString = (tags: typeof productTypeOptions) => {
+	return (tags || []).map(ele => ele.label).join(',')
+}
+
+const stringToTags = (typeString: string) => {
+	return (typeString || "").trim().split(',')
+}
 
 const ProductEditHomePage = ({ editProductState, setEditProductState }: { editProductState: ProductType, setEditProductState: React.Dispatch<React.SetStateAction<ProductType>> }) => {
-	const [description, setDescription] = useState<string>()
+	const [description, setDescription] = useState<string>(editProductState.description)
+	const [selectTypes, setSelectTypes] = useState<typeof productTypeOptions>(() => {
+		let tempSelectOptions: string[] = stringToTags(editProductState.tags)
+		return productTypeOptions.filter(data => tempSelectOptions.includes(data.label))
+	})
+
 	const [thumbnailImage, setThumbnailImage] = useState<File>()
 	const [coverImage, setCoverImage] = useState<File>()
 	const setToastRender = useSetRecoilState(hideToastState)
@@ -38,7 +54,8 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 			description: editProductState.description,
 			summary: editProductState.summary,
 			price: editProductState.price,
-			collabs: editProductState.collabs
+			collabs: editProductState.collabs,
+			tags: editProductState.tags
 		},
 		shouldUnregister: false
 	})
@@ -53,12 +70,8 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 	})
 
 	useEffect(() => {
-		setDescription(editProductState.description)
-	}, [])
-
-	useEffect(() => {
 		setEditProductState(prev => {
-			return { ...prev, description: description!, ...allFormStates, collabs: allFormStates.collabs as IndividualCollab[] }
+			return { ...prev, description: description!, ...allFormStates, collabs: allFormStates.collabs as IndividualCollab[], type: tagsToString(selectTypes) }
 		})
 	}, [allFormStates])
 
@@ -124,8 +137,6 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 		onError: (error) => { }
 	})
 
-
-
 	return (
 		<Fragment>
 			<form className="flex flex-col gap-y-2" onSubmit={handleSubmit((data) => {
@@ -145,6 +156,45 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 				</div>
 				<div className="flex flex-col gap-y-2">
 					<div>
+						Product Type
+					</div>
+					<Select
+						isMulti
+						styles={{
+							control: (baseStyles, state) => ({
+								...baseStyles,
+								borderColor: state.isFocused ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.3)',
+								backgroundColor: '#09090B',
+								cursor: 'pointer',
+							}),
+						}}
+						options={productTypeOptions}
+						defaultValue={[...selectTypes]}
+						placeholder="Proudct type..."
+						classNamePrefix="react-select"
+						className={cx(css`
+							.react-select{
+								&__menu {
+									background-color:#09090B;
+									border:solid 0.1px rgba(255,255,255,0.3);
+								}
+
+								&__option--is-focused{
+									background-color:white;
+									color:black;
+									cursor:pointer;
+								}
+							}
+						`, `text-base !cursor-pointer`)}
+						onChange={(v) => {
+							setSelectTypes([...v])
+							setValue('tags', tagsToString([...v]))
+						}}
+					/>
+					{errors.tags && <legend className="text-sm text-red-500">{errors.tags.message}</legend>}
+				</div>
+				<div className="flex flex-col gap-y-2">
+					<div>
 						Summary
 					</div>
 					<fieldset className="border-white/30 border-[0.1px] rounded-md">
@@ -160,7 +210,7 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 						value={description}
 						onChange={(data) => {
 							setValue('description', data!)
-							setDescription(data)
+							setDescription(data as string)
 						}}
 						preview="edit"
 						className='w-full'

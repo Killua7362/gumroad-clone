@@ -3,7 +3,6 @@ class Product < ApplicationRecord
 
   belongs_to :user
   has_many :reviews
-  # attribute :collabs, :collabstype, default: []
   validate :validate_collabs
 
   def can_go_live

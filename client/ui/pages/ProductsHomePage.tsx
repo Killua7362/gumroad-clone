@@ -30,7 +30,8 @@ const ProductsHomePage = () => {
 	const [searchParams, setSearchParams] = useSearchParams()
 
 	const debounceSearchInput = useCallback(debounce((value: string) => {
-		setSearchParams({ search_word: value })
+		searchParams.set('search_word', value)
+		setSearchParams(searchParams)
 	}, 300), [])
 
 	const [sortBarActive, setSortBarActive] = useState(false)
@@ -192,18 +193,25 @@ const ProductsHomePage = () => {
 						}}
 					>
 						<motion.select
-							className="rounded-xl text-base p-2 bg-background text-white border-white/30 border-[0.1px]" onChange={(e) => {
-
-							}}>
-							<option value="" >Title</option>
-							<option value="" >Price</option>
-							<option value="" >Created Date</option>
-							<option value="" >Modified Date</option>
+							className="rounded-xl text-base p-2 bg-background text-white border-white/30 border-[0.1px]"
+							defaultValue={searchParams.get('sort_by') || 'title'}
+							onChange={(e) => {
+								e.preventDefault()
+								searchParams.set('sort_by', e.target.value)
+								setSearchParams(searchParams)
+							}}
+						>
+							<option value="title" >Title</option>
+							<option value="price" >Price</option>
+							<option value="created_date" >Created Date</option>
+							<option value="modified_date" >Modified Date</option>
 						</motion.select>
+
 						<Button buttonName=""
 							extraClasses={['!text-lg !rounded-xl']}
 							onClickHandler={() => {
-								searchParams.get('sort_reverse') === 'true' ? setSearchParams({ 'sort_reverse': 'false' }) : setSearchParams({ 'sort_reverse': 'true' })
+								searchParams.get('sort_reverse') === 'true' ? searchParams.set('sort_reverse', 'false') : searchParams.set('sort_reverse', 'true')
+								setSearchParams(searchParams)
 							}} >
 							{
 								searchParams.get('sort_reverse') === 'true' ?
