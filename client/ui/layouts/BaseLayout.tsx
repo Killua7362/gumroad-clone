@@ -13,6 +13,8 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 	const location = useLocation()
 	const [sidebarActive, setSideBarActive] = useState(false)
 	const [sideBarOpen, setSideBarOpen] = useState(false)
+	const [windowWidth, setWindowWidth] = useState<number>(0);
+
 
 	const siderbarActivePaths = new Set(["profile", "notfound", "signin", "signup"])
 	const authPaths = new Set(['signin', 'signup', 'profile'])
@@ -41,14 +43,22 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 			{
 				sidebarActive
 				&&
-				<SideBar isOpen={sideBarOpen} setIsOpen={setSideBarOpen} />
+				<SideBar isOpen={sideBarOpen} setIsOpen={setSideBarOpen} windowWidth={windowWidth} setWindowWidth={setWindowWidth} />
 			}
 			<motion.div
-				layout
-				transition={{
-					duration: 0.2
+				initial={{
+					left: 0,
 				}}
-				className={`relative min-h-screen w-full flex flex-col justify-between mx-3 sm:mx-8 mr-6 left-0 ${sideBarOpen ? 'sm:left-[18.5rem]' : 'sm:left-[3.8rem]'} `}>
+				animate={{
+					left: windowWidth > 640 ? (sideBarOpen ? '18.5rem' : '3.8rem') : 0,
+					transition: {
+						duration: 0.2
+					}
+				}}
+				exit={{
+					left: 0
+				}}
+				className={`relative min-h-screen w-full flex flex-col justify-between mx-3 sm:mx-8 mr-6 left-0 `}>
 				<div className={`px-2 h-full w-full ${sidebarActive && "sm:pt-6 pt-[6rem]"}`}>
 					{children}
 				</div>

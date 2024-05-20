@@ -13,7 +13,7 @@ import { useMutation } from '@tanstack/react-query';
 import { queryClient } from '@/app/RootPage';
 import { loginStatusFetcher } from '@/react-query/query';
 
-const SideBar = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
+const SideBar = ({ isOpen, setIsOpen, windowWidth, setWindowWidth }: { isOpen: boolean, setIsOpen: React.Dispatch<React.SetStateAction<boolean>>, windowWidth: number, setWindowWidth: React.Dispatch<React.SetStateAction<number>> }) => {
 	const [activeItem, setActiveItem] = useState(0)
 	const [isAccountOpen, setIsAccountOpen] = useState(false)
 	const location = useLocation();
@@ -80,7 +80,6 @@ const SideBar = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: React.Disp
 		}
 	}
 
-	const [windowWidth, setWindowWidth] = useState<number | null>(null);
 
 	useEffect(() => {
 		const width = window.innerWidth;

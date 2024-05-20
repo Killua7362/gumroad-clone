@@ -107,7 +107,7 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 	const [renaming, setRenaming] = useState(false)
 
 	const [inputRefs, setInputRefs] = useState<RefObject<HTMLInputElement>[]>([])
-	const [contextRefs, setContextRefs] = useState<RefObject<HTMLDivElement>[]>([])
+	const [contextActive, setContextActive] = useState<boolean[]>([])
 
 	const [rendered, setRendered] = useState(false)
 
@@ -122,13 +122,13 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 
 	useEffect(() => {
 		let temp1: RefObject<HTMLInputElement>[] = [];
-		let temp2: RefObject<HTMLDivElement>[] = [];
+		let temp2: boolean[] = [];
 		for (let i = 0; i < pages.length; i++) {
 			temp1 = [...temp1, createRef()]
-			temp2 = [...temp2, createRef()]
+			temp2 = [...temp2, false]
 		}
 		setInputRefs(temp1)
-		setContextRefs(temp2)
+		setContextActive(temp2)
 	}, [pages.length])
 
 	return rendered && (
@@ -183,14 +183,28 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 													</IonLabel>
 													<BsThreeDotsVertical className='cursor-pointer hover:text-accent/50' onClick={(event) => {
 														event.stopPropagation();
-														if (contextRefs[i].current) {
-															contextRefs[i].current!.hidden = !contextRefs[i].current?.hidden
-														}
+														setContextActive(prev => {
+															let temp: boolean[] = [...prev]
+															temp[i] = !temp[i]
+															return temp
+														})
 													}} />
 												</IonRow>
-												<div
-													ref={contextRefs[i]}
-													hidden={true}
+												<motion.div
+													layout
+													style={{
+														display: contextActive[i] ? 'block' : 'none',
+														position: 'relative',
+														height: contextActive[i] ? 'fit-content' : '0',
+														opacity: contextActive[i] ? '1' : '0',
+														originX: '0px',
+														originY: '0px',
+														originZ: '0px',
+													}}
+													transition={{
+														layout: { duration: 0.2 },
+													}}
+
 												>
 													<div
 														className='p-4 py-3 bg-white text-black cursor-pointer hover:bg-white/90'
@@ -234,7 +248,7 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 															</Modal.Open>
 														</Modal.Root>
 													}
-												</div>
+												</motion.div>
 											</IonItem>
 										)
 									})
@@ -297,17 +311,12 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 								}
 							</div>
 					}
-					<div className={`border-white/30 border-[0.1px] w-full text-center py-2 rounded-md text-lg bg-white text-black hover:bg-white/80 cursor-pointer`}
-						onClick={() => {
-							reviewEdit ? setReviewEdit(false) : setReviewEdit(true)
-							if (reviewEdit) {
-								setReviewDescripition(tempReviewDescription)
-							}
-						}}>
-						{
-							reviewEdit ? "Save Changes" : "Edit Review"
+					<Button extraClasses={[`!w-full`]} buttonName={reviewEdit ? 'Save Changes' : 'Edit Review'} onClickHandler={() => {
+						reviewEdit ? setReviewEdit(false) : setReviewEdit(true)
+						if (reviewEdit) {
+							setReviewDescripition(tempReviewDescription)
 						}
-					</div>
+					}} />
 				</div>
 			</div>
 			<div className={cx(
