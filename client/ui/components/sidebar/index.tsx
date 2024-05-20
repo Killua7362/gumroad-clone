@@ -11,11 +11,10 @@ import { CgLogOut } from "react-icons/cg";
 import { useSetRecoilState } from 'recoil';
 import { useMutation } from '@tanstack/react-query';
 import { queryClient } from '@/app/RootPage';
-import { loginStatusFetcher } from '@/query';
+import { loginStatusFetcher } from '@/react-query/query';
 
-const SideBar = () => {
+const SideBar = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
 	const [activeItem, setActiveItem] = useState(0)
-	const [isOpen, setIsOpen] = useState(false)
 	const [isAccountOpen, setIsAccountOpen] = useState(false)
 	const location = useLocation();
 
@@ -138,7 +137,7 @@ const SideBar = () => {
 	})
 
 	return (
-		<motion.div className={`p-4 sm:bg-background fixed sm:relative bg-background`}
+		<motion.div className={`p-4 sm:bg-background absolute bg-background`}
 			layout
 			style={{
 				zIndex: '30'

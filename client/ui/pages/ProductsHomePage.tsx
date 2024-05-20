@@ -14,17 +14,17 @@ import Button from "@/ui/components/button";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/RootPage";
 import { z } from "zod";
-import { allProductsFetcher } from "@/query";
+import { allProductsFetcher } from "@/react-query/query"
 import debounce from 'lodash.debounce'
 import { useSearchParams } from "react-router-dom";
 
 const ProductsHomePage = () => {
 	const [contextMenuConfig, setContextMenuConfig] = useRecoilState(productsCardContextMenu)
 	const setModalActive = useSetRecoilState(modalBaseActive)
+	const setToastRender = useSetRecoilState(hideToastState)
 
 	const navigate = useNavigate()
 
-	const setToastRender = useSetRecoilState(hideToastState)
 
 	const [searchBarActive, setSearchBarActive] = useState<boolean>(false)
 	const [searchParams, setSearchParams] = useSearchParams()

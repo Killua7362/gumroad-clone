@@ -4,52 +4,83 @@ import NewProductModal from "@/ui/components/modal/NewProduct"
 import { AnimatePresence, motion } from 'framer-motion'
 import DeleteProduct from "@/ui/components/modal/DeleteProduct"
 import { createPortal } from "react-dom"
+import { RefObject, createContext, createRef, useContext, useRef } from "react"
+import { cx, css } from "@emotion/css"
 
 const mountElement = document.getElementById('modals')
 
-const ModalBase = () => {
-	const [modalActive, setModalActive] = useRecoilState(modalBaseActive)
+interface ModalContextContent {
+	ref?: RefObject<HTMLDialogElement>
+}
+
+export const modalContext = createContext<ModalContextContent>({});
+
+const ModalRoot = ({ children }: { children: React.ReactNode }) => {
+	const modalRef = useRef<HTMLDialogElement>(null)
+
+	return (
+		<modalContext.Provider value={{ ref: modalRef }}>
+			{children}
+		</modalContext.Provider>
+	)
+}
+
+const ModalBase = ({ children }: { children: React.ReactNode }) => {
+	const localContext = useContext(modalContext)
 
 	return (
 		createPortal(
-			<AnimatePresence>
+			<dialog
+				ref={localContext.ref}
+				onClick={(e) => {
+					e.preventDefault()
+					e.stopPropagation()
+					localContext.ref?.current?.close()
+				}}
+
+				className={cx("top-0 z-50 w-screen min-h-screen bg-background/30 backdrop-blur-sm text-white", css`
+						&[open]{
+							display:flex;
+							align-items: center;
+							justify-content: center;
+						}	
+						`)}>
 				{
-					modalActive.active && <motion.div
-						initial={{
-							opacity: 0
-						}}
-						exit={{
-							opacity: 0
-						}}
-						animate={{
-							opacity: 1,
-							transition: {
-								duration: 0.2
-							}
-						}}
-						className="fixed top-0 w-screen min-h-screen bg-background/30 backdrop-blur-sm flex items-center justify-center" onClick={(e) => {
-							e.stopPropagation()
-							e.preventDefault()
-							setModalActive({
-								active: modalActive.active ? false : true,
-								type: ""
-							})
-						}}>
-						<div onClick={(e) => {
-							e.stopPropagation()
-						}}>
-							{
-								{
-									"new_product": <NewProductModal />,
-									"delete_product": <DeleteProduct />
-								}[modalActive.type]
-							}
-						</div>
-					</motion.div>
+					children
 				}
-			</AnimatePresence>,
+			</dialog>,
 			mountElement!
 		)
 	)
 }
-export default ModalBase
+
+const ModalClose = ({ children }: { children: React.ReactNode }) => {
+	const localContext = useContext(modalContext)
+
+	return <div
+		className="w-full h-full"
+		onClick={(e) => {
+			e.preventDefault()
+			localContext.ref?.current?.close()
+		}}>
+		{children}
+	</div>
+}
+
+const ModalOpen = ({ children }: { children: React.ReactNode }) => {
+	const localContext = useContext(modalContext)
+
+	return localContext.ref?.current && <div className="w-full h-full" onClick={(e) => {
+		e.preventDefault()
+		localContext.ref?.current?.showModal();
+	}}>
+		{children}
+	</div>
+}
+
+export {
+	ModalRoot as Root,
+	ModalBase as Base,
+	ModalClose as Close,
+	ModalOpen as Open
+}

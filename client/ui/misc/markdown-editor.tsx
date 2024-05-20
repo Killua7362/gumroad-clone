@@ -129,18 +129,14 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
 							<ToggleStrikeButton />
 							<ToggleCodeButton />
 						</CommandButtonGroup>
-						<VerticalDivider />
 						<HeadingLevelButtonGroup showAll />
-						<VerticalDivider />
 						<CommandButtonGroup>
 							<ToggleBlockquoteButton />
 							<ToggleCodeBlockButton />
 						</CommandButtonGroup>
-						<VerticalDivider />
 						<ListButtonGroup>
 							<CreateTableButton />
 						</ListButtonGroup>
-						<VerticalDivider />
 						<HistoryButtonGroup />
 					</Toolbar>
 					<EditorComponent />

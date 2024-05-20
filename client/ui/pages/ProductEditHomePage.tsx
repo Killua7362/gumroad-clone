@@ -139,12 +139,10 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 
 	return (
 		<Fragment>
-			<form className="flex flex-col gap-y-2" onSubmit={handleSubmit((data) => {
-				collabChecker({ ...editProductState, ...data })
-			})}>
-				<div className="text-2xl">
-					Main
-				</div>
+			<form className="flex flex-col gap-y-4" id="edit_product_form" onSubmit={handleSubmit(() => {
+				/* collabChecker({ ...editProductState, ...data }) */
+			})}
+			>
 				<div className="flex flex-col gap-y-2">
 					<div>
 						Name
@@ -359,7 +357,7 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 						setEditProductState({ ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType })
 						reset()
 					}} />
-					<Button buttonName="Save" type='submit' isLoading={productIsLoading} />
+					<Button buttonName="Save" type='submit' isLoading={productIsLoading} extraClasses={['!hidden']} />
 				</div>
 			</form>
 			<div>

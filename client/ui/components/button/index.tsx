@@ -12,11 +12,13 @@ interface ButtonSchema {
 	children?: React.ReactNode;
 	isActive?: boolean;
 	isLoading?: boolean;
+	form?: string;
 }
 
-const Button = ({ buttonName, extraClasses = [""], type = 'button', onClickHandler, children, isActive = false, isLoading = false }: ButtonSchema) => {
+const Button = ({ buttonName, extraClasses = [""], type = 'button', onClickHandler, children, isActive = false, isLoading = false, form = '' }: ButtonSchema) => {
 	return (
 		<button
+			form={form}
 			onClick={async () => {
 				if (onClickHandler) {
 					await onClickHandler()

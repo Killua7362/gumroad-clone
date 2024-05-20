@@ -32,7 +32,6 @@ const DeleteProduct = () => {
 				active: false,
 				type: ""
 			})
-
 		}
 	})
 

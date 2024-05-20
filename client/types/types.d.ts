@@ -45,10 +45,8 @@ interface IndividualCollab {
 }
 
 interface ProductContetPage {
-	[id: string]: {
-		name: string;
-		content: string;
-	}
+	name: string;
+	content: string;
 }
 
 interface Review {
@@ -71,7 +69,7 @@ interface ProductType {
 	coverimageSource?: string;
 	description: string;
 	summary: string;
-	product_content?: ProductContetPage;
+	product_content?: ProductContetPage[];
 }
 
 interface ProductTypePayload {

@@ -8,7 +8,7 @@ import { useParams } from "react-router"
 import { useSearchParams } from "react-router-dom"
 import Button from "@/ui/components/button"
 import { useMutation } from "@tanstack/react-query"
-import { allProductsFetcher, collabsProductFetcher, loginStatusFetcher } from "@/query"
+import { allProductsFetcher, collabsProductFetcher, loginStatusFetcher } from "@/react-query/query"
 import { queryClient } from "@/app/RootPage"
 
 const CollaboratorsPage = () => {
