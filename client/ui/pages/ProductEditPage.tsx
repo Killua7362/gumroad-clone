@@ -7,24 +7,25 @@ import ProductEditContentPage from "@/ui/pages/ProductEditContentPage";
 import { queryClient } from "@/app/RootPage";
 import { singleProductFetcher } from "@/react-query/query"
 
-export const helperFunction = () => {
-	const [rendered, setRendered] = useState(false)
-	return { rendered, setRendered }
+
+const productEditPageProps = () => {
+	const [editProductState, setEditProductState] = useState<ProductType>()
+	return { editProductState, setEditProductState } as productEditPageProps
 }
 
 const ProductEditPage = () => {
 	const navigate = useNavigate()
 	const params = useParams()
 
-	const { rendered, setRendered } = helperFunction()
-	const [editProductState, setEditProductState] = useState<ProductType>()
+	const [rendered, setRendered] = useState(false)
+	const productState = productEditPageProps()
 
 	const { data: currentProduct, isPending: productsIsLoading, isSuccess: productIsSuccess } = singleProductFetcher({ productId: params.id })
 
 	useEffect(() => {
 		if (!productsIsLoading) {
 			if (productIsSuccess) {
-				setEditProductState({ ...currentProduct })
+				productState.setEditProductState({ ...currentProduct })
 				setRendered(true)
 			} else {
 				navigate('/notfound')
@@ -33,12 +34,12 @@ const ProductEditPage = () => {
 	}, [params.id, productsIsLoading, currentProduct, productIsSuccess])
 
 	return rendered && (
-		<ProductEditPageLayout editProductState={editProductState!} setEditProductState={setEditProductState}>
+		<ProductEditPageLayout productState={productState}>
 			{
 				params.page === 'home' ?
-					<ProductEditHomePage editProductState={editProductState!} setEditProductState={setEditProductState} />
+					<ProductEditHomePage productState={productState} />
 					:
-					<ProductEditContentPage editProductState={editProductState!} setEditProductState={setEditProductState} />
+					<ProductEditContentPage productState={productState} />
 			}
 		</ProductEditPageLayout>
 	)

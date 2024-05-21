@@ -1,10 +1,10 @@
 import ProductCard from "@/ui/components/cards/ProductCard"
 import { Fragment } from "react/jsx-runtime"
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { hideToastState, productsCardContextMenu } from "@/atoms/states";
+import { hideToastState } from "@/atoms/states";
 import { IoMdSettings } from "react-icons/io";
 import { useNavigate } from "react-router";
 import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
@@ -16,14 +16,21 @@ import { z } from "zod";
 import { allProductsFetcher } from "@/react-query/query"
 import debounce from 'lodash.debounce'
 import { useSearchParams } from "react-router-dom";
-import { getProductLiveToggle } from "@/react-query/mutations";
+import { getProductCreater, getProductDeleter, getProductLiveToggle } from "@/react-query/mutations";
+import { NewProductSchema } from "@/schema/new_product_schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import NewProductModal from "@/ui/components/modal/NewProductModal";
+import DeleteProductModal from "../components/modal/DeleteProductModal";
 
 const ProductsHomePage = () => {
-	const [contextMenuConfig, setContextMenuConfig] = useRecoilState(productsCardContextMenu)
+	const [contextMenuConfig, setContextMenuConfig] = useState<ProductsCardContextMenu>({
+		active: false,
+		activeIdx: -1
+	})
+
 	const setToastRender = useSetRecoilState(hideToastState)
 
 	const navigate = useNavigate()
-
 
 	const [searchBarActive, setSearchBarActive] = useState<boolean>(false)
 	const [searchParams, setSearchParams] = useSearchParams()
@@ -40,7 +47,6 @@ const ProductsHomePage = () => {
 			setContextMenuConfig({
 				active: false,
 				activeIdx: 0,
-				id: ''
 			})
 		}
 		document.body.addEventListener('click', closeContextMenu)
@@ -78,14 +84,11 @@ const ProductsHomePage = () => {
 
 	const { mutate: liveSetter } = getProductLiveToggle()
 
+
 	return !productsIsLoading && (
 		<div className="w-full h-full flex flex-col gap-y-4">
 			<div className="flex gap-x-3 items-center">
-				<Button
-					extraClasses={['rounded-xl']}
-					buttonName="New Product"
-					onClickHandler={() => {
-					}} />
+				<NewProductModal />
 				<Button
 					extraClasses={['rounded-xl']}
 					buttonName="Filter"
@@ -206,19 +209,16 @@ const ProductsHomePage = () => {
 									contextMenuConfig.active ? setContextMenuConfig({
 										active: false,
 										activeIdx: i,
-										id: key
 									}) :
 										setContextMenuConfig({
 											active: true,
 											activeIdx: i,
-											id: key
 										})
 								}}>
 									<IoMdSettings />
 								</div>
 								<AnimatePresence>
 									{
-										contextMenuConfig.active && contextMenuConfig.activeIdx === i &&
 										<motion.div
 											initial={{
 												height: 0,
@@ -235,18 +235,14 @@ const ProductsHomePage = () => {
 												height: 0,
 												opacity: 0,
 											}}
-											className="flex min-w-[10rem] overflow-hidden bg-background flex-col border-white/30 border-[0.1px] absolute rounded-md right-[1.5rem] top-[2.5rem] "
+											className={` ${(contextMenuConfig.active && contextMenuConfig.activeIdx === i) ? "flex" : "hidden"} min-w-[10rem] overflow-hidden bg-background flex-col border-white/30 border-[0.1px] absolute rounded-md right-[1.5rem] top-[2.5rem]`}
 											onClick={(e) => {
 												e.preventDefault()
 												e.stopPropagation()
-											}}>
+											}}
+										>
 											<div className="px-4 py-3 hover:bg-accent/50 cursor-pointer"
 												onClick={async () => {
-													setContextMenuConfig({
-														active: false,
-														activeIdx: i,
-														id: key
-													})
 													try {
 														EditProductSchema.parse({
 															title: value.title,
@@ -264,29 +260,22 @@ const ProductsHomePage = () => {
 															})
 														}
 													}
+
+													setContextMenuConfig(prev => {
+														return { ...prev, active: false }
+													})
 												}}
 											>
 												Go Live
 											</div>
 											<div className="px-4 py-3 hover:bg-accent/50 cursor-pointer"
 												onClick={() => {
-													setContextMenuConfig({
-														active: false,
-														activeIdx: i,
-														id: key
-													})
 													navigate(`/products/edit/${key}/home`)
 												}}
-											>Edit</div>
-											<div className="px-4 py-3 hover:bg-accent/50 cursor-pointer"
-												onClick={() => {
-													setContextMenuConfig({
-														active: false,
-														activeIdx: i,
-														id: key
-													})
-												}}
-											>Delete</div>
+											>
+												Edit
+											</div>
+											<DeleteProductModal idx={key} setContextMenuConfig={setContextMenuConfig} />
 										</motion.div>
 									}
 								</AnimatePresence>

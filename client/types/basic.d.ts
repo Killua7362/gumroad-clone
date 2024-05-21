@@ -24,19 +24,11 @@ interface toastMessage {
 interface ProductsCardContextMenu {
 	active: boolean;
 	activeIdx: number;
-	id?: string;
 }
-interface productsEditContentContextMenu {
-	active: boolean;
-	pageId: string;
-	points: number[];
-}
-
 interface productCategories {
 	name: string;
 	hide: boolean;
 }
-
 
 interface IndividualCollab {
 	email: string;
@@ -69,7 +61,7 @@ interface ProductType {
 	coverimageSource?: string;
 	description: string;
 	summary: string;
-	product_content?: ProductContetPage[];
+	contents?: ProductContetPage[];
 }
 
 interface ProductTypePayload {

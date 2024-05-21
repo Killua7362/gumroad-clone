@@ -5,7 +5,6 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import { Suspense, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRecoilState } from "recoil";
-import { productsCardContextMenu } from "@/atoms/states";
 
 import ProductsHomePage from "@/ui/pages/ProductsHomePage";
 import CollaboratorsPage from "./Collaborators";

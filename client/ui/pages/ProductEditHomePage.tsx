@@ -24,7 +24,9 @@ const stringToTags = (typeString: string) => {
 	return (typeString || "").trim().split(',')
 }
 
-const ProductEditHomePage = ({ editProductState, setEditProductState }: { editProductState: ProductType, setEditProductState: React.Dispatch<React.SetStateAction<ProductType>> }) => {
+const ProductEditHomePage = ({ productState }: { productState: productEditPageProps }) => {
+	const { editProductState, setEditProductState } = productState
+
 	const [description, setDescription] = useState<string>(editProductState.description)
 	const [selectTypes, setSelectTypes] = useState<typeof productTypeOptions>(() => {
 		let tempSelectOptions: string[] = stringToTags(editProductState.tags)
@@ -79,7 +81,8 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 
 	return (
 		<Fragment>
-			<form className="flex flex-col gap-y-4" id="edit_product_form" onSubmit={handleSubmit(() => {
+			<form className="flex flex-col gap-y-4" id="edit_product_form" onSubmit={handleSubmit((data) => {
+				console.log(data)
 				// collabChecker({payload: { ...editProductState, ...data },id:params.id! })
 			})}
 			>

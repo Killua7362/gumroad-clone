@@ -4,7 +4,8 @@ import { useRecoilState } from "recoil"
 import Button from "@/ui/components/button"
 
 
-const ProductEditPageLayout = ({ children, editProductState, setEditProductState }: { children: React.ReactNode, editProductState: ProductType, setEditProductState: React.Dispatch<React.SetStateAction<ProductType>> }) => {
+const ProductEditPageLayout = ({ children, productState }: { children: React.ReactNode, productState: productEditPageProps }) => {
+	const { editProductState, setEditProductState } = productState
 
 	const params = useParams()
 

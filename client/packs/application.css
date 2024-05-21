@@ -10,6 +10,11 @@ scrollbar-width: thin;
 scrollbar-color:white #09090B;
 }
 
+:root:has(.do-not-scroll){
+	overflow: hidden !important;
+	/* position: fixed !important; */
+}
+
 :root{
  /* font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; */
 	font-family:"__GeistSans_ac79ff","__GeistSans_Fallback_ac79ff",ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";

@@ -32,7 +32,6 @@ export const allProductsFetcher = () => {
 				return Promise.reject(new Error(errorMessage))
 			}
 			return res.json().then(data => {
-				console.log(data)
 				let result: ProductTypePayload = {}
 				for (let i = 0; i < data.data.length; i++) {
 					result[data.data[i].id] = { ...data.data[i].attributes }

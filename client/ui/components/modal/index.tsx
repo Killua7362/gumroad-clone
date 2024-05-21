@@ -1,77 +1,91 @@
-import { useRecoilState } from "recoil"
-import NewProductModal from "@/ui/components/modal/NewProduct"
 import { AnimatePresence, motion } from 'framer-motion'
-import DeleteProduct from "@/ui/components/modal/DeleteProduct"
 import { createPortal } from "react-dom"
-import { RefObject, createContext, createRef, useContext, useRef } from "react"
+import { RefObject, createContext, useContext, useEffect, useState } from "react"
 import { cx, css } from "@emotion/css"
 
 const mountElement = document.getElementById('modals')
 
 interface ModalContextContent {
-	ref?: RefObject<HTMLDialogElement>
+	active?: boolean,
+	setActive?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const modalContext = createContext<ModalContextContent>({});
 
 const ModalRoot = ({ children }: { children: React.ReactNode }) => {
-	const modalRef = useRef<HTMLDialogElement>(null)
+	const [active, setActive] = useState(false)
 
 	return (
-		<modalContext.Provider value={{ ref: modalRef }}>
+		<modalContext.Provider value={{ active, setActive }}>
 			{children}
 		</modalContext.Provider>
 	)
 }
 
-const ModalBase = ({ children }: { children: React.ReactNode }) => {
-	const localContext = useContext(modalContext)
+const ModalBase = ({ children, onClick }: { children: React.ReactNode, onClick?: () => void }) => {
+	const { active, setActive } = useContext(modalContext)
+
+	useEffect(() => {
+		if (active) {
+			document.body.classList.add("do-not-scroll")
+		} else {
+			document.body.classList.remove("do-not-scroll")
+		}
+	}, [active])
 
 	return (
 		createPortal(
-			<dialog
-				ref={localContext.ref}
-				onClick={(e) => {
-					e.preventDefault()
-					e.stopPropagation()
-					localContext.ref?.current?.close()
-				}}
-
-				className={cx("top-0 z-50 w-screen min-h-screen bg-background/30 backdrop-blur-sm text-white", css`
-						&[open]{
-							display:flex;
-							align-items: center;
-							justify-content: center;
-						}	
-						`)}>
+			<AnimatePresence>
 				{
-					children
+					active && <motion.div
+						initial={{
+							opacity: 0
+						}}
+						exit={{
+							opacity: 0
+						}}
+						animate={{
+							opacity: 1,
+							transition: {
+								duration: 0.3
+							}
+						}}
+						onClick={(e) => {
+							e.stopPropagation()
+							setActive!(false)
+
+							onClick && onClick()
+						}}
+
+						className={cx("top-0 fixed flex justify-center items-center z-50 w-screen min-h-screen bg-background/30 backdrop-blur-sm text-white")}>
+						{
+							children
+						}
+					</motion.div>
 				}
-			</dialog>,
+			</AnimatePresence>,
 			mountElement!
 		)
 	)
 }
 
 const ModalClose = ({ children }: { children: React.ReactNode }) => {
-	const localContext = useContext(modalContext)
-
+	const { active, setActive } = useContext(modalContext)
 	return <div
-		className="w-full h-full"
+		className="h-full"
 		onClick={(e) => {
-			e.preventDefault()
-			localContext.ref?.current?.close()
+			setActive!(false)
 		}}>
 		{children}
 	</div>
 }
 
 const ModalOpen = ({ children }: { children: React.ReactNode }) => {
-	const localContext = useContext(modalContext)
+	const { active, setActive } = useContext(modalContext)
 
-	return localContext.ref?.current && <div className="w-full h-full" onClick={(e) => {
-		e.preventDefault()
-		localContext.ref?.current?.showModal();
+	return <div className="h-full" onClick={(e) => {
+
+		setActive!(true)
 	}}>
 		{children}
 	</div>

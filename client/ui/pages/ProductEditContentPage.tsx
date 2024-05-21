@@ -15,9 +15,8 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRecoilState } from 'recoil';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import * as Modal from '@/ui/components/modal'
 import Button from '@/ui/components/button';
-
+import ProductEditContentDeleteModal from '@/ui/components/modal/ProductEditContentDeleteModal';
 
 const markDownStyle = css`
 	.remirror-theme{
@@ -88,7 +87,9 @@ const markDownStyle = css`
 		}
 		`
 
-const ProductEditContentPage = ({ editProductState, setEditProductState }: { editProductState: ProductType, setEditProductState: React.Dispatch<React.SetStateAction<ProductType>> }) => {
+const ProductEditContentPage = ({ productState }: { productState: productEditPageProps }) => {
+	const { editProductState, setEditProductState } = productState
+
 	const [reviewScore, setReviewScore] = useState(1)
 	const [tempReviewScore, setTempReviewScore] = useState(1)
 	const [reviewEdit, setReviewEdit] = useState(false)
@@ -97,12 +98,6 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 	const [reviewDescription, setReviewDescripition] = useState('')
 
 	const [searchParams, setSearchParams] = useSearchParams()
-
-	const [pages, setPages] = useState<PageSchema[]>([
-		{
-			name: "page 1",
-			content: ""
-		}])
 
 	const [renaming, setRenaming] = useState(false)
 
@@ -114,7 +109,7 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 	const navigate = useNavigate()
 
 	useEffect(() => {
-		if (!searchParams.get('page') || Number(searchParams.get('page')!) > pages.length) {
+		if (!searchParams.get('page') || Number(searchParams.get('page')!) > (editProductState.contents || []).length) {
 			setSearchParams({ page: '1' })
 		}
 		setRendered(true)
@@ -123,13 +118,13 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 	useEffect(() => {
 		let temp1: RefObject<HTMLInputElement>[] = [];
 		let temp2: boolean[] = [];
-		for (let i = 0; i < pages.length; i++) {
+		for (let i = 0; i < (editProductState.contents || []).length; i++) {
 			temp1 = [...temp1, createRef()]
 			temp2 = [...temp2, false]
 		}
 		setInputRefs(temp1)
 		setContextActive(temp2)
-	}, [pages.length])
+	}, [(editProductState.contents || []).length])
 
 	return rendered && (
 		<Fragment>
@@ -140,14 +135,14 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 							<IonReorderGroup
 								disabled={false}
 								onIonItemReorder={(event) => {
-									setPages(() => {
-										return event.detail.complete(pages)
+									setEditProductState(prev => {
+										return { ...prev, contents: event.detail.complete(prev.contents) }
 									})
 									setSearchParams({ page: `${event.detail.to + 1 as number}` })
 								}}
 								className='flex flex-col gap-2'>
 								{
-									pages.map((e, i) => {
+									(editProductState.contents || []).map((e, i) => {
 										return e && (
 											<IonItem>
 												<IonRow className={`justify-between flex-nowrap items-center px-2 py-0 overflow-none ${Number(searchParams.get('page')) === i + 1 && "bg-accent/80 text-white"} `}
@@ -169,12 +164,12 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 															placeholder='Untitled...'
 															ref={inputRefs[i]}
 															readOnly={true}
-															value={pages[i].name}
+															value={(editProductState.contents || [])[i].name}
 															onChange={(e) => {
-																setPages(prev => {
-																	let temp = [...prev]
+																setEditProductState(prev => {
+																	let temp = [...prev.contents || []]
 																	temp[i].name = e.target.value
-																	return [...temp]
+																	return { ...prev, contents: temp }
 																})
 															}}
 															onBlur={() => {
@@ -215,38 +210,8 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 														Rename
 													</div>
 													{
-														pages.length > 1 &&
-														<Modal.Root>
-															<Modal.Base>
-																<div className="bg-background z-50 border-white/30 rounded-xl min-w-[15rem] border-[0.1px] p-6 text-lg flex flex-col gap-y-6 items-center">
-																	<div className="text-xl">
-																		Confirm Delete?
-																	</div>
-																	<div className="flex gap-x-4">
-																		<Modal.Close>
-																			<Button
-																				buttonName="Cancel"
-																				type="button"
-																			/>
-																		</Modal.Close>
-																		<Modal.Close>
-																			<Button buttonName="Confirm"
-																				type="button" onClickHandler={() => {
-																					setPages((prev) => {
-																						return prev.filter((_, index) => index !== i)
-																					})
-																				}}
-																				extraClasses={['!border-red-500/70 !text-red-500 hover:text-red-500/70']} />
-																		</Modal.Close>
-																	</div>
-																</div>
-															</Modal.Base>
-															<Modal.Open>
-																<div className='p-4 py-3 bg-white text-black w-full cursor-pointer hover:bg-white/90'>
-																	Delete
-																</div>
-															</Modal.Open>
-														</Modal.Root>
+														(editProductState.contents || []).length > 1 &&
+														<ProductEditContentDeleteModal i={i} setPages={setPages} />
 													}
 												</motion.div>
 											</IonItem>
@@ -257,11 +222,8 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 						</IonList>
 					</div>
 					<Button buttonName='Add page' extraClasses={[`!w-full`]} onClickHandler={() => {
-						setPages(prev => {
-							return [...prev, {
-								name: "",
-								content: ''
-							}]
+						setEditProductState(prev => {
+							return { ...prev, contents: [...(prev.contents || []), { name: '', content: '' }] }
 						})
 					}} />
 				</div>
@@ -324,7 +286,7 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 				'w-full left-0 overflow-hidden mr-14'
 			)}>
 				<MarkdownEditor
-					pageContent={pages[(searchParams.get('page') || 1) as number - 1]?.content as string}
+					pageContent={(editProductState.contents || [])[(searchParams.get('page') || 1) as number - 1]?.content as string}
 					setPages={setPages}
 					key={searchParams.get('page')}
 					placeholder="start typing..."

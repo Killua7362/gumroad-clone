@@ -1,9 +1,11 @@
 class Product < ApplicationRecord
   require_relative './collabs'
+  require_relative './contents'
 
   belongs_to :user
   has_many :reviews
   validate :validate_collabs
+  validate :validate_contents
 
   def can_go_live
     self[:collabs].map do |item|
@@ -18,7 +20,19 @@ class Product < ApplicationRecord
     collabs.each do |collab|
       serializer = Collabs.new(collab)
       unless serializer.valid?
-        errors.add(:collabs, 'Schema is bad')
+        errors.add(:collabs, 'Collab schema is bad')
+        break
+      end
+    end
+  end
+
+  def validate_contents
+    errors.add(:contents, 'There should be more than one page') and return if contents.length < 1
+
+    contents.each do |content|
+      serializer = Contents.new(content)
+      unless serializer.valid?
+        errors.add(:contents, 'Content schema is bad')
         break
       end
     end

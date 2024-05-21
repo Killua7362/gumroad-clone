@@ -6,6 +6,10 @@ import { useNavigate } from "react-router"
 import React from "react"
 import { z } from 'zod'
 import { signInSchema, signUpSchema } from "@/schema/auth_schema"
+import { UseFormSetError } from "react-hook-form"
+import { EditProductSchema } from "@/schema/edit_product_schema"
+
+type EditProductSchemaType = z.infer<typeof EditProductSchema>
 
 // adding id to all delete function and modal
 export const getProductDeleter = () => {
@@ -111,7 +115,7 @@ export const getCollabApprover = () => {
 	return { mutate, isPending } as { mutate: (key: string) => void, isPending: boolean }
 }
 
-export const getProductEditor = ({ setEditProductState, setError }: { setEditProductState: React.Dispatch<React.SetStateAction<ProductType>>, setError: any }) => {
+export const getProductEditor = ({ setEditProductState, setError }: { setEditProductState: React.Dispatch<React.SetStateAction<ProductType>>, setError: UseFormSetError<EditProductSchemaType> }) => {
 	const setToastRender = useSetRecoilState(hideToastState)
 
 	const { mutate: productSet, isPending: productIsSetting } = useMutation({
