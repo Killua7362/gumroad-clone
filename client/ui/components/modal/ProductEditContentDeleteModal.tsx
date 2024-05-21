@@ -1,7 +1,7 @@
 import * as Modal from '@/ui/components/modal'
 import Button from '@/ui/components/button'
 
-const ProductEditContentDeleteModal = ({ i, setPages }: { i: number, setPages: React.Dispatch<React.SetStateAction<PageSchema[]>> }) => {
+const ProductEditContentDeleteModal = ({ i, setEditProductState }: { i: number, setEditProductState: React.Dispatch<React.SetStateAction<ProductType>> }) => {
 	return (
 		<Modal.Root key={i}>
 			<Modal.Base>
@@ -19,8 +19,8 @@ const ProductEditContentDeleteModal = ({ i, setPages }: { i: number, setPages: R
 						<Modal.Close>
 							<Button buttonName="Confirm"
 								type="button" onClickHandler={() => {
-									setPages((prev) => {
-										return prev.filter((_, index) => index !== i)
+									setEditProductState(prev => {
+										return { ...prev, contents: (prev.contents || []).filter((_, index) => index !== i) }
 									})
 								}}
 								extraClasses={['!border-red-500/70 !text-red-500 hover:text-red-500/70']} />

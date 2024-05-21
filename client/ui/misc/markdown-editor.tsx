@@ -59,7 +59,7 @@ interface ReactEditorProps
 
 export interface MarkdownEditorProps extends Partial<Omit<ReactEditorProps, 'stringHandler'>> {
 	pageContent: string;
-	setPages: React.Dispatch<React.SetStateAction<PageSchema[]>>;
+	setEditProductState: React.Dispatch<React.SetStateAction<ProductType>>;
 }
 
 /**
@@ -67,7 +67,7 @@ export interface MarkdownEditorProps extends Partial<Omit<ReactEditorProps, 'str
  */
 export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
 	pageContent,
-	setPages,
+	setEditProductState,
 	placeholder,
 	children,
 	theme,
@@ -143,10 +143,10 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
 					<TableComponents />
 					{children}
 					<OnChangeJSON onChange={(data) => {
-						setPages(prev => {
-							let temp = [...prev]
+						setEditProductState(prev => {
+							let temp = [...(prev.contents || [])]
 							temp[(searchParams.get('page') || 1) as number - 1].content = JSON.stringify(data);
-							return [...temp]
+							return { ...prev, contents: temp }
 						})
 					}} />
 				</Remirror>

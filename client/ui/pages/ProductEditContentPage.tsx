@@ -89,6 +89,7 @@ const markDownStyle = css`
 
 const ProductEditContentPage = ({ productState }: { productState: productEditPageProps }) => {
 	const { editProductState, setEditProductState } = productState
+	const pages = editProductState.contents || []
 
 	const [reviewScore, setReviewScore] = useState(1)
 	const [tempReviewScore, setTempReviewScore] = useState(1)
@@ -109,7 +110,7 @@ const ProductEditContentPage = ({ productState }: { productState: productEditPag
 	const navigate = useNavigate()
 
 	useEffect(() => {
-		if (!searchParams.get('page') || Number(searchParams.get('page')!) > (editProductState.contents || []).length) {
+		if (!searchParams.get('page') || Number(searchParams.get('page')!) > pages.length) {
 			setSearchParams({ page: '1' })
 		}
 		setRendered(true)
@@ -118,13 +119,13 @@ const ProductEditContentPage = ({ productState }: { productState: productEditPag
 	useEffect(() => {
 		let temp1: RefObject<HTMLInputElement>[] = [];
 		let temp2: boolean[] = [];
-		for (let i = 0; i < (editProductState.contents || []).length; i++) {
+		for (let i = 0; i < pages.length; i++) {
 			temp1 = [...temp1, createRef()]
 			temp2 = [...temp2, false]
 		}
 		setInputRefs(temp1)
 		setContextActive(temp2)
-	}, [(editProductState.contents || []).length])
+	}, [pages.length])
 
 	return rendered && (
 		<Fragment>
@@ -136,13 +137,13 @@ const ProductEditContentPage = ({ productState }: { productState: productEditPag
 								disabled={false}
 								onIonItemReorder={(event) => {
 									setEditProductState(prev => {
-										return { ...prev, contents: event.detail.complete(prev.contents) }
+										return { ...prev, contents: event.detail.complete(pages) }
 									})
 									setSearchParams({ page: `${event.detail.to + 1 as number}` })
 								}}
 								className='flex flex-col gap-2'>
 								{
-									(editProductState.contents || []).map((e, i) => {
+									pages.map((e, i) => {
 										return e && (
 											<IonItem>
 												<IonRow className={`justify-between flex-nowrap items-center px-2 py-0 overflow-none ${Number(searchParams.get('page')) === i + 1 && "bg-accent/80 text-white"} `}
@@ -164,10 +165,10 @@ const ProductEditContentPage = ({ productState }: { productState: productEditPag
 															placeholder='Untitled...'
 															ref={inputRefs[i]}
 															readOnly={true}
-															value={(editProductState.contents || [])[i].name}
+															value={pages[i].name}
 															onChange={(e) => {
 																setEditProductState(prev => {
-																	let temp = [...prev.contents || []]
+																	let temp = [...pages]
 																	temp[i].name = e.target.value
 																	return { ...prev, contents: temp }
 																})
@@ -210,8 +211,8 @@ const ProductEditContentPage = ({ productState }: { productState: productEditPag
 														Rename
 													</div>
 													{
-														(editProductState.contents || []).length > 1 &&
-														<ProductEditContentDeleteModal i={i} setPages={setPages} />
+														pages.length > 1 &&
+														<ProductEditContentDeleteModal i={i} setEditProductState={setEditProductState} />
 													}
 												</motion.div>
 											</IonItem>
@@ -223,7 +224,7 @@ const ProductEditContentPage = ({ productState }: { productState: productEditPag
 					</div>
 					<Button buttonName='Add page' extraClasses={[`!w-full`]} onClickHandler={() => {
 						setEditProductState(prev => {
-							return { ...prev, contents: [...(prev.contents || []), { name: '', content: '' }] }
+							return { ...prev, contents: [...pages, { name: '', content: '' }] }
 						})
 					}} />
 				</div>
@@ -286,8 +287,8 @@ const ProductEditContentPage = ({ productState }: { productState: productEditPag
 				'w-full left-0 overflow-hidden mr-14'
 			)}>
 				<MarkdownEditor
-					pageContent={(editProductState.contents || [])[(searchParams.get('page') || 1) as number - 1]?.content as string}
-					setPages={setPages}
+					pageContent={pages[(searchParams.get('page') || 1) as number - 1]?.content as string}
+					setEditProductState={setEditProductState}
 					key={searchParams.get('page')}
 					placeholder="start typing..."
 					theme={{
