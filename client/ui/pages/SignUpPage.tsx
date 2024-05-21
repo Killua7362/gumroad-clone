@@ -3,45 +3,18 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from "react"
-import { useMutation } from "@tanstack/react-query"
 import Button from "@/ui/components/button"
+import { signUpSchema } from "@/schema/auth_schema"
+import { setSignUp } from "@/react-query/mutations"
 
 const SignUpPage = () => {
 	const navigate = useNavigate()
 	const [customError, setCustomError] = useState('')
 
-	const signUpSchema = z.object({
-		name: z.string().min(1).max(30),
-		email: z.coerce.string().email().min(5),
-		password: z.string().min(5).max(12),
-		password_confirmation: z.string().min(5).max(12),
-	}).refine((data) => data.password === data.password_confirmation, {
-		message: "Password don't match",
-		path: ['password_confirmation']
-	})
 
 	type signUpSchemaType = z.infer<typeof signUpSchema>
 
-	const { mutate: signUpSetter, isPending: isSignUpSetting } = useMutation({
-		mutationFn: (payload: signUpSchemaType) => fetch(`${window.location.origin}/api/registrations`, {
-			method: 'POST',
-			credentials: 'include',
-			body: JSON.stringify(payload),
-			headers: { 'Content-type': 'application/json' },
-		}).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json()
-		}),
-		onSuccess: () => {
-			navigate('/signin')
-		},
-		onError: (err) => {
-			setCustomError(err.message)
-		},
-	})
+	const { mutate: signUpSetter, isPending: isSignUpSetting } = setSignUp({ setCustomError: setCustomError })
 
 	const {
 		register,

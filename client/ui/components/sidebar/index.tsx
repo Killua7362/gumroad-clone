@@ -9,11 +9,14 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { SiAboutdotme } from "react-icons/si";
 import { CgLogOut } from "react-icons/cg";
 import { useSetRecoilState } from 'recoil';
-import { useMutation } from '@tanstack/react-query';
 import { queryClient } from '@/app/RootPage';
 import { loginStatusFetcher } from '@/react-query/query';
+import { setLogOut } from '@/react-query/mutations';
 
-const SideBar = ({ isOpen, setIsOpen, windowWidth, setWindowWidth }: { isOpen: boolean, setIsOpen: React.Dispatch<React.SetStateAction<boolean>>, windowWidth: number, setWindowWidth: React.Dispatch<React.SetStateAction<number>> }) => {
+const SideBar = ({ ...sideBarProps }: SideBarProps) => {
+
+	const { sideBarOpen: isOpen, windowWidth, setSideBarOpen: setIsOpen, setWindowWidth } = sideBarProps
+
 	const [activeItem, setActiveItem] = useState(0)
 	const [isAccountOpen, setIsAccountOpen] = useState(false)
 	const location = useLocation();
@@ -113,27 +116,7 @@ const SideBar = ({ isOpen, setIsOpen, windowWidth, setWindowWidth }: { isOpen: b
 
 
 	const { data: loginStatus, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
-
-	const { mutate: loginStatusSetter } = useMutation({
-		mutationFn: () => fetch(`${window.location.origin}/api/sessions/logout`, {
-			method: 'DELETE',
-			credentials: 'include',
-			headers: { 'Content-type': 'application/json' },
-		}).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json()
-		}),
-		onSuccess: () => {
-			navigate('/signin')
-			return queryClient.clear()
-		},
-		onError: (err) => {
-
-		}
-	})
+	const { mutate: loginStatusSetter, isPending } = setLogOut()
 
 	return (
 		<motion.div className={`p-4 sm:bg-background absolute bg-background`}

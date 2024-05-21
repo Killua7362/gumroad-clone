@@ -1,15 +1,17 @@
 import { useMutation } from "@tanstack/react-query"
 import { queryClient } from "@/app/RootPage"
-import { hideToastState, modalBaseActive } from "@/atoms/states"
+import { hideToastState } from "@/atoms/states"
 import { useSetRecoilState } from "recoil"
 import { useNavigate } from "react-router"
 import React from "react"
+import { z } from 'zod'
+import { signInSchema, signUpSchema } from "@/schema/auth_schema"
 
-const productDeleter = ({ id }: { id: string }) => {
-	const setModalActive = useSetRecoilState(modalBaseActive)
+// adding id to all delete function and modal
+export const getProductDeleter = () => {
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: () => fetch(`${window.location.origin}/api/products/${id}`, {
+		mutationFn: (id: string) => fetch(`${window.location.origin}/api/products/${id}`, {
 			method: 'DELETE',
 			credentials: 'include',
 			headers: { 'Content-type': 'application/json' },
@@ -20,7 +22,7 @@ const productDeleter = ({ id }: { id: string }) => {
 			}
 			return {}
 		}),
-		onSuccess: () => {
+		onSuccess: (data, id) => {
 			queryClient.invalidateQueries({ queryKey: ['allProducts', id!], exact: true })
 			return queryClient.invalidateQueries({ queryKey: ['allProducts'], exact: true })
 		},
@@ -28,19 +30,13 @@ const productDeleter = ({ id }: { id: string }) => {
 			console.log(err)
 		},
 		onSettled: () => {
-			setModalActive({
-				active: false,
-				type: ""
-			})
 		}
 	})
 
-	return { mutate, isPending } as { mutate: () => void, isPending: boolean }
+	return { mutate, isPending } as { mutate: (id: string) => void, isPending: boolean }
 }
 
-const productCreater = () => {
-	const setModalActive = useSetRecoilState(modalBaseActive)
-
+export const getProductCreater = () => {
 	const { mutate, isPending } = useMutation({
 		mutationFn: (payload: ProductType) => fetch(`${window.location.origin}/api/products`, {
 			method: 'POST',
@@ -59,17 +55,13 @@ const productCreater = () => {
 		},
 		onError: (err) => { },
 		onSettled: () => {
-			setModalActive({
-				active: false,
-				type: ""
-			})
 		}
 	})
 
-	return { mutate, isPending } as { mutate: () => void, isPending: boolean }
+	return { mutate, isPending } as { mutate: (payload: ProductType) => void, isPending: boolean }
 }
 
-const getLoginStatus = () => {
+export const setLogOut = () => {
 	const navigate = useNavigate()
 
 	const { mutate, isPending } = useMutation({
@@ -96,7 +88,7 @@ const getLoginStatus = () => {
 	return { mutate, isPending } as { mutate: () => void, isPending: boolean }
 }
 
-const collabApprover = () => {
+export const getCollabApprover = () => {
 	const { mutate, isPending } = useMutation({
 		mutationFn: (key: string) => fetch(`${window.location.origin}/api/collabs/${key}/approve`, {
 			method: 'POST',
@@ -116,15 +108,14 @@ const collabApprover = () => {
 		onError: (err) => { },
 	})
 
-	return { mutate, isPending } as { mutate: () => void, isPending: boolean }
+	return { mutate, isPending } as { mutate: (key: string) => void, isPending: boolean }
 }
 
-const productEditor = ({ id, setEditProductState }: { id: string, setEditProductState: React.Dispatch<React.SetStateAction<ProductType>> }) => {
+export const getProductEditor = ({ setEditProductState, setError }: { setEditProductState: React.Dispatch<React.SetStateAction<ProductType>>, setError: any }) => {
 	const setToastRender = useSetRecoilState(hideToastState)
 
-
-	const { mutate, isPending } = useMutation({
-		mutationFn: (payload: ProductType) => fetch(`${window.location.origin}/api/products/${id}`, {
+	const { mutate: productSet, isPending: productIsSetting } = useMutation({
+		mutationFn: ({ payload, id }: { payload: ProductType, id: string }) => fetch(`${window.location.origin}/api/products/${id}`, {
 			method: 'PATCH',
 			credentials: 'include',
 			body: JSON.stringify(payload),
@@ -136,7 +127,7 @@ const productEditor = ({ id, setEditProductState }: { id: string, setEditProduct
 			}
 			return res.json()
 		}),
-		onSuccess: (data, payload) => {
+		onSuccess: (data, { payload, id }) => {
 			setEditProductState(prev => {
 				return { ...prev, ...data.data.attributes! }
 			})
@@ -156,8 +147,8 @@ const productEditor = ({ id, setEditProductState }: { id: string, setEditProduct
 		}
 	})
 
-	const { mutate: collabChecker, isPending: productIsPending } = useMutation({
-		mutationFn: (payload: ProductType) => fetch(`${window.location.origin}/api/collabs/validate_user`, {
+	const { mutate, isPending } = useMutation({
+		mutationFn: ({ payload, id }: { payload: ProductType, id: string }) => fetch(`${window.location.origin}/api/collabs/validate_user`, {
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({ collabs: [...payload.collabs!].map(e => e.email) }),
@@ -169,9 +160,9 @@ const productEditor = ({ id, setEditProductState }: { id: string, setEditProduct
 			}
 			return res.json()
 		}),
-		onSuccess: (data, payload) => {
+		onSuccess: (data, { payload, id }) => {
 			if (data.valid) {
-				mutate({ ...payload })
+				productSet({ payload: { ...payload }, id })
 			} else {
 				(data.data || []).map((e: string, index: number) => {
 					e &&
@@ -185,11 +176,10 @@ const productEditor = ({ id, setEditProductState }: { id: string, setEditProduct
 		onError: (error) => { }
 	})
 
-	return { collabChecker, productIsPending } as { collabChecker: () => void, productIsPending: boolean }
+	return { mutate, isPending } as { mutate: ({ payload, id }: { payload: ProductType, id: string }) => void, isPending: boolean }
 }
 
-const productLiveToggle = () => {
-	const setModalActive = useSetRecoilState(modalBaseActive)
+export const getProductLiveToggle = () => {
 	const setToastRender = useSetRecoilState(hideToastState)
 
 	const { mutate, isPending } = useMutation({
@@ -206,11 +196,6 @@ const productLiveToggle = () => {
 			return res.json()
 		}),
 		onSuccess: () => {
-			setModalActive({
-				active: false,
-				type: ""
-			})
-			return queryClient.invalidateQueries({ queryKey: ['allProducts'] })
 		},
 		onError: (err) => {
 			setToastRender({
@@ -220,11 +205,13 @@ const productLiveToggle = () => {
 		}
 	})
 
-	return { mutate, isPending } as { mutate: () => void, isPending: boolean }
+	return { mutate, isPending } as { mutate: (payload: { key: string, live: boolean }) => void, isPending: boolean }
 }
 
-const setLoginStatus = ({ setCustomError }: { setCustomError: React.Dispatch<React.SetStateAction<string>> }) => {
+export const setLoginStatus = ({ setCustomError }: { setCustomError: React.Dispatch<React.SetStateAction<string>> }) => {
 	const navigate = useNavigate()
+
+	type signInSchemaType = z.infer<typeof signInSchema>
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: (payload: signInSchemaType) => fetch(`${window.location.origin}/api/sessions`, {
@@ -247,12 +234,14 @@ const setLoginStatus = ({ setCustomError }: { setCustomError: React.Dispatch<Rea
 			setCustomError(err.message)
 		}
 	})
-
+	return { mutate, isPending } as { mutate: (payload: signInSchemaType) => void, isPending: boolean }
 
 }
 
-const setSignUp = ({ setCustomError }: { setCustomError: React.Dispatch<React.SetStateAction<string>> }) => {
+export const setSignUp = ({ setCustomError }: { setCustomError: React.Dispatch<React.SetStateAction<string>> }) => {
 	const navigate = useNavigate()
+
+	type signUpSchemaType = z.infer<typeof signUpSchema>
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: (payload: signUpSchemaType) => fetch(`${window.location.origin}/api/registrations`, {
@@ -274,4 +263,6 @@ const setSignUp = ({ setCustomError }: { setCustomError: React.Dispatch<React.Se
 			setCustomError(err.message)
 		},
 	})
+
+	return { mutate, isPending } as { mutate: (payload: signUpSchemaType) => void, isPending: boolean }
 }

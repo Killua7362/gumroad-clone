@@ -9,12 +9,12 @@ import { z } from 'zod'
 import { useFieldArray, useForm, useFormState, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EditProductSchema } from "@/schema/edit_product_schema";
-import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/RootPage";
 import Button from "@/ui/components/button";
 import Select, { OptionProps } from 'react-select'
 import { cx, css } from '@emotion/css'
 import { productTypeOptions } from "@/schema/edit_product_schema";
+import { getProductEditor } from "@/react-query/mutations";
 
 const tagsToString = (tags: typeof productTypeOptions) => {
 	return (tags || []).map(ele => ele.label).join(',')
@@ -75,72 +75,12 @@ const ProductEditHomePage = ({ editProductState, setEditProductState }: { editPr
 		})
 	}, [allFormStates])
 
-	const { mutateAsync: editProductSetter, isSuccess: editSuccessfull } = useMutation({
-		mutationFn: (payload: ProductType) => fetch(`${window.location.origin}/api/products/${params.id!}`, {
-			method: 'PATCH',
-			credentials: 'include',
-			body: JSON.stringify(payload),
-			headers: { 'Content-type': 'application/json' },
-		}).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json()
-		}),
-		onSuccess: (data, payload) => {
-			setEditProductState(prev => {
-				return { ...prev, ...data.data.attributes! }
-			})
-
-			setToastRender({
-				active: false,
-				message: 'Product updated successfully'
-			})
-			queryClient.invalidateQueries({ queryKey: ['allProducts', params.id!], exact: true })
-			return queryClient.invalidateQueries({ queryKey: ['allProducts'], exact: true })
-		},
-		onError: (err) => {
-			setToastRender({
-				active: false,
-				message: err.message
-			})
-		}
-	})
-
-	const { mutateAsync: collabChecker, isSuccess: collabSuccess, isPending: productIsLoading } = useMutation({
-		mutationFn: (payload: ProductType) => fetch(`${window.location.origin}/api/collabs/validate_user`, {
-			method: 'POST',
-			credentials: 'include',
-			body: JSON.stringify({ collabs: [...payload.collabs!].map(e => e.email) }),
-			headers: { 'Content-type': 'application/json' },
-		}).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json()
-		}),
-		onSuccess: (data, payload) => {
-			if (data.valid) {
-				editProductSetter({ ...payload })
-			} else {
-				(data.data || []).map((e: string, index: number) => {
-					e &&
-						setError(`collabs.${index}.email`, {
-							type: `collabs.${index}.email`,
-							message: e
-						})
-				})
-			}
-		},
-		onError: (error) => { }
-	})
+	const { mutate: collabChecker, isPending: productIsLoading } = getProductEditor({ setEditProductState, setError })
 
 	return (
 		<Fragment>
 			<form className="flex flex-col gap-y-4" id="edit_product_form" onSubmit={handleSubmit(() => {
-				/* collabChecker({ ...editProductState, ...data }) */
+				// collabChecker({payload: { ...editProductState, ...data },id:params.id! })
 			})}
 			>
 				<div className="flex flex-col gap-y-2">

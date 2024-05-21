@@ -7,9 +7,9 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router"
 import { useSearchParams } from "react-router-dom"
 import Button from "@/ui/components/button"
-import { useMutation } from "@tanstack/react-query"
 import { allProductsFetcher, collabsProductFetcher, loginStatusFetcher } from "@/react-query/query"
 import { queryClient } from "@/app/RootPage"
+import { getCollabApprover } from "@/react-query/mutations"
 
 const CollaboratorsPage = () => {
 
@@ -19,24 +19,7 @@ const CollaboratorsPage = () => {
 
 	const { data: collabProducts, isSuccess: collabIsSuccess, isPending: collabProductsIsLoading } = collabsProductFetcher()
 
-	const { mutate: collabProductSetter } = useMutation({
-		mutationFn: (key: string) => fetch(`${window.location.origin}/api/collabs/${key}/approve`, {
-			method: 'POST',
-			credentials: 'include',
-			body: JSON.stringify({}),
-			headers: { 'Content-type': 'application/json' },
-		}).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json()
-		}),
-		onSuccess: () => {
-			return queryClient.invalidateQueries({ queryKey: ['collabProducts'] })
-		},
-		onError: (err) => { },
-	})
+	const { mutate: collabProductSetter } = getCollabApprover()
 
 	const { data: allProducts, isSuccess: productIsSuccess, isPending: productsIsLoading } = allProductsFetcher()
 

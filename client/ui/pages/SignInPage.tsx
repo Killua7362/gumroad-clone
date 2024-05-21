@@ -4,19 +4,14 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSetRecoilState } from "recoil"
 import { useEffect, useState } from "react"
-import { useMutation } from "@tanstack/react-query"
 import { queryClient } from "@/app/RootPage"
 import Button from "@/ui/components/button"
+import { signInSchema } from "@/schema/auth_schema"
+import { setLoginStatus } from "@/react-query/mutations"
 
 const SignInPage = () => {
 	const navigate = useNavigate()
-	const [customError, setCustomError] = useState("")
-
-	const signInSchema = z.object({
-		email: z.coerce.string().email().min(5),
-		password: z.string().min(5).max(12),
-		remember: z.boolean()
-	})
+	const [customError, setCustomError] = useState<string>("")
 
 	type signInSchemaType = z.infer<typeof signInSchema>
 
@@ -27,27 +22,7 @@ const SignInPage = () => {
 		formState: { errors }
 	} = useForm<signInSchemaType>({ resolver: zodResolver(signInSchema) })
 
-	const { mutate: loginStatusSetter, isPending: isLoginSetting } = useMutation({
-		mutationFn: (payload: signInSchemaType) => fetch(`${window.location.origin}/api/sessions`, {
-			method: 'POST',
-			credentials: 'include',
-			body: JSON.stringify(payload),
-			headers: { 'Content-type': 'application/json' },
-		}).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json()
-		}),
-		onSuccess: () => {
-			navigate('/')
-			return queryClient.clear()
-		},
-		onError: (err) => {
-			setCustomError(err.message)
-		}
-	})
+	const { mutate: loginStatusSetter, isPending: isLoginSetting } = setLoginStatus({ setCustomError })
 
 	return (
 		<div className="w-full h-full flex items-center justify-center text-xl">

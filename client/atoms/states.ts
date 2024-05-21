@@ -9,23 +9,6 @@ export const productsCardContextMenu = atom({
 	} as ProductsCardContextMenu
 })
 
-export const productsEditContentContextMenu = atom({
-	key: 'productsEditContentContextMenu',
-	default: {
-		active: false,
-		pageId: '0',
-		points: [0, 0]
-	}
-})
-
-export const modalBaseActive = atom({
-	key: 'modalBaseActive',
-	default: {
-		active: false,
-		type: ""
-	}
-})
-
 export const ContentPage = atom({
 	key: 'ContentPage',
 	default: {}

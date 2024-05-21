@@ -4,23 +4,22 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { hideToastState, modalBaseActive, productsCardContextMenu } from "@/atoms/states";
+import { hideToastState, productsCardContextMenu } from "@/atoms/states";
 import { IoMdSettings } from "react-icons/io";
 import { useNavigate } from "react-router";
 import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { EditProductSchema } from "@/schema/edit_product_schema";
 import Button from "@/ui/components/button";
-import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/RootPage";
 import { z } from "zod";
 import { allProductsFetcher } from "@/react-query/query"
 import debounce from 'lodash.debounce'
 import { useSearchParams } from "react-router-dom";
+import { getProductLiveToggle } from "@/react-query/mutations";
 
 const ProductsHomePage = () => {
 	const [contextMenuConfig, setContextMenuConfig] = useRecoilState(productsCardContextMenu)
-	const setModalActive = useSetRecoilState(modalBaseActive)
 	const setToastRender = useSetRecoilState(hideToastState)
 
 	const navigate = useNavigate()
@@ -77,33 +76,7 @@ const ProductsHomePage = () => {
 		})
 	}
 
-	const { mutateAsync: liveSetter } = useMutation({
-		mutationFn: (payload: { key: string, live: boolean }) => fetch(`${window.location.origin}/api/products/${payload.key}`, {
-			method: 'PATCH',
-			credentials: 'include',
-			body: JSON.stringify({ live: payload.live }),
-			headers: { 'Content-type': 'application/json' },
-		}).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json()
-		}),
-		onSuccess: () => {
-			setModalActive({
-				active: false,
-				type: ""
-			})
-			return queryClient.invalidateQueries({ queryKey: ['allProducts'] })
-		},
-		onError: (err) => {
-			setToastRender({
-				active: false,
-				message: err.message
-			})
-		}
-	})
+	const { mutate: liveSetter } = getProductLiveToggle()
 
 	return !productsIsLoading && (
 		<div className="w-full h-full flex flex-col gap-y-4">
@@ -112,10 +85,6 @@ const ProductsHomePage = () => {
 					extraClasses={['rounded-xl']}
 					buttonName="New Product"
 					onClickHandler={() => {
-						setModalActive({
-							active: true,
-							type: "new_product"
-						})
 					}} />
 				<Button
 					extraClasses={['rounded-xl']}
@@ -315,10 +284,6 @@ const ProductsHomePage = () => {
 														active: false,
 														activeIdx: i,
 														id: key
-													})
-													setModalActive({
-														active: true,
-														type: 'delete_product'
 													})
 												}}
 											>Delete</div>

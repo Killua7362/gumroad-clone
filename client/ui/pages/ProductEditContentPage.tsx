@@ -216,7 +216,7 @@ const ProductEditContentPage = ({ editProductState, setEditProductState }: { edi
 													</div>
 													{
 														pages.length > 1 &&
-														<Modal.Root key={i}>
+														<Modal.Root>
 															<Modal.Base>
 																<div className="bg-background z-50 border-white/30 rounded-xl min-w-[15rem] border-[0.1px] p-6 text-lg flex flex-col gap-y-6 items-center">
 																	<div className="text-xl">

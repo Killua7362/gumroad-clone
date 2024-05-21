@@ -1,4 +1,3 @@
-import { productsEditContentContextMenu } from "@/atoms/states"
 import { useParams } from "react-router"
 import { Link } from "react-router-dom"
 import { useRecoilState } from "recoil"
@@ -9,16 +8,8 @@ const ProductEditPageLayout = ({ children, editProductState, setEditProductState
 
 	const params = useParams()
 
-	const [contextMenu, setContextMenu] = useRecoilState<productsEditContentContextMenu>(productsEditContentContextMenu)
 	return (
-		<div className="h-full w-full mb-14" onClick={() => {
-			setContextMenu(prev => {
-				return {
-					...prev,
-					active: false,
-				}
-			})
-		}}>
+		<div className="h-full w-full mb-14">
 			<div className="h-full w-full">
 				<div className="flex flex-col text-white/90 pb-5 pt-3 sm:pb-6 sm:pt-6 mb-5 gap-y-7">
 					<div className="text-2xl sm:text-3xl md:text-4xl uppercase tracking-wide">

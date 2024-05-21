@@ -2,14 +2,10 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Fragment, useState } from "react"
 import { Link, useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { modalBaseActive } from "@/atoms/states";
 import Button from "@/ui/components/button";
 
 const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 	const params = useParams()
-
-	const [modalActive, setModalActive] = useRecoilState(modalBaseActive)
-
 	return (
 		<div className="h-full w-full mb-14">
 			<div className="h-full px-3 sm:mx-10 flex flex-col">

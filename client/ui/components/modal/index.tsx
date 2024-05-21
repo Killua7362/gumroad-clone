@@ -1,4 +1,3 @@
-import { modalBaseActive } from "@/atoms/states"
 import { useRecoilState } from "recoil"
 import NewProductModal from "@/ui/components/modal/NewProduct"
 import { AnimatePresence, motion } from 'framer-motion'

@@ -9,12 +9,18 @@ import { queryClient } from "@/app/RootPage"
 import { loginStatusFetcher } from "@/react-query/query"
 import { motion } from 'framer-motion'
 
-const BaseLayout = ({ children }: { children: React.ReactNode }) => {
-	const location = useLocation()
-	const [sidebarActive, setSideBarActive] = useState(false)
+const getSideBarProps = () => {
 	const [sideBarOpen, setSideBarOpen] = useState(false)
 	const [windowWidth, setWindowWidth] = useState<number>(0);
 
+	return { sideBarOpen, windowWidth, setSideBarOpen, setWindowWidth } as SideBarProps
+}
+
+const BaseLayout = ({ children }: { children: React.ReactNode }) => {
+	const location = useLocation()
+	const [sidebarActive, setSideBarActive] = useState(false)
+
+	const sideBarProps: SideBarProps = getSideBarProps()
 
 	const siderbarActivePaths = new Set(["profile", "notfound", "signin", "signup"])
 	const authPaths = new Set(['signin', 'signup', 'profile'])
@@ -43,14 +49,14 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 			{
 				sidebarActive
 				&&
-				<SideBar isOpen={sideBarOpen} setIsOpen={setSideBarOpen} windowWidth={windowWidth} setWindowWidth={setWindowWidth} />
+				<SideBar {...sideBarProps} />
 			}
 			<motion.div
 				initial={{
 					left: 0,
 				}}
 				animate={{
-					left: windowWidth > 640 ? (sideBarOpen ? '18.5rem' : '3.8rem') : 0,
+					left: sideBarProps.windowWidth > 640 ? (sideBarProps.sideBarOpen ? '18.5rem' : '3.8rem') : 0,
 					transition: {
 						duration: 0.2
 					}
