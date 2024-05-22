@@ -3,7 +3,7 @@ import '@/ui/styles/ProductEditContentPage'
 import { Fragment } from "react/jsx-runtime"
 import { CiStar } from "react-icons/ci";
 import { FaStar } from "react-icons/fa";
-import { RefObject, createRef, useEffect, useRef, useState } from "react";
+import { RefObject, createRef, useContext, useEffect, useRef, useState } from "react";
 
 import { PlaceholderExtension } from 'remirror/extensions';
 import { EditorComponent, Remirror, Toolbar, useRemirror } from '@remirror/react';
@@ -17,6 +17,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Button from '@/ui/components/button';
 import ProductEditContentDeleteModal from '@/ui/components/modal/ProductEditContentDeleteModal';
+import { productEditContext } from './ProductEditPage';
+import { useFieldArray } from 'react-hook-form';
 
 const markDownStyle = css`
 	.remirror-theme{
@@ -87,8 +89,15 @@ const markDownStyle = css`
 		}
 		`
 
-const ProductEditContentPage = ({ productState }: { productState: productEditPageProps }) => {
-	const { editProductState, setEditProductState } = productState
+const ProductEditContentPage = () => {
+	const localProductEditContext = useContext(productEditContext)
+	const { editProductState, setEditProductState, control } = localProductEditContext!
+
+	const { append, remove, fields } = useFieldArray({
+		name: 'contents',
+		control
+	})
+
 	const pages = editProductState.contents || []
 
 	const [reviewScore, setReviewScore] = useState(1)
@@ -143,9 +152,9 @@ const ProductEditContentPage = ({ productState }: { productState: productEditPag
 								}}
 								className='flex flex-col gap-2'>
 								{
-									pages.map((e, i) => {
+									fields.map((e, i) => {
 										return e && (
-											<IonItem>
+											<IonItem id={e.id}>
 												<IonRow className={`justify-between flex-nowrap items-center px-2 py-0 overflow-none ${Number(searchParams.get('page')) === i + 1 && "bg-accent/80 text-white"} `}
 													onClick={() => {
 														if (inputRefs[i].current?.readOnly) {
@@ -223,9 +232,7 @@ const ProductEditContentPage = ({ productState }: { productState: productEditPag
 						</IonList>
 					</div>
 					<Button buttonName='Add page' extraClasses={[`!w-full`]} onClickHandler={() => {
-						setEditProductState(prev => {
-							return { ...prev, contents: [...pages, { name: '', content: '' }] }
-						})
+						append({ name: '', content: '' })
 					}} />
 				</div>
 				<div className="flex flex-col w-fit md:w-full border-white/30 border-[0.1px] h-fit rounded-md p-5 justify-center items-center gap-y-3">

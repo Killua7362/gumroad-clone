@@ -6,10 +6,15 @@ export const productTypeOptions = [
 	{ value: 'Programming', label: 'programming' },
 ]
 
-export const CollabSchema = z.object({
+const CollabSchema = z.object({
 	email: z.string().email(),
 	share: z.coerce.number().min(0).max(100),
 	approved: z.boolean().optional().default(false)
+})
+
+const ContentSchema = z.object({
+	name: z.string(),
+	content: z.string()
 })
 
 export const EditProductSchema = z.object({
@@ -32,6 +37,7 @@ export const EditProductSchema = z.object({
 			})
 		}
 	}),
+	contents: z.array(ContentSchema),
 	tags: z.string().superRefine((data, ctx) => {
 		if (!data) {
 			ctx.addIssue({

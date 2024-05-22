@@ -84,3 +84,18 @@ interface PageSchema {
 	content: string;
 }
 
+interface EditPageFormProps<T extends import('react-hook-form').FieldValues> {
+	handleSubmit: import('react-hook-form').UseFormHandleSubmit<T>;
+	errors: import('react-hook-form').FieldErrors<T>;
+	register: import('react-hook-form').UseFormRegister<T>;
+	setValue: import('react-hook-form').UseFormSetValue<T>;
+	reset: import('react-hook-form').UseFormReset<T>;
+	setError: import('react-hook-form').UseFormSetError<T>;
+	watch: import('react-hook-form').UseFormWatch<T>;
+	control: import('react-hook-form').Control<T>; 
+	allFormStates: T;
+	editProductState: ProductType;
+	setEditProductState: React.Dispatch<React.SetStateAction<ProductType>>;
+}
+
+interface PartialEditPageFormProps<T extends import('react-hook-form').FieldValues> extends Partial<EditPageFormProps<T>> { }

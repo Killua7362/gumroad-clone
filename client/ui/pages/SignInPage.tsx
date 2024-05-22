@@ -6,7 +6,7 @@ import { useSetRecoilState } from "recoil"
 import { useEffect, useState } from "react"
 import { queryClient } from "@/app/RootPage"
 import Button from "@/ui/components/button"
-import { signInSchema } from "@/schema/auth_schema"
+import { signInSchema } from "@/forms/schema/auth_schema"
 import { setLoginStatus } from "@/react-query/mutations"
 
 const SignInPage = () => {

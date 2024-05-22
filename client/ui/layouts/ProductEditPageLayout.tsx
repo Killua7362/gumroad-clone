@@ -1,13 +1,23 @@
 import { useParams } from "react-router"
 import { Link } from "react-router-dom"
-import { useRecoilState } from "recoil"
+import { useRecoilState, useSetRecoilState } from "recoil"
 import Button from "@/ui/components/button"
+import { EditProductSchema } from "@/forms/schema/edit_product_schema"
+import { z } from "zod"
+import { hideToastState } from "@/atoms/states"
+import { queryClient } from "@/app/RootPage"
+import { useContext } from "react"
+import { productEditContext } from "../pages/ProductEditPage"
+import { getProductEditor } from "@/react-query/mutations"
 
+const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
+	const localProductEditContext = useContext(productEditContext)
+	const { reset, editProductState, setEditProductState, setError, handleSubmit } = localProductEditContext!
 
-const ProductEditPageLayout = ({ children, productState }: { children: React.ReactNode, productState: productEditPageProps }) => {
-	const { editProductState, setEditProductState } = productState
-
+	const setToastRender = useSetRecoilState(hideToastState)
 	const params = useParams()
+
+	const { mutate: collabChecker, isPending: productIsLoading } = getProductEditor({ setEditProductState, setError })
 
 	return (
 		<div className="h-full w-full mb-14">
@@ -26,12 +36,41 @@ const ProductEditPageLayout = ({ children, productState }: { children: React.Rea
 					</div>
 				</div>
 				<div className="flex gap-x-4">
-					<Button type='button' buttonName="Revert" extraClasses={['!text-lg !rounded-xl']} />
-					<Button type='submit' buttonName="Save" extraClasses={['!text-lg !rounded-xl']} form={'edit_product_form'} />
+					<Button type='button' buttonName="Revert" extraClasses={['!text-lg !rounded-xl']} onClickHandler={() => {
+						setEditProductState({ ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType })
+						reset()
+					}} />
+					<Button type='submit' buttonName="Save" isLoading={productIsLoading} extraClasses={['!text-lg !rounded-xl']} form={'edit_product_form'} onClickHandler={async () => {
+						// collabChecker({payload: { ...editProductState, ...data },id:params.id! })
+						// console.log(editProductState.contents)
+						if (params.page === 'content') {
+
+							try {
+								EditProductSchema.parse({
+									title: editProductState.title,
+									price: editProductState.price,
+									summary: editProductState.summary,
+									description: editProductState.description,
+									collabs: editProductState.collabs || [],
+									tags: editProductState.tags,
+									contents: editProductState.contents || []
+								})
+							} catch (e) {
+								if (e instanceof z.ZodError) {
+									setToastRender({
+										active: false,
+										message: 'Some fields are empty move to main edit page to fix it'
+									})
+								}
+							}
+						}
+					}} />
 				</div>
-				<div className="w-full mt-4 text-xl flex flex-col md:flex-row gap-4 relative left-0">
+				<form className="w-full mt-4 text-xl flex flex-col md:flex-row gap-4 relative left-0" id="edit_product_form" onSubmit={handleSubmit((data) => {
+
+				})}>
 					{children}
-				</div>
+				</form>
 			</div>
 		</div>
 	)

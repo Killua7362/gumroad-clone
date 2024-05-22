@@ -1,20 +1,24 @@
+// @ts-ignore: Object is possibly 'null'.
+
 import { hideToastState } from "@/atoms/states";
 import ProductEditPageLayout from "@/ui/layouts/ProductEditPageLayout"
 import MDEditor from '@uiw/react-md-editor';
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { IoTrashBin } from "react-icons/io5";
 import { z } from 'zod'
 import { useFieldArray, useForm, useFormState, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { EditProductSchema } from "@/schema/edit_product_schema";
+import { EditProductSchema } from "@/forms/schema/edit_product_schema";
 import { queryClient } from "@/app/RootPage";
 import Button from "@/ui/components/button";
 import Select, { OptionProps } from 'react-select'
 import { cx, css } from '@emotion/css'
-import { productTypeOptions } from "@/schema/edit_product_schema";
+import { productTypeOptions } from "@/forms/schema/edit_product_schema";
 import { getProductEditor } from "@/react-query/mutations";
+import { getEditProductFormProps } from "@/forms";
+import { productEditContext } from "./ProductEditPage";
 
 const tagsToString = (tags: typeof productTypeOptions) => {
 	return (tags || []).map(ele => ele.label).join(',')
@@ -24,68 +28,29 @@ const stringToTags = (typeString: string) => {
 	return (typeString || "").trim().split(',')
 }
 
-const ProductEditHomePage = ({ productState }: { productState: productEditPageProps }) => {
-	const { editProductState, setEditProductState } = productState
+const ProductEditHomePage = () => {
+	const localProductEditContext = useContext(productEditContext)
+	const { allFormStates, handleSubmit, errors, register, setValue, watch, control, reset, setError, editProductState, setEditProductState } = localProductEditContext!
 
-	const [description, setDescription] = useState<string>(editProductState.description)
-	const [selectTypes, setSelectTypes] = useState<typeof productTypeOptions>(() => {
-		let tempSelectOptions: string[] = stringToTags(editProductState.tags)
-		return productTypeOptions.filter(data => tempSelectOptions.includes(data.label))
-	})
-
-	const [thumbnailImage, setThumbnailImage] = useState<File>()
-	const [coverImage, setCoverImage] = useState<File>()
 	const setToastRender = useSetRecoilState(hideToastState)
 
 	const navigate = useNavigate()
 	const params = useParams()
-
-	type EditProductSchemaType = z.infer<typeof EditProductSchema>
-
-	const {
-		register,
-		handleSubmit,
-		setError,
-		control,
-		reset,
-		setValue,
-		formState: { errors }
-	} = useForm<EditProductSchemaType>({
-		resolver: zodResolver(EditProductSchema), defaultValues: {
-			title: editProductState.title,
-			description: editProductState.description,
-			summary: editProductState.summary,
-			price: editProductState.price,
-			collabs: editProductState.collabs,
-			tags: editProductState.tags
-		},
-		shouldUnregister: false
-	})
 
 	const { append, remove, fields } = useFieldArray({
 		name: 'collabs',
 		control
 	})
 
-	const allFormStates = useWatch({
-		control
-	})
-
 	useEffect(() => {
 		setEditProductState(prev => {
-			return { ...prev, description: description!, ...allFormStates, collabs: allFormStates.collabs as IndividualCollab[], type: tagsToString(selectTypes) }
+			return { ...prev, ...allFormStates, collabs: allFormStates.collabs as IndividualCollab[] }
 		})
 	}, [allFormStates])
 
-	const { mutate: collabChecker, isPending: productIsLoading } = getProductEditor({ setEditProductState, setError })
-
 	return (
 		<Fragment>
-			<form className="flex flex-col gap-y-4" id="edit_product_form" onSubmit={handleSubmit((data) => {
-				console.log(data)
-				// collabChecker({payload: { ...editProductState, ...data },id:params.id! })
-			})}
-			>
+			<div className="flex flex-col gap-y-4">
 				<div className="flex flex-col gap-y-2">
 					<div>
 						Name
@@ -110,7 +75,7 @@ const ProductEditHomePage = ({ productState }: { productState: productEditPagePr
 							}),
 						}}
 						options={productTypeOptions}
-						defaultValue={[...selectTypes]}
+						value={[...productTypeOptions.filter(data => stringToTags(watch('tags')).includes(data.label))]}
 						placeholder="Proudct type..."
 						classNamePrefix="react-select"
 						className={cx(css`
@@ -128,7 +93,6 @@ const ProductEditHomePage = ({ productState }: { productState: productEditPagePr
 							}
 						`, `text-base !cursor-pointer`)}
 						onChange={(v) => {
-							setSelectTypes([...v])
 							setValue('tags', tagsToString([...v]))
 						}}
 					/>
@@ -148,35 +112,25 @@ const ProductEditHomePage = ({ productState }: { productState: productEditPagePr
 						Description
 					</div>
 					<MDEditor
-						value={description}
+						value={watch('description')}
 						onChange={(data) => {
 							setValue('description', data!)
-							setDescription(data as string)
 						}}
 						preview="edit"
 						className='w-full'
 					/>
-					{errors.description && description?.length! <= 10 && <legend className="text-sm text-red-500">{errors.description.message}</legend>}
+					{errors.description && editProductState.description?.length! <= 10 && <legend className="text-sm text-red-500">{errors.description.message}</legend>}
 				</div>
 				<div className="flex flex-col gap-y-2">
 					<div>
 						Thumbnail
 					</div>
 					<div className="border-white/30 border-dashed border-[0.1px] p-10 flex cursor-not-allowed items-center justify-center flex-col gap-y-4">
-						{
-							thumbnailImage ?
-								<img alt="thumbnailImage" width={200} height={200} src={URL.createObjectURL(thumbnailImage)} />
-								:
-								<div>
-									Too poor for cdn
-								</div>
-						}
-						<label htmlFor='thumbimage' className="p-2 hover:text-white/70 border-white/30 border-[0.1px] rounded-md overflow-none text-white/70">Upload...</label>
-						<input type="file" id='thumbimage' name='thumnail' accept="image/png, image/gif, image/jpeg" style={{ display: 'none' }} disabled onChange={(e) => {
-							if (e.target.files && e.target.files[0]) {
-								setThumbnailImage(e.target.files[0])
-							}
-						}} />
+						<div>
+							Too poor for cdn
+						</div>
+						<label htmlFor='thumbimage' className="p-2 cursor-pointer hover:text-white/70 border-white/30 border-[0.1px] text-white/70 rounded-md overflow-none">Upload...</label>
+						<input type="file" id='thumbimage' name='thumnail' accept="image/png, image/gif, image/jpeg" style={{ display: 'none' }} disabled />
 					</div>
 				</div>
 				<div className="flex flex-col gap-y-2">
@@ -184,20 +138,11 @@ const ProductEditHomePage = ({ productState }: { productState: productEditPagePr
 						Cover
 					</div>
 					<div className="border-white/30 border-dashed border-[0.1px] p-10 flex cursor-not-allowed items-center justify-center flex-col gap-y-4">
-						{
-							coverImage ?
-								<img alt="coverImage" width={200} height={200} src={URL.createObjectURL(coverImage)} />
-								:
-								<div>
-									Too poor for cdn
-								</div>
-						}
+						<div>
+							Too poor for cdn
+						</div>
 						<label htmlFor='coverImage' className="p-2 cursor-pointer hover:text-white/70 border-white/30 border-[0.1px] text-white/70 rounded-md overflow-none">Upload...</label>
-						<input type="file" id='coverImage' name='coverImage' accept="image/png, image/gif, image/jpeg" disabled style={{ display: 'none' }} onChange={(e) => {
-							if (e.target.files && e.target.files[0]) {
-								setCoverImage(e.target.files[0])
-							}
-						}} />
+						<input type="file" id='coverImage' name='coverImage' accept="image/png, image/gif, image/jpeg" disabled style={{ display: 'none' }} />
 					</div>
 				</div>
 				<div className="flex flex-col gap-y-3">
@@ -296,13 +241,9 @@ const ProductEditHomePage = ({ productState }: { productState: productEditPagePr
 					</div>
 				</div>
 				<div className="flex gap-x-4 w-full justify-end">
-					<Button buttonName="Revert" type='button' onClickHandler={() => {
-						setEditProductState({ ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType })
-						reset()
-					}} />
-					<Button buttonName="Save" type='submit' isLoading={productIsLoading} extraClasses={['!hidden']} />
+					<Button buttonName="Save" type='submit' extraClasses={['!hidden']} />
 				</div>
-			</form>
+			</div>
 			<div>
 				Testing
 			</div>

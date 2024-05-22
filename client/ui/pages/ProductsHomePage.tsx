@@ -9,7 +9,7 @@ import { IoMdSettings } from "react-icons/io";
 import { useNavigate } from "react-router";
 import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
-import { EditProductSchema } from "@/schema/edit_product_schema";
+import { EditProductSchema } from "@/forms/schema/edit_product_schema";
 import Button from "@/ui/components/button";
 import { queryClient } from "@/app/RootPage";
 import { z } from "zod";
@@ -17,7 +17,7 @@ import { allProductsFetcher } from "@/react-query/query"
 import debounce from 'lodash.debounce'
 import { useSearchParams } from "react-router-dom";
 import { getProductCreater, getProductDeleter, getProductLiveToggle } from "@/react-query/mutations";
-import { NewProductSchema } from "@/schema/new_product_schema";
+import { NewProductSchema } from "@/forms/schema/new_product_schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import NewProductModal from "@/ui/components/modal/NewProductModal";
 import DeleteProductModal from "../components/modal/DeleteProductModal";
@@ -250,6 +250,7 @@ const ProductsHomePage = () => {
 															summary: value.summary,
 															description: value.description,
 															collabs: value.collabs || [],
+															contents: value.contents || []
 														})
 														await liveSetter({ key: key, live: !value.live })
 													} catch (e) {

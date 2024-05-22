@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from "react"
 import Button from "@/ui/components/button"
-import { signUpSchema } from "@/schema/auth_schema"
+import { signUpSchema } from "@/forms/schema/auth_schema"
 import { setSignUp } from "@/react-query/mutations"
 
 const SignUpPage = () => {

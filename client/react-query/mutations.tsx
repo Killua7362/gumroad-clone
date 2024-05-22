@@ -5,9 +5,9 @@ import { useSetRecoilState } from "recoil"
 import { useNavigate } from "react-router"
 import React from "react"
 import { z } from 'zod'
-import { signInSchema, signUpSchema } from "@/schema/auth_schema"
+import { signInSchema, signUpSchema } from "@/forms/schema/auth_schema"
 import { UseFormSetError } from "react-hook-form"
-import { EditProductSchema } from "@/schema/edit_product_schema"
+import { EditProductSchema } from "@/forms/schema/edit_product_schema"
 
 type EditProductSchemaType = z.infer<typeof EditProductSchema>
 
