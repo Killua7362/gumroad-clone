@@ -4,8 +4,6 @@ import { useFieldArray, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
 
-type EditProductSchemaType = z.infer<typeof EditProductSchema>
-
 export const getEditProductFormProps = (editProductState: ProductType) => {
 	const {
 		register,

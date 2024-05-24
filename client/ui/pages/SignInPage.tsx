@@ -13,8 +13,6 @@ const SignInPage = () => {
 	const navigate = useNavigate()
 	const [customError, setCustomError] = useState<string>("")
 
-	type signInSchemaType = z.infer<typeof signInSchema>
-
 	const {
 		register,
 		handleSubmit,

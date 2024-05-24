@@ -11,7 +11,6 @@ const SignUpPage = () => {
 	const navigate = useNavigate()
 	const [customError, setCustomError] = useState('')
 
-	type signUpSchemaType = z.infer<typeof signUpSchema>
 
 	const { mutate: signUpSetter, isPending: isSignUpSetting } = setSignUp({ setCustomError: setCustomError })
 

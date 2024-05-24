@@ -9,8 +9,6 @@ import { signInSchema, signUpSchema } from "@/forms/schema/auth_schema"
 import { UseFormSetError } from "react-hook-form"
 import { EditProductSchema } from "@/forms/schema/edit_product_schema"
 
-type EditProductSchemaType = z.infer<typeof EditProductSchema>
-
 // adding id to all delete function and modal
 export const getProductDeleter = () => {
 
@@ -213,8 +211,6 @@ export const getProductLiveToggle = () => {
 export const setLoginStatus = ({ setCustomError }: { setCustomError: React.Dispatch<React.SetStateAction<string>> }) => {
 	const navigate = useNavigate()
 
-	type signInSchemaType = z.infer<typeof signInSchema>
-
 	const { mutate, isPending } = useMutation({
 		mutationFn: (payload: signInSchemaType) => fetch(`${window.location.origin}/api/sessions`, {
 			method: 'POST',
@@ -243,7 +239,6 @@ export const setLoginStatus = ({ setCustomError }: { setCustomError: React.Dispa
 export const setSignUp = ({ setCustomError }: { setCustomError: React.Dispatch<React.SetStateAction<string>> }) => {
 	const navigate = useNavigate()
 
-	type signUpSchemaType = z.infer<typeof signUpSchema>
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: (payload: signUpSchemaType) => fetch(`${window.location.origin}/api/registrations`, {

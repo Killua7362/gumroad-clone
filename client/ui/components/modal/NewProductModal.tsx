@@ -6,7 +6,6 @@ import { FieldErrors, FieldPath, FieldValues, UseFormRegister, useForm } from "r
 import { z } from 'zod'
 import Button from '@/ui/components/button';
 
-type NewProductSchemaType = z.infer<typeof NewProductSchema>
 
 const FormInput = ({ name, errors, register }: { name: FieldPath<NewProductSchemaType>, errors: FieldErrors<FieldValues>, register: UseFormRegister<NewProductSchemaType> }) => {
 	return (

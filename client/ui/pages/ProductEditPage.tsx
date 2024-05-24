@@ -7,9 +7,9 @@ import ProductEditContentPage from "@/ui/pages/ProductEditContentPage";
 import { queryClient } from "@/app/RootPage";
 import { singleProductFetcher } from "@/react-query/query"
 import { getEditProductFormProps } from "@/forms";
-import {z} from 'zod'
+import { z } from 'zod'
 import { EditProductSchema } from "@/forms/schema/edit_product_schema"
-import { EditProductSchemaType } from "@/types/zod";
+
 
 export const productEditContext = createContext<EditPageFormProps<EditProductSchemaType> | null>(null)
 
@@ -21,12 +21,12 @@ const ProductEditPage = () => {
 
 	const { data: currentProduct, isPending: productsIsLoading, isSuccess: productIsSuccess } = singleProductFetcher({ productId: params.id })
 
-	const productEditProps = getEditProductFormProps({...currentProduct})
+	const productEditProps = getEditProductFormProps({ ...currentProduct })
 
 	useEffect(() => {
 		if (!productsIsLoading) {
 			if (productIsSuccess) {
-				productEditProps.reset({...currentProduct})
+				productEditProps.reset({ ...currentProduct })
 				setRendered(true)
 			} else {
 				navigate('/notfound')
@@ -38,14 +38,14 @@ const ProductEditPage = () => {
 	return rendered && (
 		<productEditContext.Provider value={productEditProps}>
 			{
-			<ProductEditPageLayout>
-				{
-					params.page === 'home' ?
-						<ProductEditHomePage />
-						:
-						<ProductEditContentPage />
-				}
-			</ProductEditPageLayout>
+				<ProductEditPageLayout>
+					{
+						params.page === 'home' ?
+							<ProductEditHomePage />
+							:
+							<ProductEditContentPage />
+					}
+				</ProductEditPageLayout>
 			}
 		</productEditContext.Provider>
 	)
