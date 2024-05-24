@@ -14,7 +14,7 @@ import Button from "@/ui/components/button";
 import { queryClient } from "@/app/RootPage";
 import { z } from "zod";
 import { allProductsFetcher } from "@/react-query/query"
-import debounce from 'lodash.debounce'
+import _ from 'lodash'
 import { useSearchParams } from "react-router-dom";
 import { getProductCreater, getProductDeleter, getProductLiveToggle } from "@/react-query/mutations";
 import { NewProductSchema } from "@/forms/schema/new_product_schema";
@@ -35,10 +35,10 @@ const ProductsHomePage = () => {
 	const [searchBarActive, setSearchBarActive] = useState<boolean>(false)
 	const [searchParams, setSearchParams] = useSearchParams()
 
-	const debounceSearchInput = useCallback(debounce((value: string) => {
+	const debounceSearchInput = _.debounce((value: string) => {
 		searchParams.set('search_word', value)
 		setSearchParams(searchParams)
-	}, 300), [])
+	}, 300)
 
 	const [sortBarActive, setSortBarActive] = useState(false)
 
@@ -245,12 +245,7 @@ const ProductsHomePage = () => {
 												onClick={async () => {
 													try {
 														EditProductSchema.parse({
-															title: value.title,
-															price: value.price,
-															summary: value.summary,
-															description: value.description,
-															collabs: value.collabs || [],
-															contents: value.contents || []
+															...value
 														})
 														await liveSetter({ key: key, live: !value.live })
 													} catch (e) {

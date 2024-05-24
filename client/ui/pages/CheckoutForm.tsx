@@ -33,7 +33,7 @@ const CheckoutForm = () => {
 
 	return (
 		<div className="flex justify-center w-full h-full gap-x-0">
-			<div className="w-full xl:w-7/12 xl:h-[50rem] py-10 px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background flex flex-col justify-between gap-y-4">
+			<form className="w-full xl:w-7/12 xl:h-[50rem] py-10 px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background flex flex-col justify-between gap-y-4" id='checkout_form'>
 				<div className='flex flex-col gap-y-4'>
 					<div className='flex flex-col gap-y-4'>
 						<div className='text-xl'>
@@ -150,9 +150,9 @@ const CheckoutForm = () => {
 				</div>
 				<div className='flex gap-x-4 w-full justify-end'>
 					<Button buttonName='Revert' />
-					<Button buttonName='Save' />
+					<Button buttonName='Save' type='submit' form='checkout_form' />
 				</div>
-			</div>
+			</form>
 			<div className={`w-5/12 h-[50rem] overflow-x-auto overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white scrollbar-track-background hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}
 			>
 				<div className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">

@@ -1,6 +1,6 @@
 import '@remirror/styles/all.css';
 
-import React, { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import React, { FC, PropsWithChildren, useCallback, useContext, useEffect, useState } from 'react';
 import jsx from 'refractor/lang/jsx.js';
 import typescript from 'refractor/lang/typescript.js';
 import { ExtensionPriority } from 'remirror';
@@ -49,6 +49,7 @@ import { AllStyledComponent } from '@remirror/styles/emotion';
 import type { CreateEditorStateProps, RemirrorJSON } from 'remirror';
 import type { RemirrorProps, UseThemeProps } from '@remirror/react';
 import { useSearchParams } from 'react-router-dom';
+import { productEditContext } from '../pages/ProductEditPage';
 
 interface ReactEditorProps
 	extends Pick<CreateEditorStateProps, 'stringHandler'>,
@@ -59,7 +60,6 @@ interface ReactEditorProps
 
 export interface MarkdownEditorProps extends Partial<Omit<ReactEditorProps, 'stringHandler'>> {
 	pageContent: string;
-	setEditProductState: React.Dispatch<React.SetStateAction<ProductType>>;
 }
 
 /**
@@ -67,7 +67,6 @@ export interface MarkdownEditorProps extends Partial<Omit<ReactEditorProps, 'str
  */
 export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
 	pageContent,
-	setEditProductState,
 	placeholder,
 	children,
 	theme,
@@ -101,6 +100,9 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
 		],
 		[placeholder],
 	);
+
+	const localProductEditContext = useContext(productEditContext)
+	const { watch, setValue } = localProductEditContext!
 
 	const { manager, state, setState } = useRemirror({
 		extensions,
@@ -143,11 +145,7 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
 					<TableComponents />
 					{children}
 					<OnChangeJSON onChange={(data) => {
-						setEditProductState(prev => {
-							let temp = [...(prev.contents || [])]
-							temp[(searchParams.get('page') || 1) as number - 1].content = JSON.stringify(data);
-							return { ...prev, contents: temp }
-						})
+						setValue(`contents.${(searchParams.get('page') || 1) as number - 1}.content`,JSON.stringify(data))
 					}} />
 				</Remirror>
 			</ThemeProvider>

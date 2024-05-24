@@ -8,16 +8,17 @@ import { hideToastState } from "@/atoms/states"
 import { queryClient } from "@/app/RootPage"
 import { useContext } from "react"
 import { productEditContext } from "../pages/ProductEditPage"
-import { getProductEditor } from "@/react-query/mutations"
+import { getProductEditor } from "@/react-query/mutations";
+import _ from 'lodash';
 
 const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 	const localProductEditContext = useContext(productEditContext)
-	const { reset, editProductState, setEditProductState, setError, handleSubmit } = localProductEditContext!
+	const { reset, setError, handleSubmit, errors, trigger } = localProductEditContext!
 
 	const setToastRender = useSetRecoilState(hideToastState)
 	const params = useParams()
 
-	const { mutate: collabChecker, isPending: productIsLoading } = getProductEditor({ setEditProductState, setError })
+	const { mutate: collabChecker, isPending: productIsLoading } = getProductEditor({ setError })
 
 	return (
 		<div className="h-full w-full mb-14">
@@ -28,7 +29,7 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 					</div>
 					<div className="border-b-[1px] h-5 border-white/30 flex gap-x-4 w-full">
 						<Link to={`/products/edit/${params.id}/home`} className={`no-underline ${params.page && params.page === 'home' && 'cursor-default pointer-events-none'}`}>
-							<Button type='button' buttonName="Product" extraClasses={[`!text-base !rounded-2xl ${params.page && params.page === 'home' && '!border-white'}`]} />
+							<Button type='button' buttonName="Product" extraClasses={[`!text-base !rounded-2xl ${!_.isEmpty(errors) && '!border-red-400'} ${params.page && params.page === 'home' && _.isEmpty(errors) && '!border-white'}`]} />
 						</Link>
 						<Link to={`/products/edit/${params.id}/content?page=1`} className={`no-underline ${params.page && params.page === 'content' && 'cursor-default pointer-events-none'}`}>
 							<Button type='button' buttonName="Content" extraClasses={[`!text-base !rounded-2xl ${params.page && params.page === 'content' && '!border-white'}`]} />
@@ -37,37 +38,22 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 				</div>
 				<div className="flex gap-x-4">
 					<Button type='button' buttonName="Revert" extraClasses={['!text-lg !rounded-xl']} onClickHandler={() => {
-						setEditProductState({ ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType })
-						reset()
+						reset({ ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType })
 					}} />
-					<Button type='submit' buttonName="Save" isLoading={productIsLoading} extraClasses={['!text-lg !rounded-xl']} form={'edit_product_form'} onClickHandler={async () => {
-						// collabChecker({payload: { ...editProductState, ...data },id:params.id! })
-						// console.log(editProductState.contents)
-						if (params.page === 'content') {
-
-							try {
-								EditProductSchema.parse({
-									title: editProductState.title,
-									price: editProductState.price,
-									summary: editProductState.summary,
-									description: editProductState.description,
-									collabs: editProductState.collabs || [],
-									tags: editProductState.tags,
-									contents: editProductState.contents || []
+					<Button type='submit' buttonName="Save" isLoading={productIsLoading} extraClasses={['!text-lg !rounded-xl']} form={'edit_product_form'}
+						onClickHandler={async () => {
+							const result = await trigger()
+							if (!result) {
+								setToastRender({
+									active: false,
+									message: 'Some fields are empty move to main edit page to fix it'
 								})
-							} catch (e) {
-								if (e instanceof z.ZodError) {
-									setToastRender({
-										active: false,
-										message: 'Some fields are empty move to main edit page to fix it'
-									})
-								}
 							}
-						}
-					}} />
+						}}
+					/>
 				</div>
 				<form className="w-full mt-4 text-xl flex flex-col md:flex-row gap-4 relative left-0" id="edit_product_form" onSubmit={handleSubmit((data) => {
-
+					collabChecker({ payload: { ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType, ...data }, id: params.id! })
 				})}>
 					{children}
 				</form>

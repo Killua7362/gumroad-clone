@@ -19,8 +19,8 @@ class Product < ApplicationRecord
   def validate_collabs
     collabs.each do |collab|
       serializer = Collabs.new(collab)
-      unless serializer.valid?
-        errors.add(:collabs, 'Collab schema is bad')
+      unless serializer.errors.count
+        errors.add(:collabs, serializer.errors.messages)
         break
       end
     end
@@ -31,8 +31,8 @@ class Product < ApplicationRecord
 
     contents.each do |content|
       serializer = Contents.new(content)
-      unless serializer.valid?
-        errors.add(:contents, 'Content schema is bad')
+      unless serializer.errors.count
+        errors.add(:contents, serializer.errors.messages)
         break
       end
     end

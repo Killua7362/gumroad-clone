@@ -69,12 +69,19 @@ const ModalBase = ({ children, onClick }: { children: React.ReactNode, onClick?:
 	)
 }
 
-const ModalClose = ({ children }: { children: React.ReactNode }) => {
+const ModalClose = ({ children, onClickHandler }: { children: React.ReactNode, onClickHandler?: () => Promise<boolean> }) => {
 	const { active, setActive } = useContext(modalContext)
 	return <div
 		className="h-full"
-		onClick={(e) => {
-			setActive!(false)
+		onClick={async (e) => {
+			if (onClickHandler) {
+				const status = await onClickHandler()
+				if (status) {
+					setActive!(false)
+				}
+			} else {
+				setActive!(false)
+			}
 		}}>
 		{children}
 	</div>

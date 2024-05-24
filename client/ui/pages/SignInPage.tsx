@@ -26,9 +26,11 @@ const SignInPage = () => {
 
 	return (
 		<div className="w-full h-full flex items-center justify-center text-xl">
-			<form className="flex gap-x-4 border-white/30 border-[0.1px] flex-col lg:flex-row rounded-md p-6 w-10/12 sm:w-8/12 md:w-6/12 lg:w-8/12 xl:w-6/12 2xl:w-5/12 divide-y-[0.1px] lg:divide-y-0 lg:divide-x-[0.1px] divide-white/30" onSubmit={handleSubmit((data) => {
-				loginStatusSetter({ ...data })
-			})}>
+			<form
+				id='sign_in_form'
+				className="flex gap-x-4 border-white/30 border-[0.1px] flex-col lg:flex-row rounded-md p-6 w-10/12 sm:w-8/12 md:w-6/12 lg:w-8/12 xl:w-6/12 2xl:w-5/12 divide-y-[0.1px] lg:divide-y-0 lg:divide-x-[0.1px] divide-white/30" onSubmit={handleSubmit((data) => {
+					loginStatusSetter({ ...data })
+				})}>
 				<div className='flex flex-col gap-y-6 p-4 w-full'>
 					<div className="text-3xl text-center">
 						Sign In
@@ -65,7 +67,7 @@ const SignInPage = () => {
 							{customError}
 						</div>
 					}
-					<Button buttonName="Sign In" type="submit" extraClasses={[`!w-full !py-4`]} isLoading={isLoginSetting} />
+					<Button buttonName="Sign In" form="sign_in_form" type="submit" extraClasses={[`!w-full !py-4`]} isLoading={isLoginSetting} />
 
 				</div>
 				<div className="p-4 w-full flex flex-col justify-center gap-y-6 lg:pl-8">

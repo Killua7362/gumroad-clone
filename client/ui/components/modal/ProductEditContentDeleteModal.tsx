@@ -1,7 +1,8 @@
 import * as Modal from '@/ui/components/modal'
 import Button from '@/ui/components/button'
+import { UseFieldArrayRemove } from 'react-hook-form'
 
-const ProductEditContentDeleteModal = ({ i, setEditProductState }: { i: number, setEditProductState: React.Dispatch<React.SetStateAction<ProductType>> }) => {
+const ProductEditContentDeleteModal = ({ i, remove }: { i: number, remove: UseFieldArrayRemove }) => {
 	return (
 		<Modal.Root key={i}>
 			<Modal.Base>
@@ -19,9 +20,7 @@ const ProductEditContentDeleteModal = ({ i, setEditProductState }: { i: number, 
 						<Modal.Close>
 							<Button buttonName="Confirm"
 								type="button" onClickHandler={() => {
-									setEditProductState(prev => {
-										return { ...prev, contents: (prev.contents || []).filter((_, index) => index !== i) }
-									})
+									remove(i)
 								}}
 								extraClasses={['!border-red-500/70 !text-red-500 hover:text-red-500/70']} />
 						</Modal.Close>

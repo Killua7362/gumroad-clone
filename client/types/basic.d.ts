@@ -92,10 +92,8 @@ interface EditPageFormProps<T extends import('react-hook-form').FieldValues> {
 	reset: import('react-hook-form').UseFormReset<T>;
 	setError: import('react-hook-form').UseFormSetError<T>;
 	watch: import('react-hook-form').UseFormWatch<T>;
-	control: import('react-hook-form').Control<T>; 
-	allFormStates: T;
-	editProductState: ProductType;
-	setEditProductState: React.Dispatch<React.SetStateAction<ProductType>>;
+	control: import('react-hook-form').Control<T>;
+	trigger: import('react-hook-form').UseFormTrigger<T>; 
 }
 
 interface PartialEditPageFormProps<T extends import('react-hook-form').FieldValues> extends Partial<EditPageFormProps<T>> { }

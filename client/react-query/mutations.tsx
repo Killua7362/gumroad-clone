@@ -115,7 +115,7 @@ export const getCollabApprover = () => {
 	return { mutate, isPending } as { mutate: (key: string) => void, isPending: boolean }
 }
 
-export const getProductEditor = ({ setEditProductState, setError }: { setEditProductState: React.Dispatch<React.SetStateAction<ProductType>>, setError: UseFormSetError<EditProductSchemaType> }) => {
+export const getProductEditor = ({ setError }: { setError: UseFormSetError<EditProductSchemaType> }) => {
 	const setToastRender = useSetRecoilState(hideToastState)
 
 	const { mutate: productSet, isPending: productIsSetting } = useMutation({
@@ -132,10 +132,6 @@ export const getProductEditor = ({ setEditProductState, setError }: { setEditPro
 			return res.json()
 		}),
 		onSuccess: (data, { payload, id }) => {
-			setEditProductState(prev => {
-				return { ...prev, ...data.data.attributes! }
-			})
-
 			setToastRender({
 				active: false,
 				message: 'Product updated successfully'
@@ -199,7 +195,9 @@ export const getProductLiveToggle = () => {
 			}
 			return res.json()
 		}),
-		onSuccess: () => {
+		onSuccess: (data, payload) => {
+			queryClient.invalidateQueries({ queryKey: ['allProducts', payload.key!], exact: true })
+			return queryClient.invalidateQueries({ queryKey: ['allProducts'], exact: true })
 		},
 		onError: (err) => {
 			setToastRender({
@@ -258,7 +256,7 @@ export const setSignUp = ({ setCustomError }: { setCustomError: React.Dispatch<R
 				const errorMessage: string = await res.json().then(data => data.error)
 				return Promise.reject(new Error(errorMessage))
 			}
-			return res.json()
+			return {}
 		}),
 		onSuccess: () => {
 			navigate('/signin')

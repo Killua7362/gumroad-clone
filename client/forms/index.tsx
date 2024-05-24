@@ -6,9 +6,7 @@ import { useState } from "react"
 
 type EditProductSchemaType = z.infer<typeof EditProductSchema>
 
-export const getEditProductFormProps = () => {
-	const [editProductState, setEditProductState] = useState<ProductType>()
-
+export const getEditProductFormProps = (editProductState: ProductType) => {
 	const {
 		register,
 		handleSubmit,
@@ -17,6 +15,7 @@ export const getEditProductFormProps = () => {
 		reset,
 		setValue,
 		watch,
+		trigger,
 		formState: { errors }
 	} = useForm<EditProductSchemaType>({
 		resolver: zodResolver(EditProductSchema),
@@ -25,6 +24,7 @@ export const getEditProductFormProps = () => {
 			description: editProductState?.description,
 			summary: editProductState?.summary,
 			price: editProductState?.price,
+			collab_active: editProductState?.collab_active,
 			collabs: editProductState?.collabs,
 			tags: editProductState?.tags,
 			contents: editProductState?.contents
@@ -32,9 +32,5 @@ export const getEditProductFormProps = () => {
 		shouldUnregister: false
 	})
 
-	const allFormStates = useWatch({
-		control
-	})
-
-	return { handleSubmit, errors, register, setValue, reset, setError, watch, control, allFormStates, editProductState, setEditProductState } as EditPageFormProps<EditProductSchemaType>
+	return { handleSubmit, errors, register, setValue, reset, setError, watch, control, trigger } as EditPageFormProps<EditProductSchemaType>
 }

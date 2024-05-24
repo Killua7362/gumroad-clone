@@ -22,6 +22,8 @@ const NewProductModal = () => {
 	const {
 		register,
 		handleSubmit,
+		trigger,
+		reset,
 		formState: { errors }
 	} = useForm<NewProductSchemaType>({ resolver: zodResolver(NewProductSchema) })
 
@@ -46,6 +48,7 @@ const NewProductModal = () => {
 					}
 
 					productSetter(payload)
+					reset()
 				})}
 					onClick={(e) => { e.stopPropagation() }}
 				>
@@ -72,8 +75,16 @@ const NewProductModal = () => {
 								buttonName="Cancel"
 							/>
 						</Modal.Close>
-						<Modal.Close>
-							<Button buttonName="Save" type="submit" isLoading={productIsSetting} form="new_product_form" />
+						<Modal.Close onClickHandler={async () => {
+							const status = await trigger()
+							return status
+						}}>
+							<Button buttonName="Save" type="submit" isLoading={productIsSetting} form="new_product_form" onClickHandler={async () => {
+								const form_status = await trigger()
+								if (form_status) {
+
+								}
+							}} />
 						</Modal.Close>
 					</div>
 				</form>

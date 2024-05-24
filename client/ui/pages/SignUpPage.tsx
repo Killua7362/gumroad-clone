@@ -11,7 +11,6 @@ const SignUpPage = () => {
 	const navigate = useNavigate()
 	const [customError, setCustomError] = useState('')
 
-
 	type signUpSchemaType = z.infer<typeof signUpSchema>
 
 	const { mutate: signUpSetter, isPending: isSignUpSetting } = setSignUp({ setCustomError: setCustomError })
@@ -24,12 +23,14 @@ const SignUpPage = () => {
 
 	return (
 		<div className="w-full h-full flex items-center justify-center text-xl">
-			<form className="flex gap-x-4 border-white/30 border-[0.1px] flex-col lg:flex-row rounded-md p-6 w-11/12 sm:w-9/12 md:w-7/12 lg:w-9/12 xl:w-7/12 2xl:w-6/12 divide-y-[0.1px] lg:divide-y-0 lg:divide-x-[0.1px] divide-white/30"
-				onSubmit={handleSubmit((data) => {
-					signUpSetter({ ...data })
-				})}
-			>
-				<div className='flex flex-col gap-y-4 p-4 w-full'>
+			<div className="flex gap-x-4 border-white/30 border-[0.1px] flex-col lg:flex-row rounded-md p-6 w-11/12 sm:w-9/12 md:w-7/12 lg:w-9/12 xl:w-7/12 2xl:w-6/12 divide-y-[0.1px] lg:divide-y-0 lg:divide-x-[0.1px] divide-white/30">
+				<form
+					id='sign_up_form'
+					className='flex flex-col gap-y-4 p-4 w-full'
+					onSubmit={handleSubmit((data) => {
+						signUpSetter({ ...data })
+					})}
+				>
 					<div className="text-3xl text-center">
 						Sign Up
 					</div>
@@ -76,16 +77,16 @@ const SignUpPage = () => {
 								{customError}
 							</div>
 						}
-						<Button buttonName="Sign Up" type="submit" extraClasses={[`!w-full !py-4`]} isLoading={isSignUpSetting} />
+						<Button buttonName="Sign Up" type="submit" extraClasses={[`!w-full !py-4`]} isLoading={isSignUpSetting} form="sign_up_form" />
 					</div>
 
-				</div>
+				</form>
 				<div className="p-4 w-full flex flex-col justify-center gap-y-6 lg:pl-8">
 					<Button buttonName="Sign In" extraClasses={[`!w-full !py-4`]} onClickHandler={() => {
 						navigate('/signin')
 					}} />
 				</div>
-			</form>
+			</div>
 		</div>
 	)
 }

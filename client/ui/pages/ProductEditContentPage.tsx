@@ -91,14 +91,14 @@ const markDownStyle = css`
 
 const ProductEditContentPage = () => {
 	const localProductEditContext = useContext(productEditContext)
-	const { editProductState, setEditProductState, control } = localProductEditContext!
+	const { control, watch, setValue } = localProductEditContext!
 
 	const { append, remove, fields } = useFieldArray({
 		name: 'contents',
 		control
 	})
 
-	const pages = editProductState.contents || []
+	const pages = watch('contents') || []
 
 	const [reviewScore, setReviewScore] = useState(1)
 	const [tempReviewScore, setTempReviewScore] = useState(1)
@@ -145,9 +145,7 @@ const ProductEditContentPage = () => {
 							<IonReorderGroup
 								disabled={false}
 								onIonItemReorder={(event) => {
-									setEditProductState(prev => {
-										return { ...prev, contents: event.detail.complete(pages) }
-									})
+									setValue('contents', event.detail.complete(pages))
 									setSearchParams({ page: `${event.detail.to + 1 as number}` })
 								}}
 								className='flex flex-col gap-2'>
@@ -176,11 +174,7 @@ const ProductEditContentPage = () => {
 															readOnly={true}
 															value={pages[i].name}
 															onChange={(e) => {
-																setEditProductState(prev => {
-																	let temp = [...pages]
-																	temp[i].name = e.target.value
-																	return { ...prev, contents: temp }
-																})
+																setValue(`contents.${i}.name`, e.target.value)
 															}}
 															onBlur={() => {
 																inputRefs[i].current!.readOnly = true
@@ -221,7 +215,7 @@ const ProductEditContentPage = () => {
 													</div>
 													{
 														pages.length > 1 &&
-														<ProductEditContentDeleteModal i={i} setEditProductState={setEditProductState} />
+														<ProductEditContentDeleteModal i={i} remove={remove} />
 													}
 												</motion.div>
 											</IonItem>
@@ -295,7 +289,6 @@ const ProductEditContentPage = () => {
 			)}>
 				<MarkdownEditor
 					pageContent={pages[(searchParams.get('page') || 1) as number - 1]?.content as string}
-					setEditProductState={setEditProductState}
 					key={searchParams.get('page')}
 					placeholder="start typing..."
 					theme={{

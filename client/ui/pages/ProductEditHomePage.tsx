@@ -30,23 +30,20 @@ const stringToTags = (typeString: string) => {
 
 const ProductEditHomePage = () => {
 	const localProductEditContext = useContext(productEditContext)
-	const { allFormStates, handleSubmit, errors, register, setValue, watch, control, reset, setError, editProductState, setEditProductState } = localProductEditContext!
+	const { handleSubmit, errors, register, setValue, watch, control, reset, setError } = localProductEditContext!
 
 	const setToastRender = useSetRecoilState(hideToastState)
 
 	const navigate = useNavigate()
 	const params = useParams()
+	const collab_active = watch('collab_active') || false
+	const collabs = watch('collabs') || []
+	const description = watch('description') || ''
 
 	const { append, remove, fields } = useFieldArray({
 		name: 'collabs',
 		control
 	})
-
-	useEffect(() => {
-		setEditProductState(prev => {
-			return { ...prev, ...allFormStates, collabs: allFormStates.collabs as IndividualCollab[] }
-		})
-	}, [allFormStates])
 
 	return (
 		<Fragment>
@@ -112,14 +109,14 @@ const ProductEditHomePage = () => {
 						Description
 					</div>
 					<MDEditor
-						value={watch('description')}
+						value={description}
 						onChange={(data) => {
 							setValue('description', data!)
 						}}
 						preview="edit"
 						className='w-full'
 					/>
-					{errors.description && editProductState.description?.length! <= 10 && <legend className="text-sm text-red-500">{errors.description.message}</legend>}
+					{errors.description && description?.length! <= 10 && <legend className="text-sm text-red-500">{errors.description.message}</legend>}
 				</div>
 				<div className="flex flex-col gap-y-2">
 					<div>
@@ -159,17 +156,15 @@ const ProductEditHomePage = () => {
 						Collabs
 					</div>
 					<div className="flex gap-x-4">
-						<input type="checkbox" className=" bg-background text-white border-white/30 border-[0.1px] p-1 w-fit" defaultChecked={editProductState.collab_active} onChange={(e) => {
-							setEditProductState(prev => {
-								return { ...prev, collab_active: e.target.checked }
-							})
+						<input type="checkbox" className=" bg-background text-white border-white/30 border-[0.1px] p-1 w-fit" defaultChecked={collab_active} onChange={(e) => {
+							setValue('collab_active', !collab_active)
 						}} />
 						<div className="text-base">
 							Activate Collab
 						</div>
 					</div>
 					{
-						editProductState.collab_active &&
+						collab_active &&
 						<Fragment>
 							<div className='flex gap-x-4 items-center text-lg text-white/70'>
 								<fieldset className="border-white/30 w-full border-[0.1px] rounded-md p-2 focus-within:border-white">
@@ -181,7 +176,7 @@ const ProductEditHomePage = () => {
 								<fieldset className="border-white/30 w-full border-[0.1px] rounded-md p-2 focus-within:border-white">
 									<legend className="text-sm">Share(in %)</legend>
 									<div className="w-full">
-										{allFormStates.collabs === undefined ? 100 : 100 - allFormStates.collabs.reduce((a, { share }) => a + (Number(share) || 0), 0)}
+										{collabs === undefined ? 100 : 100 - collabs.reduce((a, { share }) => a + (Number(share) || 0), 0)}
 									</div>
 								</fieldset>
 							</div>

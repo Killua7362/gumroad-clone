@@ -9,8 +9,7 @@ import { singleProductFetcher } from "@/react-query/query"
 import { getEditProductFormProps } from "@/forms";
 import {z} from 'zod'
 import { EditProductSchema } from "@/forms/schema/edit_product_schema"
-
-type EditProductSchemaType = z.infer<typeof EditProductSchema>
+import { EditProductSchemaType } from "@/types/zod";
 
 export const productEditContext = createContext<EditPageFormProps<EditProductSchemaType> | null>(null)
 
@@ -22,12 +21,11 @@ const ProductEditPage = () => {
 
 	const { data: currentProduct, isPending: productsIsLoading, isSuccess: productIsSuccess } = singleProductFetcher({ productId: params.id })
 
-	const productEditProps = getEditProductFormProps()
+	const productEditProps = getEditProductFormProps({...currentProduct})
 
 	useEffect(() => {
 		if (!productsIsLoading) {
 			if (productIsSuccess) {
-				productEditProps.setEditProductState!({ ...currentProduct })
 				productEditProps.reset({...currentProduct})
 				setRendered(true)
 			} else {
@@ -37,7 +35,7 @@ const ProductEditPage = () => {
 	}, [params.id, productsIsLoading, currentProduct, productIsSuccess])
 
 
-	return rendered && productEditProps.editProductState && (
+	return rendered && (
 		<productEditContext.Provider value={productEditProps}>
 			{
 			<ProductEditPageLayout>
