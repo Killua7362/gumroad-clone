@@ -21,6 +21,8 @@ import { NewProductSchema } from "@/forms/schema/new_product_schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import NewProductModal from "@/ui/components/modal/NewProductModal";
 import DeleteProductModal from "../components/modal/DeleteProductModal";
+import { SelectComponent } from "../components/select";
+import { filterTypeOptions } from "@/forms/schema/misc_schema";
 
 const ProductsHomePage = () => {
 	const [contextMenuConfig, setContextMenuConfig] = useState<ProductsCardContextMenu>({
@@ -164,21 +166,15 @@ const ProductsHomePage = () => {
 							e.stopPropagation()
 						}}
 					>
-						<motion.select
-							className="rounded-xl text-base p-2 bg-background text-white border-white/30 border-[0.1px]"
-							defaultValue={searchParams.get('sort_by') || 'title'}
-							onChange={(e) => {
-								e.preventDefault()
-								searchParams.set('sort_by', e.target.value)
+						<SelectComponent
+							placeholder='Sort by'
+							options={filterTypeOptions}
+							value={filterTypeOptions.filter((e) => e.label === (searchParams.get('sort_by') || 'title'))}
+							onChange={(v) => {
+								searchParams.set('sort_by', v?.label || 'title')
 								setSearchParams(searchParams)
 							}}
-						>
-							<option value="title" >Title</option>
-							<option value="price" >Price</option>
-							<option value="created_date" >Created Date</option>
-							<option value="modified_date" >Modified Date</option>
-						</motion.select>
-
+						/>
 						<Button buttonName=""
 							extraClasses={['!text-lg !rounded-xl']}
 							onClickHandler={() => {

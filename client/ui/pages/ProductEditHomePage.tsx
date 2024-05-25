@@ -1,5 +1,3 @@
-// @ts-ignore: Object is possibly 'null'.
-
 import { hideToastState } from "@/atoms/states";
 import ProductEditPageLayout from "@/ui/layouts/ProductEditPageLayout"
 import MDEditor from '@uiw/react-md-editor';
@@ -13,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { EditProductSchema } from "@/forms/schema/edit_product_schema";
 import { queryClient } from "@/app/RootPage";
 import Button from "@/ui/components/button";
-import Select, { OptionProps } from 'react-select'
+import { SelectComponent } from "../components/select";
 import { cx, css } from '@emotion/css'
 import { productTypeOptions } from "@/forms/schema/edit_product_schema";
 import { getProductEditor } from "@/react-query/mutations";
@@ -61,34 +59,11 @@ const ProductEditHomePage = () => {
 					<div>
 						Product Type
 					</div>
-					<Select
-						isMulti
-						styles={{
-							control: (baseStyles, state) => ({
-								...baseStyles,
-								borderColor: state.isFocused ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.3)',
-								backgroundColor: '#09090B',
-								cursor: 'pointer',
-							}),
-						}}
+					<SelectComponent
+						isMulti={true}
 						options={productTypeOptions}
 						value={[...productTypeOptions.filter(data => stringToTags(watch('tags')).includes(data.label))]}
 						placeholder="Proudct type..."
-						classNamePrefix="react-select"
-						className={cx(css`
-							.react-select{
-								&__menu {
-									background-color:#09090B;
-									border:solid 0.1px rgba(255,255,255,0.3);
-								}
-
-								&__option--is-focused{
-									background-color:white;
-									color:black;
-									cursor:pointer;
-								}
-							}
-						`, `text-base !cursor-pointer`)}
 						onChange={(v) => {
 							setValue('tags', tagsToString([...v]))
 						}}

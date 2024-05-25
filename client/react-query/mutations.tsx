@@ -239,7 +239,6 @@ export const setLoginStatus = ({ setCustomError }: { setCustomError: React.Dispa
 export const setSignUp = ({ setCustomError }: { setCustomError: React.Dispatch<React.SetStateAction<string>> }) => {
 	const navigate = useNavigate()
 
-
 	const { mutate, isPending } = useMutation({
 		mutationFn: (payload: signUpSchemaType) => fetch(`${window.location.origin}/api/registrations`, {
 			method: 'POST',
@@ -262,4 +261,37 @@ export const setSignUp = ({ setCustomError }: { setCustomError: React.Dispatch<R
 	})
 
 	return { mutate, isPending } as { mutate: (payload: signUpSchemaType) => void, isPending: boolean }
+}
+
+export const getProfileStatusSetter = ({ userId }: { userId: string }) => {
+	const setToastRender = useSetRecoilState(hideToastState)
+
+	const { mutate, isPending } = useMutation({
+		mutationFn: (payload: CheckoutFormSchemaType) => fetch(`${window.location.origin}/api/profiles/${userId!}`, {
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify(payload),
+			headers: { 'Content-type': 'application/json' },
+		}).then(async (res) => {
+			if (!res.ok) {
+				const errorMessage: string = await res.json().then(data => data.error)
+				return Promise.reject(new Error(errorMessage))
+			}
+			return {}
+		}),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['profileStatus', userId!], exact: true })
+			setToastRender({
+				active: false,
+				message: 'Profile updated successfully'
+			})
+		},
+		onError: (err) => {
+			setToastRender({
+				active: false,
+				message: err.message
+			})
+		},
+	})
+	return { mutate, isPending } as { mutate: (payload: CheckoutFormSchemaType) => void, isPending: boolean }
 }

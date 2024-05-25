@@ -11,7 +11,7 @@ import { z } from 'zod'
 import { EditProductSchema } from "@/forms/schema/edit_product_schema"
 
 
-export const productEditContext = createContext<EditPageFormProps<EditProductSchemaType> | null>(null)
+export const productEditContext = createContext<ReactFormProps<EditProductSchemaType> | null>(null)
 
 const ProductEditPage = () => {
 	const navigate = useNavigate()

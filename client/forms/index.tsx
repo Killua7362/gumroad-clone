@@ -3,6 +3,7 @@ import { EditProductSchema } from "./schema/edit_product_schema"
 import { useFieldArray, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
+import { CheckoutFormSchema } from "./schema/checkout_schema"
 
 export const getEditProductFormProps = (editProductState: ProductType) => {
 	const {
@@ -14,6 +15,7 @@ export const getEditProductFormProps = (editProductState: ProductType) => {
 		setValue,
 		watch,
 		trigger,
+		resetField,
 		formState: { errors }
 	} = useForm<EditProductSchemaType>({
 		resolver: zodResolver(EditProductSchema),
@@ -30,5 +32,28 @@ export const getEditProductFormProps = (editProductState: ProductType) => {
 		shouldUnregister: false
 	})
 
-	return { handleSubmit, errors, register, setValue, reset, setError, watch, control, trigger } as EditPageFormProps<EditProductSchemaType>
+	return { handleSubmit, resetField, errors, register, setValue, reset, setError, watch, control, trigger } as ReactFormProps<EditProductSchemaType>
+}
+
+export const getCheckoutFormProps = (payload: CheckoutFormSchemaType) => {
+	const {
+		register,
+		handleSubmit,
+		setError,
+		control,
+		reset,
+		setValue,
+		watch,
+		trigger,
+		resetField,
+		formState: { errors }
+	} = useForm<CheckoutFormSchemaType>({
+		resolver: zodResolver(CheckoutFormSchema),
+		defaultValues: {
+			...payload
+		},
+		shouldUnregister: false
+	})
+
+	return { handleSubmit, errors, register, resetField, setValue, reset, setError, watch, control, trigger } as ReactFormProps<CheckoutFormSchemaType>
 }

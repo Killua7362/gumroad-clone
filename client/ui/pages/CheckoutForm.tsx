@@ -1,66 +1,72 @@
 import { useRunner } from 'react-live-runner'
 import ProfileHomePage from '@/ui/pages/ProfileHomePage'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Button from '@/ui/components/button';
+import { queryClient } from '@/app/RootPage';
+import { getProfileStatus } from '@/react-query/query';
+import { getCheckoutFormProps } from '@/forms';
+import { useFieldArray } from 'react-hook-form';
+import { getProfileStatusSetter } from '@/react-query/mutations';
+import { FormInput } from '../components/forms';
+import FilterCheckoutModal from '../components/modal/FilterCheckoutModal';
 
 const CheckoutForm = () => {
 
+	const { data: profileStatus, isPending: profileIsLoading, isSuccess: profileIsSuccess } = getProfileStatus({ userId: (queryClient.getQueryData(['loginStatus']) as authSchema).user_id, preview: false })
+
 	const code = `
 		<div className="w-[60vw] mb-[-10rem] min-h-screen relative origin-top-left bg-background pointer-events-none" style={{transform:'scale(0.8)'}}>
-			<ProfileHomePage preview={true} name={tempName} bio={tempBio} productCategories={tempProductCategories}/>
+			<ProfileHomePage preview={true} name={name} bio={bio} category={category}/>
 		</div>
 	`
-	const [tempProductCategories, setTempProductCategories] = useState<productCategories[]>([
-		{
-			name: 'All Products',
-			hide: false
-		}
-	])
 
-	const [tempName, setTempName] = useState<string>("")
-	const [tempBio, setTempBio] = useState<string>("")
+	const { handleSubmit, register, control, reset, watch, setValue, errors, resetField } = getCheckoutFormProps(profileStatus || {})
+
+	const { mutate: profileStatusSetter, isPending: profileStatusLoading } = getProfileStatusSetter({ userId: (queryClient.getQueryData(['loginStatus']) as authSchema).user_id! })
+
+	useEffect(() => {
+		if (profileIsSuccess) {
+			reset({ ...profileStatus })
+		}
+	}, [profileIsSuccess])
+
+	const bio = watch('bio')
+	const name = watch('name')
+	const category = watch('category')
 
 	const scope = {
 		ProfileHomePage,
-		tempProductCategories,
-		tempName,
-		tempBio
+		name,
+		bio,
+		category
 	}
 
 	const { element, error } = useRunner({ code, scope })
 
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: 'category'
+	})
+
 	return (
 		<div className="flex justify-center w-full h-full gap-x-0">
-			<form className="w-full xl:w-7/12 xl:h-[50rem] py-10 px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background flex flex-col justify-between gap-y-4" id='checkout_form'>
+			<form className="w-full xl:w-7/12 xl:h-[50rem] py-10 px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background flex flex-col justify-between gap-y-4" id='checkout_form' onSubmit={handleSubmit((data) => {
+				profileStatusSetter({ ...data })
+			})}>
 				<div className='flex flex-col gap-y-4'>
 					<div className='flex flex-col gap-y-4'>
 						<div className='text-xl'>
 							Name
 						</div>
-						<div>
-							<input
-								className="bg-background border-white/30 border-[0.1px] rounded-md overflow-hidden w-full text-base text-white outline-none focus-within:border-white px-4 py-2" value={tempName} onChange={(e) => {
-									e.preventDefault()
-									setTempName(e.currentTarget.value)
-								}} />
-						</div>
+						<FormInput<CheckoutFormSchemaType> name='name' errors={errors} register={register} placeholder='Name' type='text' />
 					</div>
 					<div className='flex flex-col gap-y-4'>
 						<div className='text-xl'>
 							Bio
 						</div>
-						<div>
-							<input
-								className="bg-background border-white/30 border-[0.1px] rounded-md overflow-hidden w-full text-base text-white outline-none focus-within:border-white px-4 py-2"
-								value={tempBio}
-								onChange={(e) => {
-									e.preventDefault()
-									setTempBio(e.currentTarget.value)
-								}}
-							/>
-						</div>
+						<FormInput<CheckoutFormSchemaType> name='bio' errors={errors} register={register} placeholder='Bio' type='text' />
 					</div>
 					<div className='flex flex-col gap-y-4'>
 						<div className='text-xl'>
@@ -68,65 +74,52 @@ const CheckoutForm = () => {
 						</div>
 						<div className='flex flex-col gap-y-4'>
 							{
-								tempProductCategories.map((e, i) => {
+								fields.map((e, i) => {
 									return (
-										<div className='gap-x-4 items-center flex' id={`product_categories_${i}`}>
-											{
-												i !== 0 &&
-												<div>
-													{i}
-												</div>
+										<div id={e.id} className='flex flex-col gap-y-2'>
+											<div className='gap-x-4 items-center flex'>
+												<span>
+													{i + 1}
+												</span>
+												<FormInput<CheckoutFormSchemaType> type='text' name={`category.${i}.name`} errors={errors} register={register} placeholder='Category Name' />
 
-											}
-											<input
-												className="bg-background border-white/30 border-[0.1px] rounded-md overflow-hidden w-full text-base text-white outline-none focus-within:border-white px-4 py-2" value={e.name} disabled={i !== 0 ? false : true} placeholder={i !== 0 ? `Enter product category name` : `Default`}
-												onChange={(e) => {
-													e.preventDefault()
-													let tempProducts: productCategories[] = [...tempProductCategories];
-													tempProducts[i].name = e.currentTarget.value
-													setTempProductCategories(tempProducts)
-												}}
-											/>
-											{
-												i !== 0 &&
-												<div className=' py-2 px-4 border-white/30 border-[0.1px] rounded-xl'>
-													Filter
-												</div>
+												<FilterCheckoutModal watch={watch} setValue={setValue} i={i} resetField={resetField} />
 
-											}
-											<div className={`${tempProductCategories.length === 1 ? "text-white/70" : "hover:text-white/90 cursor-pointer text-white"} text-base flex gap-x-3 items-center rounded-xl border-white/30 border-[0.1px] px-4 py-2`}
-												onClick={() => {
-													if (tempProductCategories.length !== 1) {
-														let tempProducts: productCategories[] = [...tempProductCategories];
-														tempProducts[i].hide = tempProducts[i].hide ? false : true
-														setTempProductCategories(tempProducts)
-													}
+												<Button buttonName='' onClickHandler={() => {
+													setValue(`category.${i}.hidden`, !watch(`category.${i}.hidden`))
 												}}>
-												{
-													tempProductCategories[i].hide && tempProductCategories.length !== 1 ?
-														<span className='flex gap-x-2 items-center'>
-															<FaEye />
-															Show
-														</span>
-														:
-														<span className='flex gap-x-2 items-center'>
-															<FaEyeSlash />
-															Hide
-														</span>
-												}
-											</div>
-											{
-												i !== 0 &&
-												<div className='text-white hover:text-white/80 text-base flex gap-x-3 items-center rounded-xl border-white/30 border-[0.1px] px-4 py-2 cursor-pointer'
-													onClick={() => {
-														let tempProducts: productCategories[] = [...tempProductCategories];
-														tempProducts = tempProducts.filter((e, idx) => idx !== i)
-														setTempProductCategories(tempProducts)
-													}}>
+													{
+														watch(`category.${i}.hidden`) ?
+															<span className='flex gap-x-2 items-center'>
+																<FaEye />
+																Unhide
+															</span>
+															:
+															<span className='flex gap-x-2 items-center'>
+																<FaEyeSlash />
+																Hide
+															</span>
+													}
+												</Button>
+												<Button buttonName='' onClickHandler={() => { remove(i) }} >
 													<RiDeleteBin2Fill className='text-red-400' />
 													<span>
 														Delete
 													</span>
+												</Button>
+											</div>
+											{errors.category &&
+												<div className='text-red-400 flex flex-col gap-y-1'>
+													{errors.category[i]?.name &&
+														<span>
+															Name: {errors.category[i]?.name?.message}
+														</span>
+													}
+													{errors.category[i]?.url &&
+														<span>
+															Filter: {errors.category[i]?.url?.message}
+														</span>
+													}
 												</div>
 											}
 										</div>
@@ -135,12 +128,7 @@ const CheckoutForm = () => {
 							}
 							<div className='gap-x-4 items-center flex w-full justify-end'>
 								<Button buttonName='Add new category' onClickHandler={() => {
-									setTempProductCategories(prev => {
-										return [...prev, {
-											name: '',
-											hide: true
-										}]
-									})
+									append({ name: '', hidden: true, url: '' })
 								}}
 									extraClasses={['w-full py-4']}
 								/>
@@ -152,7 +140,7 @@ const CheckoutForm = () => {
 					<Button buttonName='Revert' />
 					<Button buttonName='Save' type='submit' form='checkout_form' />
 				</div>
-			</form>
+			</form >
 			<div className={`w-5/12 h-[50rem] overflow-x-auto overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white scrollbar-track-background hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}
 			>
 				<div className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">

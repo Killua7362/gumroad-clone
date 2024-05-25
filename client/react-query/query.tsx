@@ -115,10 +115,10 @@ export const singleProductFetcher = ({ productId }: { productId: string | undefi
 
 }
 
-export const profileProductsFetcher = ({ productId, preview }: { productId: string | undefined, preview: boolean }) => {
+export const getProfileProductsFetcher = ({ userId, preview }: { userId: string | undefined, preview: boolean }) => {
 	const { data, isSuccess, isPending } = useQuery({
-		queryKey: ['profileProducts', productId!],
-		queryFn: () => fetch(`${window.location.origin}/api/profiles/${productId!}`).then(async (res) => {
+		queryKey: ['profileProducts', userId!],
+		queryFn: () => fetch(`${window.location.origin}/api/profiles/${userId!}`).then(async (res) => {
 			if (!res.ok) {
 				const errorMessage: string = await res.json().then(data => data.error)
 				return Promise.reject(new Error(errorMessage))
@@ -134,7 +134,7 @@ export const profileProductsFetcher = ({ productId, preview }: { productId: stri
 		meta: {
 			persist: false
 		},
-		enabled: !!productId && !preview,
+		enabled: !!userId && !preview,
 	})
 
 	return { data, isSuccess, isPending } as {
@@ -143,4 +143,58 @@ export const profileProductsFetcher = ({ productId, preview }: { productId: stri
 		isPending: boolean;
 	};
 
+}
+
+export const getSingleProfileProductFetcher = ({ userId, productId, preview }: { userId: string | undefined, productId: string | undefined, preview: boolean }) => {
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ['profileProducts', userId!, productId!],
+		queryFn: () => fetch(`${window.location.origin}/api/profiles/${userId!}/${productId!}`).then(async (res) => {
+			if (!res.ok) {
+				const errorMessage: string = await res.json().then(data => data.error)
+				return Promise.reject(new Error(errorMessage))
+			}
+			return res.json().then(data => {
+				let result: ProductTypePayload = {}
+				for (let i = 0; i < data.data.length; i++) {
+					result[data.data[i].id] = { ...data.data[i].attributes }
+				}
+				return result;
+			})
+		}),
+		meta: {
+			persist: false
+		},
+		enabled: !!userId && !!productId && !preview,
+	})
+
+	return { data, isSuccess, isPending } as {
+		data: ProductTypePayload;
+		isSuccess: boolean;
+		isPending: boolean;
+	};
+}
+
+export const getProfileStatus = ({ userId, preview }: { userId: string | undefined, preview: boolean }) => {
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ['profileStatus', userId!],
+		queryFn: () => fetch(`${window.location.origin}/api/profile/${userId!}`).then(async (res) => {
+			if (!res.ok) {
+				const errorMessage: string = await res.json().then(data => data.error)
+				return Promise.reject(new Error(errorMessage))
+			}
+			return res.json().then(data => {
+				return { ...data.data.attributes } as CheckoutFormSchemaType
+			})
+		}),
+		meta: {
+			persist: false
+		},
+		enabled: !!userId && !preview,
+	})
+
+	return { data, isSuccess, isPending } as {
+		data: CheckoutFormSchemaType;
+		isSuccess: boolean;
+		isPending: boolean;
+	};
 }

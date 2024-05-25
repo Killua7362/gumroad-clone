@@ -25,10 +25,6 @@ interface ProductsCardContextMenu {
 	active: boolean;
 	activeIdx: number;
 }
-interface productCategories {
-	name: string;
-	hide: boolean;
-}
 
 interface IndividualCollab {
 	email: string;
@@ -84,7 +80,7 @@ interface PageSchema {
 	content: string;
 }
 
-interface EditPageFormProps<T extends import('react-hook-form').FieldValues> {
+interface ReactFormProps<T extends import('react-hook-form').FieldValues> {
 	handleSubmit: import('react-hook-form').UseFormHandleSubmit<T>;
 	errors: import('react-hook-form').FieldErrors<T>;
 	register: import('react-hook-form').UseFormRegister<T>;
@@ -93,7 +89,6 @@ interface EditPageFormProps<T extends import('react-hook-form').FieldValues> {
 	setError: import('react-hook-form').UseFormSetError<T>;
 	watch: import('react-hook-form').UseFormWatch<T>;
 	control: import('react-hook-form').Control<T>;
-	trigger: import('react-hook-form').UseFormTrigger<T>; 
+	trigger: import('react-hook-form').UseFormTrigger<T>;
+	resetField: import('react-hook-form').UseFormResetField<T>;
 }
-
-interface PartialEditPageFormProps<T extends import('react-hook-form').FieldValues> extends Partial<EditPageFormProps<T>> { }

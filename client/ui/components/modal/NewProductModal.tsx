@@ -5,17 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldErrors, FieldPath, FieldValues, UseFormRegister, useForm } from "react-hook-form";
 import { z } from 'zod'
 import Button from '@/ui/components/button';
-
-
-const FormInput = ({ name, errors, register }: { name: FieldPath<NewProductSchemaType>, errors: FieldErrors<FieldValues>, register: UseFormRegister<NewProductSchemaType> }) => {
-	return (
-		<fieldset className={`${errors[name] ? "border-red-400" : "border-white/30 focus-within:border-white"} border-[0.1px] w-full rounded-md p-2`}>
-			<input type="text" className="bg-background text-white outline-none text-base w-full mx-2 my-1" placeholder={`${name.charAt(0).toUpperCase() + name.slice(1)} of your product`} {...register(name)} />
-			{errors[name] && <legend className="text-xs text-red-400"> {`${errors[name]!.message}`}</legend>}
-		</fieldset>
-
-	)
-}
+import { FormInput } from '@/ui/components/forms';
 
 const NewProductModal = () => {
 	const {
@@ -59,13 +49,13 @@ const NewProductModal = () => {
 							<div>
 								Name
 							</div>
-							<FormInput name={`name`} register={register} errors={errors} />
+							<FormInput<NewProductSchemaType> name={`name`} register={register} errors={errors} placeholder={'Name'} type='text' />
 						</div>
 						<div className="flex gap-x-7 items-center">
 							<div>
 								Price
 							</div>
-							<FormInput name={`price`} register={register} errors={errors} />
+							<FormInput<NewProductSchemaType> name={`price`} register={register} errors={errors} placeholder='Price' type='number' />
 						</div>
 					</div>
 					<div className="w-full flex justify-end gap-x-4">

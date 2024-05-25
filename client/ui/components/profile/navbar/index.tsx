@@ -1,7 +1,8 @@
+import { getProfileStatus } from "@/react-query/query";
 import { IoMdCart } from "react-icons/io"
 import { useNavigate, useParams } from "react-router"
 
-const ProfileNavbar = () => {
+const ProfileNavbar = ({ name }: { name: string }) => {
 	const navigate = useNavigate();
 	const params = useParams();
 
@@ -11,7 +12,7 @@ const ProfileNavbar = () => {
 				<div className="text-3xl w-full cursor-pointer" onClick={() => {
 					navigate(`/profile/${params.id!}`)
 				}}>
-					Akshay Bhat
+					{name}
 				</div>
 				<div className="flex gap-x-3 items-center justify-between md:justify-start w-full md:w-fit">
 					<div className="flex gap-x-2">

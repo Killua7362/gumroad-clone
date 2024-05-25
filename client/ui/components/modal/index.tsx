@@ -69,10 +69,10 @@ const ModalBase = ({ children, onClick }: { children: React.ReactNode, onClick?:
 	)
 }
 
-const ModalClose = ({ children, onClickHandler }: { children: React.ReactNode, onClickHandler?: () => Promise<boolean> }) => {
+const ModalClose = ({ children, onClickHandler, className = "h-full" }: { children: React.ReactNode, onClickHandler?: () => Promise<boolean>, className?: string }) => {
 	const { active, setActive } = useContext(modalContext)
 	return <div
-		className="h-full"
+		className={className}
 		onClick={async (e) => {
 			if (onClickHandler) {
 				const status = await onClickHandler()
@@ -87,11 +87,10 @@ const ModalClose = ({ children, onClickHandler }: { children: React.ReactNode, o
 	</div>
 }
 
-const ModalOpen = ({ children }: { children: React.ReactNode }) => {
+const ModalOpen = ({ children, className = "h-full" }: { children: React.ReactNode, className?: string }) => {
 	const { active, setActive } = useContext(modalContext)
 
-	return <div className="h-full" onClick={(e) => {
-
+	return <div className={className} onClick={(e) => {
 		setActive!(true)
 	}}>
 		{children}

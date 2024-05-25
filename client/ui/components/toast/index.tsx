@@ -34,7 +34,7 @@ const Toast = () => {
 								duration: 0.2
 							}
 						}}
-						className="fixed top-0 w-full mt-5 flex justify-center"
+						className="fixed z-50 top-0 w-full mt-5 flex justify-center"
 					>
 						<div className="bg-background border-white border-[0.1px] px-4 py-2 w-fit">
 							{toastRender.message}
