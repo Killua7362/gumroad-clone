@@ -2,7 +2,8 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Fragment, useState } from "react"
 import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
-import { Link, useParams } from "react-router-dom";
+import { Link, NavLink, useParams } from "react-router-dom";
+import Button from "../components/button";
 
 const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
 	const [sortConfig, setSortConfig] = useState<sortConfig>({
@@ -26,16 +27,28 @@ const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
 						Checkout
 					</div>
 					<div className="border-b-[1px] h-3 border-white/30 flex gap-x-4 z-20">
-						<Link to='/checkout/form' className={`no-underline ${params.page && params.page === 'form' && 'cursor-default pointer-events-none'}`}>
-							<span className={`border-white/30 border-[0.1px] rounded-2xl px-3 py-2 w-fit h-fit ${params.page && params.page === 'form' ? 'bg-white text-black' : 'bg-background text-white hover:bg-accent'} `}>
-								Form
-							</span>
-						</Link>
-						<Link to='/checkout/suggestions' className={`no-underline ${params.page && params.page === 'suggestions' && 'cursor-default pointer-events-none'}`}>
-							<span className={`border-white/30 border-[0.1px] rounded-2xl px-3 py-2 w-fit h-fit ${params.page && params.page === 'suggestions' ? 'bg-white text-black' : 'bg-background text-white hover:bg-accent'} `}>
-								Suggest
-							</span>
-						</Link>
+						<NavLink to='/checkout/form'
+							style={{
+								textDecoration: 'none'
+							}}
+							className={({ isActive }) => {
+								return (isActive ? "cursor-default pointer-events-none" : "")
+							}} >
+							{({ isActive }) => (
+								<Button buttonName="Form" isActive={isActive} extraClasses={[`!text-base !rounded-2xl`]} />
+							)}
+						</NavLink>
+						<NavLink to='/checkout/suggestions'
+							style={{
+								textDecoration: 'none'
+							}}
+							className={({ isActive }) => {
+								return (isActive ? "cursor-default pointer-events-none" : "")
+							}} >
+							{({ isActive }) => (
+								<Button buttonName="Suggest" isActive={isActive} extraClasses={[`!text-base !rounded-2xl`]} />
+							)}
+						</NavLink>
 					</div>
 				</div>
 				<div className="w-full flex flex-col gap-6">

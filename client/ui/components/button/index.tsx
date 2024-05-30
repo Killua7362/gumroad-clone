@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import './index.css'
 import { cx, css } from '@emotion/css'
+import Loader from '../loader';
 
 type ButtonTypes = "button" | "submit" | "reset" | undefined
 
@@ -37,7 +37,10 @@ const Button = ({ buttonName, extraClasses = [""], type = 'button', onClickHandl
 
 			`, ...extraClasses)}
 		>
-			<span className={`loader absolute ${!isLoading && 'invisible'}`} />
+			{
+				isLoading &&
+				<Loader />
+			}
 			{
 				buttonName !== "" &&
 				<span className={`${isLoading && 'invisible'}`}>

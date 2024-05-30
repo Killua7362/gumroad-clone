@@ -7,6 +7,11 @@ class Product < ApplicationRecord
   validate :validate_collabs
   validate :validate_contents
 
+  enum currency_code: {
+    'USD': 0,
+    'INR': 1
+  }
+
   def can_go_live
     self[:collabs].map do |item|
       return false if item['approved'] == false

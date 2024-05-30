@@ -1,28 +1,36 @@
-import React, { useState, Fragment, useEffect } from 'react';
 import style from './global.module.css';
 import {
-	BrowserRouter as Router,
-	Route,
-	Routes,
-	useParams,
-	Navigate,
+	RouterProvider,
 } from "react-router-dom";
 import { RecoilRoot } from 'recoil'
-import Home from '@/ui/pages/Home'
-import BaseLayout from '@/ui/layouts/BaseLayout';
-import NotFoundPage from '@/ui/pages/404';
-import ProductsPage from '@/ui/pages/Products';
-import CollaboratorsPage from '@/ui/pages/Collaborators';
-import CheckoutPage from '@/ui/pages/Checkout';
-import ProfileHomePage from '@/ui/pages/ProfileHomePage';
-import ProductsDetailsPage from '@/ui/pages/ProductDetailsPage';
-import ProfileCheckoutPage from '@/ui/pages/ProfileCheckoutPage';
-import ProductEditPage from '@/ui/pages/ProductEditPage';
-import SignInPage from '@/ui/pages/SignInPage';
-import SignUpPage from '@/ui/pages/SignUpPage';
 import { QueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import BaseLayout from "@/ui/layouts/BaseLayout"
+import CheckoutLayout from "@/ui/layouts/CheckoutLayout"
+import ProductLayout from "@/ui/layouts/ProductsLayout"
+import NonProtectedRoute from "@/ui/layouts/wrapper/NonProtectedRoute"
+import ProtectedRoute from "@/ui/layouts/wrapper/ProtectedRoute"
+import NotFoundPage from "@/ui/pages/404"
+import CheckoutForm from "@/ui/pages/CheckoutForm"
+import CollaboratorsPage from "@/ui/pages/Collaborators"
+import Home from "@/ui/pages/Home"
+import ProductsDetailsPage from "@/ui/pages/ProductDetailsPage"
+import ProductsHomePage from "@/ui/pages/ProductsHomePage"
+import ProfileCheckoutPage from "@/ui/pages/ProfileCheckoutPage"
+import ProfileHomePage from "@/ui/pages/ProfileHomePage"
+import SignInPage from "@/ui/pages/SignInPage"
+import SignUpPage from "@/ui/pages/SignUpPage"
+import SuggestionsPage from "@/ui/pages/Suggestions"
+import { Outlet } from "react-router"
+import { allProductsFetcherProps, collabsProductFetcherProps, getProfileProductsFetcherProps, getProfileStatusProps, getSingleProfileProductFetcherProps, singleProductFetcherProps } from "@/react-query/query"
+import { createBrowserRouter } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
+import Loader from '@/ui/components/loader';
+
+const ProductEditPageLayout = lazy(() => import('@/ui/layouts/ProductEditPageLayout'))
+const ProductEditContentPage = lazy(() => import('@/ui/pages/ProductEditContentPage'))
+const ProductEditHomePage = lazy(() => import('@/ui/pages/ProductEditHomePage'))
 
 export const queryClient = new QueryClient({
 	defaultOptions: {
@@ -41,37 +49,213 @@ const persister = createSyncStoragePersister({
 	storage: window.localStorage
 })
 
-const productsPageRoute = () => {
-	const params = useParams();
+const router = createBrowserRouter([
+	{
 
-	if (params.page && (params.page === 'home' || params.page === 'collaborators')) {
-		return (
-			<ProductsPage />
-		)
-	}
+		lazy: async () => {
+			const BaseLayout = (await import('@/ui/layouts/BaseLayout')).default
+			return {
+				element: < BaseLayout>
+					<Outlet />
+				</BaseLayout>
+			}
+		},
+		errorElement: <NotFoundPage />,
+		children: [
+			{
+				path: 'profile/:id',
+				id: 'profile_home',
+				loader: async ({ params }) => {
+					const productDataQuery = getProfileProductsFetcherProps({ userId: params.id })
+					const productData = await queryClient.ensureQueryData(productDataQuery)
 
-	return <Navigate to='/notfound' replace />
-}
+					const profileDataQuery = getProfileStatusProps({ userId: params.id })
+					const profileData = await queryClient.ensureQueryData(profileDataQuery)
 
-const checkoutPageRoute = () => {
-	const params = useParams()
-	if (params.page && (params.page === 'form' || params.page === 'suggestions')) {
-		return (
-			<CheckoutPage />
-		)
-	}
-	return <Navigate to='/notfound' replace />
-}
+					return {
+						productData,
+						profileData
+					} as {
+						productData: ProductTypePayload,
+						profileData: CheckoutFormSchemaType
+					}
+				},
+				lazy: async () => {
+					const ProfileHomePage = (await import('@/ui/pages/ProfileHomePage')).default
+					return { element: < ProfileHomePage /> }
+				},
+			},
+			{
+				loader: async ({ params }) => {
+					const singleProfileProductDataQuery = getSingleProfileProductFetcherProps({ userId: params.id, productId: params.productid })
 
-const ProductEditPageRoute = () => {
-	const params = useParams()
-	if (params.page && (params.page === 'home' || params.page === 'content')) {
-		return (
-			<ProductEditPage />
-		)
-	}
-	return <Navigate to='/notfound' replace />
-}
+					const singleProductData = await queryClient.ensureQueryData(singleProfileProductDataQuery)
+
+					return {
+						singleProductData,
+					} as {
+						singleProductData: ProductType,
+					}
+				},
+				path: 'profile/:id/product/:productid',
+				id: 'profile_single_product',
+				lazy: async () => {
+					const ProductsDetailsPage = (await import('@/ui/pages/ProductDetailsPage')).default
+					return { element: < ProductsDetailsPage /> }
+				},
+			},
+			{
+				path: 'profile/:id/checkout',
+				lazy: async () => {
+					const ProfileCheckoutPage = (await import('@/ui/pages/ProfileCheckoutPage')).default
+					return { element: < ProfileCheckoutPage /> }
+				},
+			},
+			{
+				element: <NonProtectedRoute />,
+				children: [
+					{
+						path: 'signin',
+						lazy: async () => {
+							const SignInPage = (await import('@/ui/pages/SignInPage')).default
+							return { element: < SignInPage /> }
+						},
+					},
+					{
+						path: 'signup',
+						lazy: async () => {
+							const SignUpPage = (await import('@/ui/pages/SignUpPage')).default
+							return { element: < SignUpPage /> }
+						},
+					},
+				]
+			},
+			{
+				element: <ProtectedRoute />,
+				children: [
+					{
+						path: '/',
+						lazy: async () => {
+							const Home = (await import('@/ui/pages/Home')).default
+							return { element: < Home /> }
+						},
+					},
+					{
+						path: 'products/edit/:id',
+						id: 'product_edit_page',
+						loader: async ({ params }) => {
+							const singleProductDataQuery = singleProductFetcherProps({ productId: params.id })
+							const singleProductData = await queryClient.ensureQueryData(singleProductDataQuery)
+							return singleProductData as ProductType
+						},
+						Component: () => {
+							return (
+								< ProductEditPageLayout >
+									<Outlet />
+								</ProductEditPageLayout>
+							)
+						},
+						children: [
+							{
+								path: 'home',
+								element: <ProductEditHomePage />
+							},
+							{
+								path: 'content',
+								element: <ProductEditContentPage />
+							},
+
+						]
+					},
+					{
+						lazy: async () => {
+							const ProductLayout = (await import('@/ui/layouts/ProductsLayout')).default
+							return {
+								element: < ProductLayout >
+									<Outlet />
+								</ProductLayout>
+							}
+						},
+						children: [
+							{
+								path: "products/home",
+								id: 'products_home',
+								loader: async () => {
+									const allProducts = await queryClient.ensureQueryData(allProductsFetcherProps)
+									return allProducts as ProductTypePayload
+								},
+								lazy: async () => {
+									const ProductsHomePage = (await import('@/ui/pages/ProductsHomePage')).default
+									return {
+										element: <ProductsHomePage />
+									}
+								},
+							},
+							{
+								path: "products/collaborators",
+								id: 'collaborators_page',
+								lazy: async () => {
+									const CollaboratorsPage = (await import('@/ui/pages/Collaborators')).default
+									return {
+										element: <CollaboratorsPage />
+									}
+								},
+								loader: async () => {
+									const allProducts = await queryClient.ensureQueryData(allProductsFetcherProps)
+									const collabProducts = await queryClient.ensureQueryData(collabsProductFetcherProps)
+									return {
+										allProducts,
+										collabProducts
+									} as {
+										allProducts: ProductTypePayload,
+										collabProducts: ProductTypePayload
+									}
+								}
+							},
+						]
+					},
+					{
+						lazy: async () => {
+							const CheckoutLayout = (await import('@/ui/layouts/CheckoutLayout')).default
+							return {
+								element: <CheckoutLayout>
+									<Outlet />
+								</CheckoutLayout>
+							}
+						},
+						children: [
+							{
+								path: 'checkout/form',
+								id: 'checkout_form',
+								lazy: async () => {
+									const CheckoutForm = (await import('@/ui/pages/CheckoutForm')).default
+									return {
+										element: <CheckoutForm />
+									}
+								},
+								loader: async () => {
+									const profileDataQuery = getProfileStatusProps({ userId: (queryClient.getQueryData(['loginStatus']) as authSchema).user_id })
+									const profileData = await queryClient.ensureQueryData(profileDataQuery)
+									return profileData as CheckoutFormSchemaType
+								}
+							},
+							{
+								path: 'checkout/suggestions',
+								element: <SuggestionsPage />,
+								lazy: async () => {
+									const SuggestionsPage = (await import('@/ui/pages/Suggestions')).default
+									return {
+										element: <SuggestionsPage />
+									}
+								},
+							},
+						]
+					},
+				]
+			},
+		]
+	},
+])
 
 const RootPage = () => {
 
@@ -87,27 +271,9 @@ const RootPage = () => {
 						},
 					},
 				}} client={queryClient}>
-				<Router>
-					<BaseLayout>
-						<Routes>
-							<Route path='/' element={
-								< Home />
-							} />
-							<Route path="/signin" element={<SignInPage />} />
-							<Route path="/signup" element={<SignUpPage />} />
-							<Route path="/products/edit/:id/:page" Component={ProductEditPageRoute} />
-							<Route path="/products/:page" Component={productsPageRoute} />
-							<Route path="/checkout/:page" Component={checkoutPageRoute} />
-							<Route path="/profile/:id" element={
-								< ProfileHomePage />
-							} />
-							<Route path="/profile/:id/product" element={< ProductsDetailsPage />} />
-							<Route path="/profile/:id/checkout" element={< ProfileCheckoutPage />} />
-							<Route path='/notfound' element={< NotFoundPage />} />
-							<Route path='*' element={<Navigate to='/notfound' replace />} />
-						</Routes>
-					</BaseLayout>
-				</Router >
+				<Suspense fallback={<Loader />}>
+					<RouterProvider router={router} />
+				</Suspense>
 			</PersistQueryClientProvider>
 		</RecoilRoot>
 	);

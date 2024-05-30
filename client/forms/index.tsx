@@ -23,6 +23,7 @@ export const getEditProductFormProps = (editProductState: ProductType) => {
 			title: editProductState?.title,
 			description: editProductState?.description,
 			summary: editProductState?.summary,
+			currency_code: editProductState?.currency_code,
 			price: editProductState?.price,
 			collab_active: editProductState?.collab_active,
 			collabs: editProductState?.collabs,
@@ -46,7 +47,7 @@ export const getCheckoutFormProps = (payload: CheckoutFormSchemaType) => {
 		watch,
 		trigger,
 		resetField,
-		formState: { errors }
+		formState: { errors, isDirty },
 	} = useForm<CheckoutFormSchemaType>({
 		resolver: zodResolver(CheckoutFormSchema),
 		defaultValues: {
@@ -55,5 +56,5 @@ export const getCheckoutFormProps = (payload: CheckoutFormSchemaType) => {
 		shouldUnregister: false
 	})
 
-	return { handleSubmit, errors, register, resetField, setValue, reset, setError, watch, control, trigger } as ReactFormProps<CheckoutFormSchemaType>
+	return { handleSubmit, errors, register, resetField, setValue, reset, setError, watch, control, trigger, isDirty } as ReactFormProps<CheckoutFormSchemaType>
 }

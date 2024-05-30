@@ -1,6 +1,11 @@
 export const filterTypeOptions = [
-	{ value: 'Title', label: 'title' },
-	{ value: 'Price', label: 'price' },
-	{ value: 'Created Date', label: 'created_date' },
-	{ value: 'Modified Date', label: 'modified_date' }
+	{ value: 'title', label: 'Title' },
+	{ value: 'price', label: 'Price' },
+	{ value: 'created_date', label: 'Created Date' },
+	{ value: 'modified_date', label: 'Modified Date' }
+]
+
+export const currencyTypeOptions = [
+	{ value: 'USD', label: 'United States Dollars(USD)' },
+	{ value: 'INR', label: 'Indian Rupees(INR)' },
 ]

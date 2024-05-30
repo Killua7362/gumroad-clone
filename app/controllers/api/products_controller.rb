@@ -40,10 +40,10 @@ module Api
       Product.transaction(joinable: false) do
         product = Product.find_by(id: params[:id])
         if @current_user and @current_user.id == product.user_id
-          if (params[:live] == true or product.live == true) and !product.can_go_live
-            product.update(live: false)
+          if params[:live] == true and !product.can_go_live
             render json: { error: 'Cannot go live because collaborators are yet to approve' }, status: 404
-          elsif product.update(products_params.merge(user_id: @current_user.id))
+          elsif product.update(products_params.merge(user_id: @current_user.id,
+                                                     live: params['product'].keys == ['live'] ? params[:live] : false))
             render json: ProductSerializer.new(product, options).serializable_hash.to_json
           else
             render json: { error: product.errors.messages }, status: 401
@@ -70,7 +70,7 @@ module Api
     private
 
     def products_params
-      params.require(:product).permit(:title, :description, :summary, :price, :tags, :live, :collab_active,
+      params.require(:product).permit(:title, :description, :summary, :price, :currency_code, :tags, :live, :collab_active,
                                       :thumbimageSource, :coverimageSource, collabs: %i[email share approved], contents: %i[name content])
     end
 

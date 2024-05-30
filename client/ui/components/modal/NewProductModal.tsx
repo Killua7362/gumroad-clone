@@ -6,6 +6,8 @@ import { FieldErrors, FieldPath, FieldValues, UseFormRegister, useForm } from "r
 import { z } from 'zod'
 import Button from '@/ui/components/button';
 import { FormInput } from '@/ui/components/forms';
+import { SelectComponent } from '../select';
+import { currencyTypeOptions } from '@/forms/schema/misc_schema';
 
 const NewProductModal = () => {
 	const {
@@ -13,21 +15,25 @@ const NewProductModal = () => {
 		handleSubmit,
 		trigger,
 		reset,
+		watch,
+		setValue,
 		formState: { errors }
 	} = useForm<NewProductSchemaType>({ resolver: zodResolver(NewProductSchema) })
 
 	const { mutate: productSetter, isPending: productIsSetting } = getProductCreater()
+	const currency_code = watch('currency_code')
 
 	return (
 		<Modal.Root>
 			<Modal.Base>
-				<form id="new_product_form" className="bg-background border-white/30 rounded-xl w-[25rem] border-[0.1px] p-6 text-lg flex flex-col gap-y-6" onSubmit={handleSubmit((data) => {
+				<form id="new_product_form" className="bg-background border-white/30 rounded-xl w-[28rem] border-[0.1px] p-6 text-lg flex flex-col gap-y-6" onSubmit={handleSubmit((data) => {
 					let payload: ProductType =
 					{
 						title: data.name,
 						description: "",
 						summary: "",
 						price: data.price,
+						currency_code: "USD",
 						tags: "",
 						live: false,
 						collab_active: false,
@@ -35,7 +41,6 @@ const NewProductModal = () => {
 						coverimageSource: "",
 						collabs: [] as IndividualCollab[]
 					}
-
 					productSetter(payload)
 					reset()
 				})}
@@ -51,11 +56,26 @@ const NewProductModal = () => {
 							</div>
 							<FormInput<NewProductSchemaType> name={`name`} register={register} errors={errors} placeholder={'Name'} type='text' />
 						</div>
-						<div className="flex gap-x-7 items-center">
+						<div className="flex gap-x-7 items-center h-full">
 							<div>
 								Price
 							</div>
-							<FormInput<NewProductSchemaType> name={`price`} register={register} errors={errors} placeholder='Price' type='number' />
+							<div className='flex gap-x-2 items-center h-full'>
+								<FormInput<NewProductSchemaType> name={`price`} register={register} errors={errors} placeholder='Price' type='number'>
+									<SelectComponent
+										placeholder='Enter Price...'
+										options={currencyTypeOptions}
+										value={{
+											value: currency_code || 'USD',
+											label: currency_code || 'USD'
+										}}
+										width='95px'
+										onChange={(v) => {
+											setValue('currency_code', v?.value || 'USD')
+										}}
+									/>
+								</FormInput>
+							</div>
 						</div>
 					</div>
 					<div className="w-full flex justify-end gap-x-4">
@@ -84,7 +104,7 @@ const NewProductModal = () => {
 					buttonName="New Product"
 				/>
 			</Modal.Open>
-		</Modal.Root>
+		</Modal.Root >
 	)
 }
 

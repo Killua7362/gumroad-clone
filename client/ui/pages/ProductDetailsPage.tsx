@@ -1,10 +1,19 @@
 import ProductsDetailsPageLayout from "@/ui/layouts/ProductsDetailsPageLayout"
 import { useInView } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RiMoneyEuroCircleLine } from "react-icons/ri";
 import { motion } from 'framer-motion'
+import { getSingleProfileProductFetcher } from "@/react-query/query";
+import { useNavigate, useParams, useRouteLoaderData } from "react-router";
+import { UseFormWatch } from "react-hook-form";
+import Loader from "../components/loader";
 
-const ProductsDetailsPage = ({ preview = false }: { preview?: boolean }) => {
+interface ProductsDetailsPageProps {
+	preview?: boolean;
+	watch?: UseFormWatch<EditProductSchemaType>
+}
+
+const ProductsDetailsPage = ({ preview = false, watch }: ProductsDetailsPageProps) => {
 	const titleRef = useRef(null)
 	const priceRef = useRef<HTMLInputElement>(null)
 
@@ -12,23 +21,39 @@ const ProductsDetailsPage = ({ preview = false }: { preview?: boolean }) => {
 		margin: "-20% 0px 0px 0px"
 	})
 
-	const priceInView = useInView(priceRef)
+	const initialData = useRouteLoaderData('profile_single_product') as {
+		singleProductData: ProductType,
+	}
 
-	return (
+	const priceInView = useInView(priceRef)
+	const params = useParams()
+
+	const { data: profileProductData, isPending: profileProductPending, isSuccess: profileProductSuccess } = getSingleProfileProductFetcher({ userId: params.id, productId: params.productid, preview: preview, initialData: initialData?.singleProductData })
+
+	const title = preview ? watch!('title') : profileProductData?.title
+	const price = preview ? watch!('price') : profileProductData?.price
+
+	if (profileProductPending && !preview) return <Loader />
+
+	return (profileProductSuccess || preview) && (
 		<ProductsDetailsPageLayout preview={preview}>
-			<motion.div
-				transition={{ duration: 0.2 }}
-				layout
-				className={` w-[100%] flex justify-center items-center bg-background border-b-[0.1px] border-white/30  fixed mt-[-0.3rem] sm:mt-[-4.3rem] overflow-hidden ${titleIsInView ? "h-[0rem]" : "min-h-[5rem]"} `}>
-				<div className="w-10/12 xl:w-8/12 text-xl flex justify-between items-center">
-					<span className="text-3xl">
-						Title of the product
-					</span>
-					<span className={`${!priceInView && "hidden md:block"}`}>
-						10rs
-					</span>
-				</div>
-			</motion.div>
+			{
+				!preview &&
+				<motion.div
+					transition={{ duration: 0.2 }}
+					layout
+					className={` w-[100%] flex justify-center items-center bg-background border-b-[0.1px] border-white/30  fixed mt-[-0.3rem] sm:mt-[-4.3rem] overflow-hidden ${titleIsInView ? "h-[0rem]" : "min-h-[5rem]"} `}>
+					<div className="w-10/12 xl:w-8/12 text-xl flex justify-between items-center">
+						<span className="text-3xl">
+							{title}
+						</span>
+						<span className={`${!priceInView && "hidden md:block"}`}>
+							{price}
+						</span>
+					</div>
+				</motion.div>
+
+			}
 			<div className={`w-full h-full flex flex-col gap-y-3 ${preview ? "pt-[6rem]" : "mt-[10rem] sm:mt-[14rem] md:mt-[10rem] pt-24 sm:pt-8 md:pt-10"}`}>
 				<div className="w-11/12 lg:w-10/12 xl:w-8/12 mx-auto h-full flex flex-col mt-2 flex flex-col">
 					<div className="w-full h-[50rem] bg-accent border-[0.1px] border-white/30">
@@ -38,11 +63,11 @@ const ProductsDetailsPage = ({ preview = false }: { preview?: boolean }) => {
 						<div className="flex flex-col w-full md:w-8/12 divide-y-2 divide-white/30">
 							<div className="divide-y-2 divide-white/30 flex flex-col" ref={titleRef}>
 								<div className="text-3xl p-5">
-									Title of the product
+									{title}
 								</div>
 								<div className="flex text-xl justify-between gap-x-6 divide-x-2 divide-white/30">
 									<div className="p-5">
-										10rs
+										{price}
 									</div>
 									<div className="w-full p-5">
 										Akshay bhat

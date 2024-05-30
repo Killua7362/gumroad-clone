@@ -35,7 +35,7 @@ const ProductCard = ({ children, productData }: { children: React.ReactNode, pro
 				<div className="flex gap-x-3">
 					{productData.tags !== "" && productData.tags.split(',').map((e, i) => {
 						return (
-							<div className="text-xs px-3 py-[0.2rem] bg-white text-black w-fit h-fit rounded-xl">
+							<div className="text-xs px-3 py-[0.2rem] bg-white text-black w-fit h-fit rounded-xl" key={`product_card_tags_${i}`}>
 								{e}
 							</div>
 						)

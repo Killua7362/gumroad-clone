@@ -16,10 +16,13 @@ import { cx, css } from '@emotion/css'
 import { productTypeOptions } from "@/forms/schema/edit_product_schema";
 import { getProductEditor } from "@/react-query/mutations";
 import { getEditProductFormProps } from "@/forms";
-import { productEditContext } from "./ProductEditPage";
+import { productEditContext } from "@/ui/layouts/ProductEditPageLayout";
+import { currencyTypeOptions } from "@/forms/schema/misc_schema";
+import ProductsDetailsPage from "@/ui/pages/ProductDetailsPage";
+import { Runner } from 'react-runner'
 
 const tagsToString = (tags: typeof productTypeOptions) => {
-	return (tags || []).map(ele => ele.label).join(',')
+	return (tags || []).map(ele => ele.value).join(',')
 }
 
 const stringToTags = (typeString: string) => {
@@ -28,7 +31,7 @@ const stringToTags = (typeString: string) => {
 
 const ProductEditHomePage = () => {
 	const localProductEditContext = useContext(productEditContext)
-	const { handleSubmit, errors, register, setValue, watch, control, reset, setError } = localProductEditContext!
+	const { errors, register, setValue, watch, control, reset, setError } = localProductEditContext!
 
 	const setToastRender = useSetRecoilState(hideToastState)
 
@@ -37,6 +40,18 @@ const ProductEditHomePage = () => {
 	const collab_active = watch('collab_active') || false
 	const collabs = watch('collabs') || []
 	const description = watch('description') || ''
+	const currency_code = watch('currency_code') || 'USD'
+
+	const code = `
+		<div className="w-[60vw] mb-[-10rem] min-h-screen relative origin-top-left bg-background pointer-events-none" style={{transform:'scale(0.8)'}}>
+			<ProductsDetailsPage preview={true} watch={watch}/>
+		</div>
+	`
+
+	const scope = {
+		ProductsDetailsPage,
+		watch
+	}
 
 	const { append, remove, fields } = useFieldArray({
 		name: 'collabs',
@@ -45,7 +60,7 @@ const ProductEditHomePage = () => {
 
 	return (
 		<Fragment>
-			<div className="flex flex-col gap-y-4">
+			<div className="flex flex-col gap-y-4 w-full xl:w-7/12 xl:h-[50rem] px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background flex flex-col justify-between gap-y-4">
 				<div className="flex flex-col gap-y-2">
 					<div>
 						Name
@@ -62,7 +77,7 @@ const ProductEditHomePage = () => {
 					<SelectComponent
 						isMulti={true}
 						options={productTypeOptions}
-						value={[...productTypeOptions.filter(data => stringToTags(watch('tags')).includes(data.label))]}
+						value={[...productTypeOptions.filter(data => stringToTags(watch('tags')).includes(data.value))]}
 						placeholder="Proudct type..."
 						onChange={(v) => {
 							setValue('tags', tagsToString([...v]))
@@ -121,7 +136,16 @@ const ProductEditHomePage = () => {
 					<div>
 						Price
 					</div>
-					<fieldset className="border-white/30 border-[0.1px] rounded-md p-2 focus-within:border-white">
+					<fieldset className="border-white/30 border-[0.1px] rounded-md p-2 focus-within:border-white flex">
+						<SelectComponent
+							placeholder='Enter Price...'
+							options={currencyTypeOptions}
+							value={{ value: currency_code, label: currency_code }}
+							width='95px'
+							onChange={(v) => {
+								setValue('currency_code', v?.value || 'USD')
+							}}
+						/>
 						<input className="w-full text-lg bg-background text-white outline-none px-4" type="number" step='any' {...register('price')} />
 						{errors.price && <legend className="text-sm text-red-500">{errors.price.message}</legend>}
 					</fieldset>
@@ -160,7 +184,7 @@ const ProductEditHomePage = () => {
 							{
 								fields.map((collab, index) => {
 									return (
-										<div className='flex gap-x-4 items-center' id={collab.id}>
+										<div className='flex gap-x-4 items-center' key={collab.id}>
 											<div>
 												{index + 1}
 											</div>
@@ -214,8 +238,12 @@ const ProductEditHomePage = () => {
 					<Button buttonName="Save" type='submit' extraClasses={['!hidden']} />
 				</div>
 			</div>
-			<div>
-				Testing
+			<div className={`w-5/12 h-[50rem] overflow-x-auto overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white scrollbar-track-background hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}
+			>
+				<div className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">
+					Preview
+				</div>
+				<Runner scope={scope} code={code} />
 			</div>
 		</Fragment >
 	)

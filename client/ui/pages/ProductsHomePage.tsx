@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { hideToastState } from "@/atoms/states";
 import { IoMdSettings } from "react-icons/io";
-import { useNavigate } from "react-router";
+import { useNavigate, useRouteLoaderData } from "react-router";
 import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { EditProductSchema } from "@/forms/schema/edit_product_schema";
@@ -23,8 +23,17 @@ import NewProductModal from "@/ui/components/modal/NewProductModal";
 import DeleteProductModal from "../components/modal/DeleteProductModal";
 import { SelectComponent } from "../components/select";
 import { filterTypeOptions } from "@/forms/schema/misc_schema";
+import { processProducts } from "@/lib/products_process";
+import Loader from "../components/loader";
 
 const ProductsHomePage = () => {
+
+	const initialData = useRouteLoaderData('products_home') as ProductTypePayload
+
+	const { data: allProducts, isSuccess: productIsSuccess, isPending: productsIsLoading } = allProductsFetcher({ initialData })
+
+	if (productsIsLoading) return <Loader />
+
 	const [contextMenuConfig, setContextMenuConfig] = useState<ProductsCardContextMenu>({
 		active: false,
 		activeIdx: -1
@@ -62,32 +71,9 @@ const ProductsHomePage = () => {
 		}
 	}, [searchParams.get('search_word')])
 
-	const { data: allProducts, isSuccess: productIsSuccess, isPending: productsIsLoading } = allProductsFetcher()
-
-	const sortFunction = ([keyA, valueA]: [keyA: string, valueA: ProductType], [keyB, valueB]: [keyB: string, valueB: ProductType]) => {
-		switch (searchParams.get('sort_by')) {
-			case 'title':
-				return (((valueA.title as any) - (valueB.title as any)))
-			default:
-				return (valueA.price - valueB.price)
-		}
-	}
-
-	const searchFunction = ({ products }: { products: Entries<ProductTypePayload> }) => {
-		return products.filter(([key, value], id) => (value.title.toLowerCase().includes(searchParams.get('search_word') || "")))
-	}
-
-	const processProducts = ({ allProducts }: { allProducts: ProductTypePayload }) => {
-		const products: Entries<ProductTypePayload> = Object.entries(allProducts)
-		return searchFunction({ products }).sort((a, b) => {
-			return sortFunction(a, b) * (searchParams.get('sort_reverse') === 'true' ? -1 : 1)
-		})
-	}
-
 	const { mutate: liveSetter } = getProductLiveToggle()
 
-
-	return !productsIsLoading && (
+	return productIsSuccess && (
 		<div className="w-full h-full flex flex-col gap-y-4">
 			<div className="flex gap-x-3 items-center">
 				<NewProductModal />
@@ -169,20 +155,20 @@ const ProductsHomePage = () => {
 						<SelectComponent
 							placeholder='Sort by'
 							options={filterTypeOptions}
-							value={filterTypeOptions.filter((e) => e.label === (searchParams.get('sort_by') || 'title'))}
+							value={filterTypeOptions.filter((e) => e.value === (searchParams.get('sort_by') || 'title'))}
 							onChange={(v) => {
-								searchParams.set('sort_by', v?.label || 'title')
+								searchParams.set('sort_by', v?.value || 'title')
 								setSearchParams(searchParams)
 							}}
 						/>
 						<Button buttonName=""
 							extraClasses={['!text-lg !rounded-xl']}
 							onClickHandler={() => {
-								searchParams.get('sort_reverse') === 'true' ? searchParams.set('sort_reverse', 'false') : searchParams.set('sort_reverse', 'true')
+								searchParams.get('reverse') === 'true' ? searchParams.set('reverse', 'false') : searchParams.set('reverse', 'true')
 								setSearchParams(searchParams)
 							}} >
 							{
-								searchParams.get('sort_reverse') === 'true' ?
+								searchParams.get('reverse') === 'true' ?
 									<FaArrowUpShortWide />
 									:
 									<FaArrowDownWideShort />
@@ -193,7 +179,7 @@ const ProductsHomePage = () => {
 				}
 			</AnimatePresence>
 			<div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
-				{processProducts({ allProducts }).map(([key, value], i) => {
+				{processProducts({ products: Object.entries(allProducts), searchURL: searchParams.toString() }).map(([key, value], i) => {
 					return (
 						<ProductCard key={key} productData={{
 							...value

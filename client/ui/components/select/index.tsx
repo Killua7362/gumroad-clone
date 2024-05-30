@@ -9,6 +9,8 @@ type SelectProps<Option, IsMulti extends boolean = false, Group extends GroupBas
 	Group
 > & {
 	placeholder: string;
+	width?: string;
+	height?: string;
 };
 
 export const SelectComponent = <Option, IsMulti extends boolean = false, Group extends GroupBase<Option> = GroupBase<Option>>(props: SelectProps<Option, IsMulti, Group>) => {
@@ -21,9 +23,11 @@ export const SelectComponent = <Option, IsMulti extends boolean = false, Group e
 					borderColor: state.isFocused ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.3)',
 					backgroundColor: '#09090B',
 					cursor: 'pointer',
-					minWidth: "170px",
+					minWidth: props.width ? props.width : "170px",
+					minHeight: props.height ? props.height : '100%'
 				}),
 			}}
+			placeholder={props.placeholder}
 			classNamePrefix="react-select"
 			className={cx(css`
 							.react-select{

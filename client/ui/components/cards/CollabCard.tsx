@@ -44,7 +44,7 @@ const CollabCard = ({ children, productData }: { children: React.ReactNode, prod
 				{
 					productData.collabs!.map((e, i) => {
 						return (
-							<div className={`gap-x-4 gap-y-2 grid grid-cols-5 mr-8 ${e.approved ? "text-green-400" : "text-red-400"}`} id={`collab_${productData.title}_${i}`}>
+							<div className={`gap-x-4 gap-y-2 grid grid-cols-5 mr-8 ${e.approved ? "text-green-400" : "text-red-400"}`} key={`collab_${productData.title}_${i}`}>
 								<div className="col-span-4">
 									{e.email}
 								</div>

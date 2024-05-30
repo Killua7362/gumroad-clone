@@ -29,9 +29,9 @@ const FilterCheckoutModal = ({ watch, setValue, i, resetField }: { watch: UseFor
 						<SelectComponent
 							placeholder='Sort by'
 							options={filterTypeOptions}
-							value={filterTypeOptions.filter(e => e.label === (urlparams.get('sort_by') || 'title'))}
+							value={filterTypeOptions.filter(e => e.value === (urlparams.get('sort_by') || 'title'))}
 							onChange={(v) => {
-								urlparams.set('sort_by', v?.label || 'title')
+								urlparams.set('sort_by', v?.value || 'title')
 								setTempURL(urlparams.toString())
 							}}
 						/>

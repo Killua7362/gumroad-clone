@@ -1,20 +1,28 @@
 import { queryClient } from "@/app/RootPage";
 import { useQuery } from "@tanstack/react-query";
 
+export const loginStatusFetcherProps = {
+	queryFn: () => fetch(`${window.location.origin}/api/sessions/logged_in`).then(async (res) => {
+		if (!res.ok) {
+			const errorMessage: string = await res.json().then(data => data.error)
+			return Promise.reject(new Error(errorMessage))
+		}
+		return res.json()
+	}),
+}
+
+
 export const loginStatusFetcher = () => {
-	const { data, isSuccess, isPending } = useQuery({
-		queryFn: () => fetch(`${window.location.origin}/api/sessions/logged_in`).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json()
-		}),
-		meta: {
-			persist: false
-		},
-		queryKey: ['loginStatus'],
-	});
+	const { data, isSuccess, isPending } = useQuery(
+		{
+			...loginStatusFetcherProps,
+			meta: {
+				persist: false
+			},
+			queryKey: ['loginStatus'],
+
+		}
+	);
 
 	return { data, isSuccess, isPending } as {
 		data: authSchema;
@@ -23,26 +31,30 @@ export const loginStatusFetcher = () => {
 	};
 }
 
-export const allProductsFetcher = () => {
-	const { data, isSuccess, isPending } = useQuery({
-		queryKey: ['allProducts'],
-		queryFn: () => fetch(`${window.location.origin}/api/products`).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
+export const allProductsFetcherProps = {
+	queryKey: ['allProducts'],
+	queryFn: () => fetch(`${window.location.origin}/api/products`).then(async (res) => {
+		if (!res.ok) {
+			const errorMessage: string = await res.json().then(data => data.error)
+			return Promise.reject(new Error(errorMessage))
+		}
+		return res.json().then(data => {
+			let result: ProductTypePayload = {}
+			for (let i = 0; i < data.data.length; i++) {
+				result[data.data[i].id] = { ...data.data[i].attributes }
 			}
-			return res.json().then(data => {
-				let result: ProductTypePayload = {}
-				for (let i = 0; i < data.data.length; i++) {
-					result[data.data[i].id] = { ...data.data[i].attributes }
-				}
-				return result;
-			})
-		}),
+			return result;
+		})
+	}),
+}
+export const allProductsFetcher = ({ initialData }: { initialData?: ProductTypePayload | undefined }) => {
+	const { data, isSuccess, isPending } = useQuery({
+		...allProductsFetcherProps,
 		meta: {
 			persist: false
 		},
-		enabled: (queryClient.getQueryData(['loginStatus']) && (queryClient.getQueryData(['loginStatus']) as authSchema).logged_in == true) as boolean
+		enabled: (queryClient.getQueryData(['loginStatus']) && (queryClient.getQueryData(['loginStatus']) as authSchema).logged_in == true) as boolean,
+		initialData
 	})
 
 	return { data, isSuccess, isPending } as {
@@ -52,27 +64,32 @@ export const allProductsFetcher = () => {
 	};
 }
 
-export const collabsProductFetcher = () => {
+export const collabsProductFetcherProps = {
+	queryKey: ['collabProducts'],
+	queryFn: () => fetch(`${window.location.origin}/api/collabs/products`).then(async (res) => {
+		if (!res.ok) {
+			const errorMessage: string = await res.json().then(data => data.error)
+			return Promise.reject(new Error(errorMessage))
+		}
+		return res.json().then(data => {
+			let result: ProductTypePayload = {}
+			for (let i = 0; i < data.data.length; i++) {
+				result[data.data[i].id] = { ...data.data[i].attributes }
+			}
+			return result;
+		})
+	}),
+}
+
+export const collabsProductFetcher = ({ initialData }: { initialData: ProductTypePayload | undefined }) => {
 
 	const { data, isSuccess, isPending } = useQuery({
-		queryKey: ['collabProducts'],
-		queryFn: () => fetch(`${window.location.origin}/api/collabs/products`).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
-			}
-			return res.json().then(data => {
-				let result: ProductTypePayload = {}
-				for (let i = 0; i < data.data.length; i++) {
-					result[data.data[i].id] = { ...data.data[i].attributes }
-				}
-				return result;
-			})
-		}),
+		...collabsProductFetcherProps,
 		meta: {
 			persist: false
 		},
-		enabled: (queryClient.getQueryData(['loginStatus']) && (queryClient.getQueryData(['loginStatus']) as authSchema).logged_in == true) as boolean
+		enabled: (queryClient.getQueryData(['loginStatus']) && (queryClient.getQueryData(['loginStatus']) as authSchema).logged_in == true) as boolean,
+		initialData
 	})
 
 	return { data, isSuccess, isPending } as {
@@ -84,8 +101,8 @@ export const collabsProductFetcher = () => {
 
 }
 
-export const singleProductFetcher = ({ productId }: { productId: string | undefined }) => {
-	const { data, isSuccess, isPending } = useQuery({
+export const singleProductFetcherProps = ({ productId }: { productId: string | undefined }) => {
+	return {
 		queryKey: ['allProducts', productId!],
 		queryFn: () => {
 			if (queryClient.getQueryData(['allProducts'])) {
@@ -103,8 +120,15 @@ export const singleProductFetcher = ({ productId }: { productId: string | undefi
 				})
 			}
 		},
+	}
+}
+
+export const singleProductFetcher = ({ productId, initialData }: { productId: string | undefined, initialData?: ProductType | undefined }) => {
+	const { data, isSuccess, isPending } = useQuery({
+		...singleProductFetcherProps({ productId }),
 		meta: { persist: true },
 		enabled: !!productId,
+		initialData
 	})
 
 	return { data, isSuccess, isPending } as {
@@ -115,8 +139,8 @@ export const singleProductFetcher = ({ productId }: { productId: string | undefi
 
 }
 
-export const getProfileProductsFetcher = ({ userId, preview }: { userId: string | undefined, preview: boolean }) => {
-	const { data, isSuccess, isPending } = useQuery({
+export const getProfileProductsFetcherProps = ({ userId }: { userId: string | undefined }) => {
+	return {
 		queryKey: ['profileProducts', userId!],
 		queryFn: () => fetch(`${window.location.origin}/api/profiles/${userId!}`).then(async (res) => {
 			if (!res.ok) {
@@ -131,10 +155,16 @@ export const getProfileProductsFetcher = ({ userId, preview }: { userId: string 
 				return result;
 			})
 		}),
+	}
+}
+export const getProfileProductsFetcher = ({ userId, initialData }: { userId: string | undefined, initialData?: ProductTypePayload | undefined }) => {
+	const { data, isSuccess, isPending } = useQuery({
+		...getProfileProductsFetcherProps({ userId }),
 		meta: {
 			persist: false
 		},
-		enabled: !!userId && !preview,
+		enabled: !!userId,
+		initialData
 	})
 
 	return { data, isSuccess, isPending } as {
@@ -145,37 +175,47 @@ export const getProfileProductsFetcher = ({ userId, preview }: { userId: string 
 
 }
 
-export const getSingleProfileProductFetcher = ({ userId, productId, preview }: { userId: string | undefined, productId: string | undefined, preview: boolean }) => {
-	const { data, isSuccess, isPending } = useQuery({
+export const getSingleProfileProductFetcherProps = ({ userId, productId }: { userId: string | undefined, productId: string | undefined }) => {
+	return {
 		queryKey: ['profileProducts', userId!, productId!],
-		queryFn: () => fetch(`${window.location.origin}/api/profiles/${userId!}/${productId!}`).then(async (res) => {
-			if (!res.ok) {
-				const errorMessage: string = await res.json().then(data => data.error)
-				return Promise.reject(new Error(errorMessage))
+		queryFn: () => {
+			if (queryClient.getQueryData(['profileProducts', userId!])) {
+				return (queryClient.getQueryData(['profileProducts', userId!]) as ProductTypePayload)[productId!]
+			} else {
+				return fetch(`${window.location.origin}/api/profiles/${userId!}/${productId!}`).then(async (res) => {
+					if (!res.ok) {
+						const errorMessage: string = await res.json().then(data => data.error)
+						return Promise.reject(new Error(errorMessage))
+					}
+					return res.json().then(data => {
+						return { ...data.data.attributes } as ProductType;
+					})
+				})
 			}
-			return res.json().then(data => {
-				let result: ProductTypePayload = {}
-				for (let i = 0; i < data.data.length; i++) {
-					result[data.data[i].id] = { ...data.data[i].attributes }
-				}
-				return result;
-			})
-		}),
+		},
+
+	}
+}
+
+export const getSingleProfileProductFetcher = ({ userId, productId, preview, initialData }: { userId: string | undefined, productId: string | undefined, preview: boolean, initialData?: ProductType | undefined }) => {
+	const { data, isSuccess, isPending } = useQuery({
+		...getSingleProfileProductFetcherProps({ userId, productId }),
 		meta: {
 			persist: false
 		},
 		enabled: !!userId && !!productId && !preview,
+		initialData
 	})
 
 	return { data, isSuccess, isPending } as {
-		data: ProductTypePayload;
+		data: ProductType;
 		isSuccess: boolean;
 		isPending: boolean;
 	};
 }
 
-export const getProfileStatus = ({ userId, preview }: { userId: string | undefined, preview: boolean }) => {
-	const { data, isSuccess, isPending } = useQuery({
+export const getProfileStatusProps = ({ userId }: { userId: string | undefined }) => {
+	return {
 		queryKey: ['profileStatus', userId!],
 		queryFn: () => fetch(`${window.location.origin}/api/profile/${userId!}`).then(async (res) => {
 			if (!res.ok) {
@@ -186,10 +226,17 @@ export const getProfileStatus = ({ userId, preview }: { userId: string | undefin
 				return { ...data.data.attributes } as CheckoutFormSchemaType
 			})
 		}),
+	}
+}
+
+export const getProfileStatus = ({ userId, preview, initialData }: { userId: string | undefined, preview: boolean, initialData?: CheckoutFormSchemaType | undefined }) => {
+	const { data, isSuccess, isPending } = useQuery({
+		...getProfileStatusProps({ userId }),
 		meta: {
 			persist: false
 		},
 		enabled: !!userId && !preview,
+		initialData
 	})
 
 	return { data, isSuccess, isPending } as {

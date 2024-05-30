@@ -49,7 +49,7 @@ import { AllStyledComponent } from '@remirror/styles/emotion';
 import type { CreateEditorStateProps, RemirrorJSON } from 'remirror';
 import type { RemirrorProps, UseThemeProps } from '@remirror/react';
 import { useSearchParams } from 'react-router-dom';
-import { productEditContext } from '../pages/ProductEditPage';
+import { productEditContext } from '../layouts/ProductEditPageLayout';
 
 interface ReactEditorProps
 	extends Pick<CreateEditorStateProps, 'stringHandler'>,

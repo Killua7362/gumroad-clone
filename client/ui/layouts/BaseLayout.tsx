@@ -23,27 +23,13 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 	const sideBarProps: SideBarProps = getSideBarProps()
 
 	const siderbarActivePaths = new Set(["profile", "notfound", "signin", "signup"])
-	const authPaths = new Set(['signin', 'signup', 'profile'])
-
 	const navigate = useNavigate()
 
-	const { data: loginStatus, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
-
 	useEffect(() => {
-		if (!isLoginStatusLoading) {
-			if (!authPaths.has(location.pathname.split('/')[1]) && (!isLoginSuccess || loginStatus?.logged_in === false)) {
-				navigate('/signin')
-			}
-
-			if ((isLoginSuccess && loginStatus?.logged_in) && new Set(['signin', 'signup']).has(location.pathname.split('/')[1])) {
-				navigate('/')
-			}
-		}
 		setSideBarActive(!siderbarActivePaths.has(location.pathname.split('/')[1]))
-	}, [location.pathname, isLoginStatusLoading, isLoginSuccess, loginStatus?.logged_in!])
+	}, [location.pathname,])
 
-
-	return !isLoginStatusLoading && (
+	return (
 		<div className="min-h-screen w-screen flex flex-col sm:flex-row">
 			<Toast />
 			{

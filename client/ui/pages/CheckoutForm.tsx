@@ -1,4 +1,3 @@
-import { useRunner } from 'react-live-runner'
 import ProfileHomePage from '@/ui/pages/ProfileHomePage'
 import { useEffect, useState } from 'react'
 import { RiDeleteBin2Fill } from "react-icons/ri";
@@ -11,49 +10,52 @@ import { useFieldArray } from 'react-hook-form';
 import { getProfileStatusSetter } from '@/react-query/mutations';
 import { FormInput } from '../components/forms';
 import FilterCheckoutModal from '../components/modal/FilterCheckoutModal';
+import { Runner } from 'react-runner'
+import Loader from '../components/loader';
+import { useRouteLoaderData } from 'react-router';
 
 const CheckoutForm = () => {
+	const initialData = useRouteLoaderData('checkout_form') as CheckoutFormSchemaType
 
-	const { data: profileStatus, isPending: profileIsLoading, isSuccess: profileIsSuccess } = getProfileStatus({ userId: (queryClient.getQueryData(['loginStatus']) as authSchema).user_id, preview: false })
+	const { data: profileStatus, isPending: profileIsLoading, isSuccess: profileIsSuccess } = getProfileStatus({ userId: (queryClient.getQueryData(['loginStatus']) as authSchema).user_id, preview: false, initialData })
 
 	const code = `
 		<div className="w-[60vw] mb-[-10rem] min-h-screen relative origin-top-left bg-background pointer-events-none" style={{transform:'scale(0.8)'}}>
-			<ProfileHomePage preview={true} name={name} bio={bio} category={category}/>
+			<ProfileHomePage preview={true} name={name} bio={bio} category={category} userId={userId}/>
 		</div>
 	`
 
-	const { handleSubmit, register, control, reset, watch, setValue, errors, resetField } = getCheckoutFormProps(profileStatus || {})
+	if (profileIsLoading) return <Loader />
+
+	const { handleSubmit, register, control, reset, watch, setValue, errors, resetField, isDirty } = getCheckoutFormProps(profileStatus || {})
 
 	const { mutate: profileStatusSetter, isPending: profileStatusLoading } = getProfileStatusSetter({ userId: (queryClient.getQueryData(['loginStatus']) as authSchema).user_id! })
-
-	useEffect(() => {
-		if (profileIsSuccess) {
-			reset({ ...profileStatus })
-		}
-	}, [profileIsSuccess])
+	const [rendered, setRendered] = useState(false)
 
 	const bio = watch('bio')
 	const name = watch('name')
 	const category = watch('category')
+	const userId = (queryClient.getQueryData(['loginStatus']) as authSchema).user_id
 
 	const scope = {
 		ProfileHomePage,
 		name,
 		bio,
-		category
+		category,
+		userId
 	}
-
-	const { element, error } = useRunner({ code, scope })
 
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'category'
 	})
 
-	return (
+	return profileIsSuccess && (
 		<div className="flex justify-center w-full h-full gap-x-0">
 			<form className="w-full xl:w-7/12 xl:h-[50rem] py-10 px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background flex flex-col justify-between gap-y-4" id='checkout_form' onSubmit={handleSubmit((data) => {
-				profileStatusSetter({ ...data })
+				if (isDirty) {
+					profileStatusSetter({ ...data })
+				}
 			})}>
 				<div className='flex flex-col gap-y-4'>
 					<div className='flex flex-col gap-y-4'>
@@ -76,7 +78,7 @@ const CheckoutForm = () => {
 							{
 								fields.map((e, i) => {
 									return (
-										<div id={e.id} className='flex flex-col gap-y-2'>
+										<div key={e.id} className='flex flex-col gap-y-2'>
 											<div className='gap-x-4 items-center flex'>
 												<span>
 													{i + 1}
@@ -137,8 +139,8 @@ const CheckoutForm = () => {
 					</div>
 				</div>
 				<div className='flex gap-x-4 w-full justify-end'>
-					<Button buttonName='Revert' />
-					<Button buttonName='Save' type='submit' form='checkout_form' />
+					<Button buttonName='Revert' onClickHandler={() => { reset() }} />
+					<Button buttonName='Save' type='submit' form='checkout_form' isLoading={profileIsLoading} />
 				</div>
 			</form >
 			<div className={`w-5/12 h-[50rem] overflow-x-auto overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white scrollbar-track-background hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}
@@ -146,7 +148,7 @@ const CheckoutForm = () => {
 				<div className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">
 					Preview
 				</div>
-				{element}
+				<Runner scope={scope} code={code} />
 			</div>
 		</div >
 	)

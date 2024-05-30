@@ -17,7 +17,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Button from '@/ui/components/button';
 import ProductEditContentDeleteModal from '@/ui/components/modal/ProductEditContentDeleteModal';
-import { productEditContext } from './ProductEditPage';
+import { productEditContext } from '../layouts/ProductEditPageLayout';
 import { useFieldArray } from 'react-hook-form';
 
 const markDownStyle = css`
@@ -151,8 +151,8 @@ const ProductEditContentPage = () => {
 								className='flex flex-col gap-2'>
 								{
 									fields.map((e, i) => {
-										return e && (
-											<IonItem id={e.id}>
+										return (
+											<IonItem key={e.id}>
 												<IonRow className={`justify-between flex-nowrap items-center px-2 py-0 overflow-none ${Number(searchParams.get('page')) === i + 1 && "bg-accent/80 text-white"} `}
 													onClick={() => {
 														if (inputRefs[i].current?.readOnly) {
@@ -241,7 +241,7 @@ const ProductEditContentPage = () => {
 							{
 								new Array(5).fill(0).map((e, i) => {
 									return (
-										<div className="cursor-pointer"
+										<div key={`review_star_${i}`} className="cursor-pointer"
 											onMouseEnter={() => {
 												reviewEdit && setTempReviewScore(i + 1)
 											}}

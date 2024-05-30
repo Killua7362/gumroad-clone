@@ -4,24 +4,27 @@ import { Fragment } from "react/jsx-runtime"
 import { AnimatePresence, motion } from "framer-motion"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { useEffect, useState } from "react"
-import { useParams } from "react-router"
+import { useParams, useRouteLoaderData } from "react-router"
 import { useSearchParams } from "react-router-dom"
 import Button from "@/ui/components/button"
-import { allProductsFetcher, collabsProductFetcher, loginStatusFetcher } from "@/react-query/query"
+import { allProductsFetcher, collabsProductFetcher } from "@/react-query/query"
 import { queryClient } from "@/app/RootPage"
 import { getCollabApprover } from "@/react-query/mutations"
+import Loader from "../components/loader"
 
 const CollaboratorsPage = () => {
+	const initialData = useRouteLoaderData('collaborators_page') as {
+		allProducts: ProductTypePayload,
+		collabProducts: ProductTypePayload
+	}
+
+	const { data: allProducts, isSuccess: productIsSuccess, isPending: productsIsLoading } = allProductsFetcher({ initialData: initialData?.allProducts })
+	const { data: collabProducts, isSuccess: collabIsSuccess, isPending: collabProductsIsLoading } = collabsProductFetcher({ initialData: initialData?.collabProducts })
+
+	if (productsIsLoading || collabProductsIsLoading) return <Loader />
 
 	const [params, setSearchParams] = useSearchParams()
-
-	const { data: loginStatus, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
-
-	const { data: collabProducts, isSuccess: collabIsSuccess, isPending: collabProductsIsLoading } = collabsProductFetcher()
-
 	const { mutate: collabProductSetter } = getCollabApprover()
-
-	const { data: allProducts, isSuccess: productIsSuccess, isPending: productsIsLoading } = allProductsFetcher()
 
 	const productsCollection = () => {
 		if (params.get('type') == 'outgoing') {
@@ -39,12 +42,12 @@ const CollaboratorsPage = () => {
 		Object.keys(productsCollectionData).filter(key => !(key in allProducts)).map((key, i) => {
 			result[key] = productsCollectionData![key].collab_active &&
 				Object.keys(productsCollectionData![key].collabs!).length !== 0 &&
-				(collabProducts![key]?.collabs || []).filter(e => e.email === loginStatus?.email)[0]?.approved || false
+				(collabProducts![key]?.collabs || []).filter(e => e.email === (queryClient.getQueryData(['loginStatus']) as authSchema)?.email)[0]?.approved || false
 		})
 		return result;
 	}
 
-	return !collabProductsIsLoading && (
+	return collabIsSuccess && productIsSuccess && (
 		<Fragment>
 			<div className="flex gap-x-3 items-center">
 				<Button

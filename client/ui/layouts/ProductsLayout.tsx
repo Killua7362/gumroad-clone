@@ -1,11 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { Fragment, useState } from "react"
-import { Link, useParams } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import Button from "@/ui/components/button";
 
 const ProductLayout = ({ children }: { children: React.ReactNode }) => {
-	const params = useParams()
 	return (
 		<div className="h-full w-full mb-14">
 			<div className="h-full px-3 sm:mx-10 flex flex-col">
@@ -14,12 +13,30 @@ const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 						Products
 					</div>
 					<div className="border-b-[1px] h-5 border-white/30 flex gap-x-4">
-						<Link to='/products/home' className={`no-underline ${params.page && params.page === 'home' && 'cursor-default pointer-events-none'}`}>
-							<Button buttonName="Home" extraClasses={[`!text-base !rounded-2xl ${params.page && params.page === 'home' && '!border-white'}`]} />
-						</Link>
-						<Link to='/products/collaborators' className={`no-underline ${params.page && params.page === 'collaborators' && 'cursor-default pointer-events-none'}`}>
-							<Button buttonName="Collab" extraClasses={[`!text-base !rounded-2xl ${params.page && params.page === 'collaborators' && '!border-white'}`]} />
-						</Link>
+						<NavLink to='/products/home'
+							style={{
+								textDecoration: 'none'
+							}}
+							className={({ isActive }) => {
+								return (isActive ? "cursor-default pointer-events-none" : "")
+							}} >
+							{({ isActive }) => (
+								<Button buttonName="Home" isActive={isActive} extraClasses={[`!text-base !rounded-2xl`]} />
+							)}
+						</NavLink>
+						<NavLink
+							to='/products/collaborators'
+							className={({ isActive }) => {
+								return (isActive ? "cursor-default pointer-events-none" : "")
+							}}
+							style={{
+								textDecoration: 'none'
+							}}
+						>
+							{({ isActive }) => (
+								<Button buttonName="Collab" isActive={isActive} extraClasses={[`!text-base !rounded-2xl`]} />
+							)}
+						</NavLink>
 					</div>
 				</div>
 				{children}

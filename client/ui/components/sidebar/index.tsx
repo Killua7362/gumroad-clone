@@ -196,7 +196,7 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 									<Link to={e.linkUrl} key={`sidebar_items_${i}`} className='no-underline text-white'>
 										<motion.div
 											className={`flex px-6 items-center py-4 border-white/30 gap-x-4 ${i === activeItem ? "bg-white text-gray-800" : "cursor-pointer hover:text-white/80 "}`}
-											id={`$sidebarTopitems_${i}`}
+											key={`$sidebarTopitems_${i}`}
 											onClick={() => {
 												if (i !== activeItem) {
 													setActiveItem(i)

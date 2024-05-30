@@ -50,6 +50,7 @@ interface ProductType {
 	title: string;
 	tags: string;
 	live: boolean;
+	currency_code: string;
 	price: number;
 	collab_active: boolean;
 	collabs?: IndividualCollab[];
@@ -91,4 +92,5 @@ interface ReactFormProps<T extends import('react-hook-form').FieldValues> {
 	control: import('react-hook-form').Control<T>;
 	trigger: import('react-hook-form').UseFormTrigger<T>;
 	resetField: import('react-hook-form').UseFormResetField<T>;
+	isDirty: boolean;
 }

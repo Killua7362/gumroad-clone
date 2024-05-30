@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
 export const productTypeOptions = [
-	{ value: 'Productivity', label: 'productivity' },
-	{ value: 'Fitness', label: 'fitness' },
-	{ value: 'Programming', label: 'programming' },
+	{ value: 'productivity', label: 'Productivity' },
+	{ value: 'fitness', label: 'Fitness' },
+	{ value: 'programming', label: 'Programming' },
 ]
 
 const CollabSchema = z.object({
@@ -20,6 +20,7 @@ const ContentSchema = z.object({
 export const EditProductSchema = z.object({
 	title: z.string().min(2).max(30),
 	price: z.coerce.number().min(0),
+	currency_code: z.string().default('USD'),
 	summary: z.string().min(10),
 	description: z.string().min(10),
 	collab_active: z.boolean().default(false),
@@ -48,7 +49,7 @@ export const EditProductSchema = z.object({
 			return;
 		}
 		const stringArray: string[] = data.trim().split(',')
-		const validateArray: string[] = productTypeOptions.map(d => d.label)
+		const validateArray: string[] = productTypeOptions.map(d => d.value)
 
 		for (let i = 0; i < stringArray.length; i++) {
 			if (!(validateArray.includes(stringArray[i]))) {
