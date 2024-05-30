@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { hideToastState } from "@/atoms/states";
 import { IoMdSettings } from "react-icons/io";
-import { useNavigate, useRouteLoaderData } from "react-router";
+import { useRouteLoaderData } from "react-router";
 import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { EditProductSchema } from "@/forms/schema/edit_product_schema";
@@ -15,7 +15,7 @@ import { queryClient } from "@/app/RootPage";
 import { z } from "zod";
 import { allProductsFetcher } from "@/react-query/query"
 import _ from 'lodash'
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { getProductCreater, getProductDeleter, getProductLiveToggle } from "@/react-query/mutations";
 import { NewProductSchema } from "@/forms/schema/new_product_schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,7 +41,6 @@ const ProductsHomePage = () => {
 
 	const setToastRender = useSetRecoilState(hideToastState)
 
-	const navigate = useNavigate()
 
 	const [searchBarActive, setSearchBarActive] = useState<boolean>(false)
 	const [searchParams, setSearchParams] = useSearchParams()
@@ -246,13 +245,11 @@ const ProductsHomePage = () => {
 											>
 												Go Live
 											</div>
-											<div className="px-4 py-3 hover:bg-accent/50 cursor-pointer"
-												onClick={() => {
-													navigate(`/products/edit/${key}/home`)
-												}}
-											>
-												Edit
-											</div>
+											<Link to={`/products/edit/${key}/home`} className="text-white no-underline">
+												<div className="px-4 py-3 hover:bg-accent/50 cursor-pointer">
+													Edit
+												</div>
+											</Link>
 											<DeleteProductModal idx={key} setContextMenuConfig={setContextMenuConfig} />
 										</motion.div>
 									}

@@ -1,4 +1,6 @@
 import style from './global.module.css';
+import "nprogress/nprogress.css";
+
 import {
 	RouterProvider,
 } from "react-router-dom";
@@ -6,31 +8,36 @@ import { RecoilRoot } from 'recoil'
 import { QueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
-import BaseLayout from "@/ui/layouts/BaseLayout"
-import CheckoutLayout from "@/ui/layouts/CheckoutLayout"
-import ProductLayout from "@/ui/layouts/ProductsLayout"
+
 import NonProtectedRoute from "@/ui/layouts/wrapper/NonProtectedRoute"
 import ProtectedRoute from "@/ui/layouts/wrapper/ProtectedRoute"
-import NotFoundPage from "@/ui/pages/404"
-import CheckoutForm from "@/ui/pages/CheckoutForm"
-import CollaboratorsPage from "@/ui/pages/Collaborators"
-import Home from "@/ui/pages/Home"
-import ProductsDetailsPage from "@/ui/pages/ProductDetailsPage"
-import ProductsHomePage from "@/ui/pages/ProductsHomePage"
-import ProfileCheckoutPage from "@/ui/pages/ProfileCheckoutPage"
-import ProfileHomePage from "@/ui/pages/ProfileHomePage"
-import SignInPage from "@/ui/pages/SignInPage"
-import SignUpPage from "@/ui/pages/SignUpPage"
-import SuggestionsPage from "@/ui/pages/Suggestions"
+
 import { Outlet } from "react-router"
-import { allProductsFetcherProps, collabsProductFetcherProps, getProfileProductsFetcherProps, getProfileStatusProps, getSingleProfileProductFetcherProps, singleProductFetcherProps } from "@/react-query/query"
+import { allProductsFetcherProps, collabsProductFetcherProps, getProfileProductsFetcherProps, getProfileStatusProps, getSingleProfileProductFetcherProps, loginStatusFetcherProps, singleProductFetcherProps } from "@/react-query/query"
 import { createBrowserRouter } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
-import Loader from '@/ui/components/loader';
 
-const ProductEditPageLayout = lazy(() => import('@/ui/layouts/ProductEditPageLayout'))
-const ProductEditContentPage = lazy(() => import('@/ui/pages/ProductEditContentPage'))
-const ProductEditHomePage = lazy(() => import('@/ui/pages/ProductEditHomePage'))
+import BaseLayout from '@/ui/layouts/BaseLayout';
+import Loader from '@/ui/components/loader';
+import { AnimatePresence } from 'framer-motion';
+import Bar from '@/ui/components/loader/Bar';
+const CheckoutLayout = lazy(() => import("@/ui/layouts/CheckoutLayout"))
+const ProductEditPageLayout = lazy(() => import("@/ui/layouts/ProductEditPageLayout"))
+const ProductLayout = lazy(() => import("@/ui/layouts/ProductsLayout"))
+const NotFoundPage = lazy(() => import("@/ui/pages/404"))
+const CheckoutForm = lazy(() => import("@/ui/pages/CheckoutForm"))
+const CollaboratorsPage = lazy(() => import('@/ui/pages/Collaborators'));
+const Home = lazy(() => import('@/ui/pages/Home'));
+const ProductsDetailsPage = lazy(() => import('@/ui/pages/ProductDetailsPage'));
+const ProductEditContentPage = lazy(() => import('@/ui/pages/ProductEditContentPage'));
+const ProductEditHomePage = lazy(() => import('@/ui/pages/ProductEditHomePage'));
+const ProductsHomePage = lazy(() => import('@/ui/pages/ProductsHomePage'));
+const ProfileCheckoutPage = lazy(() => import('@/ui/pages/ProfileCheckoutPage'));
+const ProfileHomePage = lazy(() => import('@/ui/pages/ProfileHomePage'));
+const SignInPage = lazy(() => import('@/ui/pages/SignInPage'));
+const SignUpPage = lazy(() => import('@/ui/pages/SignUpPage'));
+const SuggestionsPage = lazy(() => import('@/ui/pages/Suggestions'));
+
 
 export const queryClient = new QueryClient({
 	defaultOptions: {
@@ -51,14 +58,19 @@ const persister = createSyncStoragePersister({
 
 const router = createBrowserRouter([
 	{
-
-		lazy: async () => {
-			const BaseLayout = (await import('@/ui/layouts/BaseLayout')).default
-			return {
-				element: < BaseLayout>
-					<Outlet />
+		Component: () => {
+			return (
+				<BaseLayout>
+					<Suspense fallback={<Bar />}>
+						<Outlet />
+					</Suspense>
 				</BaseLayout>
-			}
+			)
+		},
+		id: 'root',
+		loader: async () => {
+			const loginStatus = await queryClient.ensureQueryData(loginStatusFetcherProps)
+			return loginStatus as authSchema
 		},
 		errorElement: <NotFoundPage />,
 		children: [
@@ -80,10 +92,7 @@ const router = createBrowserRouter([
 						profileData: CheckoutFormSchemaType
 					}
 				},
-				lazy: async () => {
-					const ProfileHomePage = (await import('@/ui/pages/ProfileHomePage')).default
-					return { element: < ProfileHomePage /> }
-				},
+				element: <ProfileHomePage />
 			},
 			{
 				loader: async ({ params }) => {
@@ -99,34 +108,22 @@ const router = createBrowserRouter([
 				},
 				path: 'profile/:id/product/:productid',
 				id: 'profile_single_product',
-				lazy: async () => {
-					const ProductsDetailsPage = (await import('@/ui/pages/ProductDetailsPage')).default
-					return { element: < ProductsDetailsPage /> }
-				},
+				element: <ProductsDetailsPage />
 			},
 			{
 				path: 'profile/:id/checkout',
-				lazy: async () => {
-					const ProfileCheckoutPage = (await import('@/ui/pages/ProfileCheckoutPage')).default
-					return { element: < ProfileCheckoutPage /> }
-				},
+				element: <ProfileCheckoutPage />
 			},
 			{
 				element: <NonProtectedRoute />,
 				children: [
 					{
 						path: 'signin',
-						lazy: async () => {
-							const SignInPage = (await import('@/ui/pages/SignInPage')).default
-							return { element: < SignInPage /> }
-						},
+						element: <SignInPage />
 					},
 					{
 						path: 'signup',
-						lazy: async () => {
-							const SignUpPage = (await import('@/ui/pages/SignUpPage')).default
-							return { element: < SignUpPage /> }
-						},
+						element: <SignUpPage />
 					},
 				]
 			},
@@ -135,10 +132,7 @@ const router = createBrowserRouter([
 				children: [
 					{
 						path: '/',
-						lazy: async () => {
-							const Home = (await import('@/ui/pages/Home')).default
-							return { element: < Home /> }
-						},
+						element: <Home />,
 					},
 					{
 						path: 'products/edit/:id',
@@ -150,7 +144,7 @@ const router = createBrowserRouter([
 						},
 						Component: () => {
 							return (
-								< ProductEditPageLayout >
+								<ProductEditPageLayout>
 									<Outlet />
 								</ProductEditPageLayout>
 							)
@@ -168,13 +162,12 @@ const router = createBrowserRouter([
 						]
 					},
 					{
-						lazy: async () => {
-							const ProductLayout = (await import('@/ui/layouts/ProductsLayout')).default
-							return {
-								element: < ProductLayout >
+						Component: () => {
+							return (
+								<ProductLayout>
 									<Outlet />
-								</ProductLayout>
-							}
+								</ProductLayout >
+							)
 						},
 						children: [
 							{
@@ -184,22 +177,12 @@ const router = createBrowserRouter([
 									const allProducts = await queryClient.ensureQueryData(allProductsFetcherProps)
 									return allProducts as ProductTypePayload
 								},
-								lazy: async () => {
-									const ProductsHomePage = (await import('@/ui/pages/ProductsHomePage')).default
-									return {
-										element: <ProductsHomePage />
-									}
-								},
+								element: <ProductsHomePage />
 							},
 							{
 								path: "products/collaborators",
 								id: 'collaborators_page',
-								lazy: async () => {
-									const CollaboratorsPage = (await import('@/ui/pages/Collaborators')).default
-									return {
-										element: <CollaboratorsPage />
-									}
-								},
+								element: <CollaboratorsPage />,
 								loader: async () => {
 									const allProducts = await queryClient.ensureQueryData(allProductsFetcherProps)
 									const collabProducts = await queryClient.ensureQueryData(collabsProductFetcherProps)
@@ -215,24 +198,18 @@ const router = createBrowserRouter([
 						]
 					},
 					{
-						lazy: async () => {
-							const CheckoutLayout = (await import('@/ui/layouts/CheckoutLayout')).default
-							return {
-								element: <CheckoutLayout>
+						Component: () => {
+							return (
+								<CheckoutLayout>
 									<Outlet />
 								</CheckoutLayout>
-							}
+							)
 						},
 						children: [
 							{
 								path: 'checkout/form',
 								id: 'checkout_form',
-								lazy: async () => {
-									const CheckoutForm = (await import('@/ui/pages/CheckoutForm')).default
-									return {
-										element: <CheckoutForm />
-									}
-								},
+								element: <CheckoutForm />,
 								loader: async () => {
 									const profileDataQuery = getProfileStatusProps({ userId: (queryClient.getQueryData(['loginStatus']) as authSchema).user_id })
 									const profileData = await queryClient.ensureQueryData(profileDataQuery)
@@ -241,13 +218,7 @@ const router = createBrowserRouter([
 							},
 							{
 								path: 'checkout/suggestions',
-								element: <SuggestionsPage />,
-								lazy: async () => {
-									const SuggestionsPage = (await import('@/ui/pages/Suggestions')).default
-									return {
-										element: <SuggestionsPage />
-									}
-								},
+								element: <SuggestionsPage />
 							},
 						]
 					},
@@ -271,9 +242,7 @@ const RootPage = () => {
 						},
 					},
 				}} client={queryClient}>
-				<Suspense fallback={<Loader />}>
-					<RouterProvider router={router} />
-				</Suspense>
+				<RouterProvider router={router} />
 			</PersistQueryClientProvider>
 		</RecoilRoot>
 	);

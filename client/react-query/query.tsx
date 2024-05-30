@@ -2,11 +2,8 @@ import { queryClient } from "@/app/RootPage";
 import { useQuery } from "@tanstack/react-query";
 
 export const loginStatusFetcherProps = {
+	queryKey: ['loginStatus'],
 	queryFn: () => fetch(`${window.location.origin}/api/sessions/logged_in`).then(async (res) => {
-		if (!res.ok) {
-			const errorMessage: string = await res.json().then(data => data.error)
-			return Promise.reject(new Error(errorMessage))
-		}
 		return res.json()
 	}),
 }
@@ -19,7 +16,6 @@ export const loginStatusFetcher = () => {
 			meta: {
 				persist: false
 			},
-			queryKey: ['loginStatus'],
 
 		}
 	);

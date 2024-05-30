@@ -14,7 +14,7 @@ import { IonItem, IonLabel, IonList, IonReorder, IonReorderGroup, IonRow, ItemRe
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRecoilState } from 'recoil';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import Button from '@/ui/components/button';
 import ProductEditContentDeleteModal from '@/ui/components/modal/ProductEditContentDeleteModal';
 import { productEditContext } from '../layouts/ProductEditPageLayout';
@@ -116,7 +116,6 @@ const ProductEditContentPage = () => {
 
 	const [rendered, setRendered] = useState(false)
 
-	const navigate = useNavigate()
 
 	useEffect(() => {
 		if (!searchParams.get('page') || Number(searchParams.get('page')!) > pages.length) {

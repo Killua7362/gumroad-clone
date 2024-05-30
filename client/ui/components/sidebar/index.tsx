@@ -3,14 +3,13 @@ import { SideBarTopItems } from '@/ui/components/sidebar/items';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { AnimatePresence, Variants, motion } from 'framer-motion'
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useRouteLoaderData } from 'react-router-dom'
 import { MdAccountCircle } from "react-icons/md";
 import { IoSettingsSharp } from "react-icons/io5";
 import { SiAboutdotme } from "react-icons/si";
 import { CgLogOut } from "react-icons/cg";
 import { useSetRecoilState } from 'recoil';
 import { queryClient } from '@/app/RootPage';
-import { loginStatusFetcher } from '@/react-query/query';
 import { setLogOut } from '@/react-query/mutations';
 
 const SideBar = ({ ...sideBarProps }: SideBarProps) => {
@@ -21,7 +20,6 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 	const [isAccountOpen, setIsAccountOpen] = useState(false)
 	const location = useLocation();
 
-	const navigate = useNavigate();
 	document.title = (SideBarTopItems[activeItem]?.title || "Account")
 
 	const eleDesktopVariants = {
@@ -114,8 +112,7 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 		}
 	}, [location])
 
-
-	const { data: loginStatus, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()
+	const loginStatus = useRouteLoaderData('root') as authSchema
 	const { mutate: loginStatusSetter, isPending } = setLogOut()
 
 	return (
@@ -196,7 +193,7 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 									<Link to={e.linkUrl} key={`sidebar_items_${i}`} className='no-underline text-white'>
 										<motion.div
 											className={`flex px-6 items-center py-4 border-white/30 gap-x-4 ${i === activeItem ? "bg-white text-gray-800" : "cursor-pointer hover:text-white/80 "}`}
-											key={`$sidebarTopitems_${i}`}
+											id={`$sidebarTopitems_${i}`}
 											onClick={() => {
 												if (i !== activeItem) {
 													setActiveItem(i)

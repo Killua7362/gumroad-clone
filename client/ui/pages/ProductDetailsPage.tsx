@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { RiMoneyEuroCircleLine } from "react-icons/ri";
 import { motion } from 'framer-motion'
 import { getSingleProfileProductFetcher } from "@/react-query/query";
-import { useNavigate, useParams, useRouteLoaderData } from "react-router";
+import { useParams, useRouteLoaderData } from "react-router";
 import { UseFormWatch } from "react-hook-form";
 import Loader from "../components/loader";
 

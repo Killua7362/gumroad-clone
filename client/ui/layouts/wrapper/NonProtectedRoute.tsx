@@ -9,7 +9,7 @@ const NonProtectedRoute = () => {
 		<Loader />
 	)
 
-	if (isLoginSuccess && loginStatus.logged_in === false) return <Outlet />
+	if (!isLoginSuccess || (isLoginSuccess && loginStatus.logged_in === false)) return <Outlet />
 
 	return <Navigate to='/' />
 }

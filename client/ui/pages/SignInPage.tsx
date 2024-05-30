@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router"
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,9 +7,9 @@ import { queryClient } from "@/app/RootPage"
 import Button from "@/ui/components/button"
 import { signInSchema } from "@/forms/schema/auth_schema"
 import { setLoginStatus } from "@/react-query/mutations"
+import { Link } from 'react-router-dom'
 
 const SignInPage = () => {
-	const navigate = useNavigate()
 	const [customError, setCustomError] = useState<string>("")
 
 	const {
@@ -69,9 +68,9 @@ const SignInPage = () => {
 
 				</div>
 				<div className="p-4 w-full flex flex-col justify-center gap-y-6 lg:pl-8">
-					<Button buttonName="Sign Up" extraClasses={[`!w-full !py-4`]} onClickHandler={() => {
-						navigate('/signup')
-					}} />
+					<Link className='text-white no-underline' to={'/signup'}>
+						<Button buttonName="Sign Up" extraClasses={[`!w-full !py-4`]} />
+					</Link>
 				</div>
 			</form>
 		</div>

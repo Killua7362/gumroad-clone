@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from "react"
 import SideBar from "@/ui/components/sidebar"
 import Footer from "@/ui/components/Footer"
-import { Navigate, useLocation, useNavigate } from "react-router"
+import { useLocation } from "react-router"
 import { useRecoilValue } from "recoil"
 import Toast from "@/ui/components/toast"
 import { isError } from "remirror"
@@ -23,7 +23,6 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 	const sideBarProps: SideBarProps = getSideBarProps()
 
 	const siderbarActivePaths = new Set(["profile", "notfound", "signin", "signup"])
-	const navigate = useNavigate()
 
 	useEffect(() => {
 		setSideBarActive(!siderbarActivePaths.has(location.pathname.split('/')[1]))

@@ -2,7 +2,7 @@ import { hideToastState } from "@/atoms/states";
 import ProductEditPageLayout from "@/ui/layouts/ProductEditPageLayout"
 import MDEditor from '@uiw/react-md-editor';
 import { Fragment, useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { IoTrashBin } from "react-icons/io5";
 import { z } from 'zod'
@@ -35,7 +35,6 @@ const ProductEditHomePage = () => {
 
 	const setToastRender = useSetRecoilState(hideToastState)
 
-	const navigate = useNavigate()
 	const params = useParams()
 	const collab_active = watch('collab_active') || false
 	const collabs = watch('collabs') || []

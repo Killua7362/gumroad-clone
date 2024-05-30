@@ -1,4 +1,5 @@
 declare module '*.css'
+declare module 'nprogress'
 
 interface pupilPos {
 	left: string;
