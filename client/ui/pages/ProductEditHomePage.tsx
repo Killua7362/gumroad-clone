@@ -237,7 +237,7 @@ const ProductEditHomePage = () => {
 					<Button buttonName="Save" type='submit' extraClasses={['!hidden']} />
 				</div>
 			</div>
-			<div className={`w-5/12 h-[50rem] overflow-x-auto overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white scrollbar-track-background hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}
+			<div className={`w-5/12 h-[50rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}
 			>
 				<div className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">
 					Preview

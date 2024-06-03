@@ -27,7 +27,7 @@ export const SideBarTopItems = [
 	{
 		title: "Sales",
 		icon: <MdOutlinePriceChange />,
-		linkUrl: ""
+		linkUrl: "/"
 	}
 ]
 

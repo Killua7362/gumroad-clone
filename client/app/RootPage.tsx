@@ -61,9 +61,7 @@ const router = createBrowserRouter([
 		Component: () => {
 			return (
 				<BaseLayout>
-					<Suspense fallback={<Bar />}>
-						<Outlet />
-					</Suspense>
+					<Outlet />
 				</BaseLayout>
 			)
 		},
@@ -242,7 +240,9 @@ const RootPage = () => {
 						},
 					},
 				}} client={queryClient}>
-				<RouterProvider router={router} />
+				<Suspense fallback={<Bar />}>
+					<RouterProvider router={router} />
+				</Suspense>
 			</PersistQueryClientProvider>
 		</RecoilRoot>
 	);

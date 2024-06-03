@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
+html{
+	scroll-behavior: smooth;
 	overflow-x:hidden;
 	overflow-y:auto;
-scrollbar-width: thin;
-scrollbar-color:white #09090B;
+	scrollbar-width: thin;
+	scrollbar-color:white #09090B;
 }
 
 :root:has(.do-not-scroll){
@@ -27,5 +27,7 @@ scrollbar-color:white #09090B;
   border-style: solid;
   border-color: currentColor /* or gray-DEFAULT / gray-400 */;
   margin: 0;
-	box-sizing:border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;    
 }
