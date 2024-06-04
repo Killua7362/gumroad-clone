@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { cx, css } from '@emotion/css'
 import Loader from '../loader';
+import { motion } from 'framer-motion'
 
 type ButtonTypes = "button" | "submit" | "reset" | undefined
 
@@ -17,7 +18,7 @@ interface ButtonSchema {
 
 const Button = ({ buttonName, extraClasses = [""], type = 'button', onClickHandler, children, isActive = false, isLoading = false, form = '' }: ButtonSchema) => {
 	return (
-		<button
+		<motion.button
 			form={form}
 			onClick={async () => {
 				if (onClickHandler) {
@@ -25,17 +26,26 @@ const Button = ({ buttonName, extraClasses = [""], type = 'button', onClickHandl
 				}
 			}}
 			type={type}
-			className={cx(`save-button px-4 py-2 flex justify-center gap-x-3 items-center ${isActive ? 'border-white' : 'border-white/30 cursor-pointer'} rounded-md border-[0.1px] bg-background text-white text-lg w-fit`, css`
-				transition:all 0.1s ease-out;
-				${!isActive && `
-					&:hover{
-						transform:translate(-1.5px,-2px);
-						box-shadow: 3px 3px 0px -1px;
-					}
-				`
+			whileHover={{
+				...(!isActive) && {
+					transform: 'translate(-4px,-4px)',
+					boxShadow: '4px 4px 0px -1px',
+				},
+				transition: {
+					type: 'ease-out',
+					duration: 0.1
 				}
-
-			`, ...extraClasses)}
+			}}
+			whileTap={{
+				transform: 'translate(2px,2px)',
+				boxShadow: '0px 0px 0px 0px',
+				transition: {
+					type: 'ease-in',
+					duration: 0.1
+				}
+			}}
+			className={cx(`save-button px-4 py-2 flex justify-center gap-x-3 items-center ${isActive ? 'border-white' : 'border-white/30 cursor-pointer'} rounded-md border-[0.1px] bg-background text-white text-lg w-fit`,
+				...extraClasses)}
 		>
 			{
 				isLoading &&
@@ -48,7 +58,7 @@ const Button = ({ buttonName, extraClasses = [""], type = 'button', onClickHandl
 				</span>
 			}
 			{children}
-		</button>
+		</motion.button>
 	)
 }
 

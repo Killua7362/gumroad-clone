@@ -17,11 +17,13 @@ class BrowserHistory {
 
 	setURL(url: string) {
 		const prevPages: string[] = this.homepages.get(this.getKey(url))!
+		if (!prevPages) return
 		this.homepages.set(this.getKey(url), [...prevPages, url])
 	}
 
 	getURL(url: string) {
 		const arr: string[] = this.homepages.get(this.getKey(url))!
+		if (!arr) return location.pathname
 		const res: string = arr[arr.length - 1]
 		if (res === location.pathname) {
 			return arr[0]!
@@ -42,6 +44,7 @@ class BrowserHistory {
 	clear() {
 		for (const key in this.homepages) {
 			const page: string[] = this.homepages.get(key)!
+			if (!page) return
 			this.homepages.set(key, [page[0]])
 		}
 	}

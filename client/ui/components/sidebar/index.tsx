@@ -23,14 +23,11 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 	const divDesktopVariants = {
 		initial: {
 			width: "4rem",
-			height: 'calc(100vh - 2.2rem)',
-			transition: {
-				duration: 0
-			}
+			height: 'calc(100% - 2rem)',
 		},
 		animate: {
 			width: isOpen ? "18rem" : '5rem',
-			height: 'calc(100vh - 2.2rem)',
+			height: 'calc(100% - 2rem)',
 			transition: {
 				duration: 0.2,
 			}
@@ -39,15 +36,12 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 
 	const divMobileVariants = {
 		initial: {
-			width: "100%",
-			height: '4rem',
-			transition: {
-				duration: 0
-			}
+			width: 'calc(100% - 3.9rem)',
+			height: '3.9rem',
 		},
 		animate: {
-			width: "100%",
-			height: isOpen ? "calc(100% - 2rem)" : "4rem",
+			width: 'calc(100% - 2rem)',
+			height: isOpen ? "calc(100% - 2rem)" : "3.9rem",
 			transition: {
 				duration: 0.2
 			}
@@ -84,9 +78,13 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 			animate='animate'
 			exit='initial'
 			variants={windowWidth! < 640 ? divMobileVariants : divDesktopVariants}
-			className="flex bg-background flex-col font-medium rounded-xl border-[0.1px] border-white/30 m-4">
-			<div className='uppercase flex items-center text-xl sm:text-2xl py-8 px-6 justify-between border-white/30 border-b-[0.1px]'>
-				<motion.div
+			className="fixed flex bg-background flex-col font-medium rounded-xl border-[0.1px] border-white/30 m-4 overflow-hidden"
+			style={{
+				zIndex: 30
+			}}
+		>
+			<div className='uppercase flex items-center text-xl sm:text-2xl py-4 sm:py-8 px-6 justify-between border-white/30 border-b-[0.1px]'>
+				<div
 					className=''>
 					{isOpen &&
 						<div className='hidden sm:block'>
@@ -96,7 +94,7 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 					<div className='block sm:hidden'>
 						{(SideBarTopItems.filter(e => e.linkUrl === location.pathname))[0]?.title || "Account"}
 					</div>
-				</motion.div>
+				</div>
 				<div className='relative top-0 sm:top-1 cursor-pointer' onClick={() => { isOpen ? setIsOpen(false) : setIsOpen(true) }}>
 					<motion.div
 						animate={{
@@ -123,6 +121,9 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 						return (
 							<NavLink to={browserHistory.getURL(e.linkUrl) || e.linkUrl}
 								key={`sidebar_items_${i}`}
+								onClick={() => {
+									sideBarProps.setSideBarOpen(false)
+								}}
 								style={{
 									textDecoration: 'none',
 									color: 'white'
@@ -249,7 +250,7 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 						isAccountOpen ? setIsAccountOpen(false) : setIsAccountOpen(true)
 					}}
 					className={
-						`flex ${!isAccountOpen && "border-[1px]"} flex-row-reverse p-4 bg-background text-white hover:text-white/80 items-center w-full rounded-xl border-white/30 gap-x-4 cursor-pointer`
+						`flex ${!isAccountOpen && "border-[1px]"} flex-row-reverse p-4 bg-background text-white hover:text-white/80  items-center w-full rounded-xl border-white/30 gap-x-4 cursor-pointer`
 					}
 					whileHover={{
 						backgroundColor: '#2c2c31',

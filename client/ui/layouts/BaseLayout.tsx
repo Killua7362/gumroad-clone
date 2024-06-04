@@ -1,13 +1,13 @@
 import { Fragment, useEffect, useState } from "react"
 import SideBar from "@/ui/components/sidebar"
 import Footer from "@/ui/components/Footer"
-import { useLocation } from "react-router"
+import { useRouteLoaderData } from "react-router"
 import { useRecoilValue } from "recoil"
 import Toast from "@/ui/components/toast"
 import { isError } from "remirror"
 import { queryClient } from "@/app/RootPage"
 import { loginStatusFetcher } from "@/react-query/query"
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const getSideBarProps = () => {
 	const [sideBarOpen, setSideBarOpen] = useState(false)
@@ -17,33 +17,31 @@ const getSideBarProps = () => {
 }
 
 const BaseLayout = ({ children }: { children: React.ReactNode }) => {
-	const location = useLocation()
-	const [sidebarActive, setSideBarActive] = useState(false)
+	const authRouteProps = useRouteLoaderData('auth_route') as {
+		sideBarActive: boolean;
+		footerActive: boolean;
+	}
 
 	const sideBarProps: SideBarProps = getSideBarProps()
 
-	const siderbarActivePaths = new Set(["profile", "notfound", "signin", "signup"])
-
-	useEffect(() => {
-		setSideBarActive(!siderbarActivePaths.has(location.pathname.split('/')[1]))
-	}, [location.pathname,])
-
 	return (
-		<div className="min-h-screen w-screen flex flex-col sm:flex-row flex-wrap relative">
+		<div className="min-h-screen min-w-screen flex flex-col sm:flex-row flex-wrap relative">
 			<Toast />
-			{
-				sidebarActive
-				&&
-				<SideBar {...sideBarProps} />
-			}
+			<AnimatePresence mode='wait' initial={false}>
+				{
+					(authRouteProps?.sideBarActive || false)
+					&&
+					<SideBar {...sideBarProps} />
+				}
+			</AnimatePresence>
 			<motion.div
 				layout
-				className={`absolute h-full flex flex-col justify-between overflow-y-auto overflow-x-auto mx-3 sm:mx-8 sm:mr-0 mr-0 right-0 scrollbar-thin scrollbar-thumb-white scrollbar-track-background`}
+				className={`absolute h-full w-full sm:w-auto flex flex-col justify-between overflow-y-auto overflow-x-auto sm:ml-8 sm:right-0 px-2 sm:px-0 scrollbar-thin scrollbar-thumb-white scrollbar-track-background top-[6rem] sm:top-0`}
 				transition={{
 					x: { type: "spring", bounce: 0 },
 				}}
 				style={{
-					left: sideBarProps.windowWidth > 640 ? (sideBarProps.sideBarOpen ? '18rem' : '5rem') : 0,
+					left: ((authRouteProps?.sideBarActive || false) && sideBarProps.windowWidth > 640) ? (sideBarProps.sideBarOpen ? '18rem' : '5rem') : 0,
 				}}
 			>
 				<div>

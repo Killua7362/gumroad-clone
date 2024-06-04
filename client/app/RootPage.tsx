@@ -127,6 +127,16 @@ const router = createBrowserRouter([
 			},
 			{
 				element: <ProtectedRoute />,
+				id: 'auth_route',
+				loader: () => {
+					return {
+						sideBarActive: true,
+						footerActive: true
+					} as {
+						sideBarActive: boolean;
+						footerActive: boolean;
+					}
+				},
 				children: [
 					{
 						path: '/',
