@@ -1,25 +1,30 @@
-import { hideToastState } from "@/atoms/states";
-import ProductEditPageLayout from "@/ui/layouts/ProductEditPageLayout"
-import MDEditor from '@uiw/react-md-editor';
-import { Fragment, useContext, useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { IoTrashBin } from "react-icons/io5";
 import { z } from 'zod'
 import { useFieldArray, useForm, useFormState, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EditProductSchema } from "@/forms/schema/edit_product_schema";
 import { queryClient } from "@/app/RootPage";
 import Button from "@/ui/components/button";
-import { SelectComponent } from "../components/select";
+import { SelectComponent } from "@/ui/components/select";
 import { cx, css } from '@emotion/css'
 import { productTypeOptions } from "@/forms/schema/edit_product_schema";
 import { getProductEditor } from "@/react-query/mutations";
 import { getEditProductFormProps } from "@/forms";
-import { productEditContext } from "@/ui/layouts/ProductEditPageLayout";
+import { productEditContext } from '../_layout_edit';
 import { currencyTypeOptions } from "@/forms/schema/misc_schema";
-import ProductsDetailsPage from "@/ui/pages/ProductDetailsPage";
+import { ProductsDetailsPage } from '@/ui/pages/profile.$id/product.$productid/index.lazy';
 import { Runner } from 'react-runner'
+import { createLazyFileRoute } from "@tanstack/react-router";
+import { Fragment, useContext } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { hideToastState } from '@/atoms/states';
+import { IoTrashBin } from 'react-icons/io5';
+import MDEditor from '@uiw/react-md-editor';
+
+export const Route = createLazyFileRoute('/_protected/_layout/products/edit/$id/_layout_edit/home/')({
+	component: () => {
+		return <ProductEditHomePage />
+	}
+})
 
 const tagsToString = (tags: typeof productTypeOptions) => {
 	return (tags || []).map(ele => ele.value).join(',')
@@ -35,7 +40,7 @@ const ProductEditHomePage = () => {
 
 	const setToastRender = useSetRecoilState(hideToastState)
 
-	const params = useParams()
+	const params = Route.useParams()
 	const collab_active = watch('collab_active') || false
 	const collabs = watch('collabs') || []
 	const description = watch('description') || ''
@@ -247,5 +252,3 @@ const ProductEditHomePage = () => {
 		</Fragment >
 	)
 }
-
-export default ProductEditHomePage

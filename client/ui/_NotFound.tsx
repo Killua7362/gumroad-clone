@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link } from '@tanstack/react-router'
 import '@/ui/styles/404.css'
 import { useState } from "react"
 
@@ -11,7 +11,7 @@ const NotFoundPage = () => {
 	const [mouthHeight, setMouthHeight] = useState<string>("1.5")
 
 	return (
-		<div className="flex z-10 flex-col gap-y-10 fixed sm:ml-24 sm:pr-24 mt-[2rem] sm:mt-0 z-50 top-0 left-0 w-full h-full text-white items-center justify-center tracking-wider font-thin" onMouseMove={(e) => {
+		<div className="flex flex-col gap-y-10 fixed sm:ml-24 sm:pr-24 mt-[2rem] sm:mt-0 z-50 top-0 left-0 w-full h-full text-white items-center justify-center tracking-wider font-thin" onMouseMove={(e) => {
 			const boundingRect = e.currentTarget.getBoundingClientRect()
 
 			const width_high = boundingRect.right;

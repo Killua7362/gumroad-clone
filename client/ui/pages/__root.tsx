@@ -1,13 +1,13 @@
 import { Fragment, useEffect, useState } from "react"
 import SideBar from "@/ui/components/sidebar"
 import Footer from "@/ui/components/Footer"
-import { useRouteLoaderData } from "react-router"
 import { useRecoilValue } from "recoil"
 import Toast from "@/ui/components/toast"
 import { isError } from "remirror"
 import { queryClient } from "@/app/RootPage"
-import { loginStatusFetcher } from "@/react-query/query"
+import { loginStatusFetcher, loginStatusFetcherProps } from "@/react-query/query"
 import { AnimatePresence, motion } from 'framer-motion'
+import { createRootRoute, getRouteApi, Link, Outlet, useLoaderData, useMatch, useRouteContext, useRouterState } from '@tanstack/react-router'
 
 const getSideBarProps = () => {
 	const [sideBarOpen, setSideBarOpen] = useState(false)
@@ -16,12 +16,29 @@ const getSideBarProps = () => {
 	return { sideBarOpen, windowWidth, setSideBarOpen, setWindowWidth } as SideBarProps
 }
 
-const BaseLayout = ({ children }: { children: React.ReactNode }) => {
-	const authRouteProps = useRouteLoaderData('auth_route') as {
-		sideBarActive: boolean;
-		footerActive: boolean;
-	}
+export const Route = createRootRoute({
+	loader: async () => {
+		const loginStatus = await queryClient.ensureQueryData(loginStatusFetcherProps)
+		const result = loginStatus as authSchema
+		return result;
+	},
+	component: () => {
+		return (
+			<BaseLayout>
+				<Outlet />
+			</BaseLayout>
+		)
+	},
+	errorComponent: () => {
 
+	}
+})
+
+const BaseLayout = ({ children }: { children: React.ReactNode }) => {
+	const matches = useRouterState().matches
+	const lastMatchContext = matches[matches.length - 1].context
+
+	const sideBarActive = (lastMatchContext as RootContextProps).sidebaractive!
 	const sideBarProps: SideBarProps = getSideBarProps()
 
 	return (
@@ -29,7 +46,7 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 			<Toast />
 			<AnimatePresence mode='wait' initial={false}>
 				{
-					(authRouteProps?.sideBarActive || false)
+					(sideBarActive || false)
 					&&
 					<SideBar {...sideBarProps} />
 				}
@@ -41,7 +58,7 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 					x: { type: "spring", bounce: 0 },
 				}}
 				style={{
-					left: ((authRouteProps?.sideBarActive || false) && sideBarProps.windowWidth > 640) ? (sideBarProps.sideBarOpen ? '18rem' : '5rem') : 0,
+					left: ((sideBarActive || false) && sideBarProps.windowWidth > 640) ? (sideBarProps.sideBarOpen ? '18rem' : '5rem') : 0,
 				}}
 			>
 				<div>
@@ -52,5 +69,3 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 		</div>
 	)
 }
-
-export default BaseLayout

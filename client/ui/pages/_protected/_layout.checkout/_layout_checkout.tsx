@@ -2,8 +2,19 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Fragment, useState } from "react"
 import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
-import { Link, NavLink, useParams } from "react-router-dom";
-import Button from "../components/button";
+import { Link } from "@tanstack/react-router";
+import Button from "@/ui/components/button";
+import { Outlet, createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute('/_protected/_layout/checkout/_layout_checkout')({
+	component: () => {
+		return (
+			<CheckoutLayout>
+				<Outlet />
+			</CheckoutLayout>
+		)
+	}
+})
 
 const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
 	const [sortConfig, setSortConfig] = useState<sortConfig>({
@@ -17,8 +28,6 @@ const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
 		startsWith: ""
 	})
 
-	const params = useParams()
-
 	return (
 		<div className="h-full w-full">
 			<div className="h-full px-3 sm:mx-10">
@@ -27,28 +36,28 @@ const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
 						Checkout
 					</div>
 					<div className="border-b-[1px] h-3 border-white/30 flex gap-x-4 z-20">
-						<NavLink to='/checkout/form'
+						<Link to='/checkout/form'
 							style={{
 								textDecoration: 'none'
 							}}
-							className={({ isActive }) => {
-								return (isActive ? "cursor-default pointer-events-none" : "")
-							}} >
+							activeProps={{
+								className: 'cursor-default pointer-events-none'
+							}}>
 							{({ isActive }) => (
 								<Button buttonName="Form" isActive={isActive} extraClasses={[`!text-base !rounded-2xl`]} />
 							)}
-						</NavLink>
-						<NavLink to='/checkout/suggestions'
+						</Link>
+						<Link to='/checkout/suggestions'
 							style={{
 								textDecoration: 'none'
 							}}
-							className={({ isActive }) => {
-								return (isActive ? "cursor-default pointer-events-none" : "")
-							}} >
+							activeProps={{
+								className: 'cursor-default pointer-events-none'
+							}}>
 							{({ isActive }) => (
 								<Button buttonName="Suggest" isActive={isActive} extraClasses={[`!text-base !rounded-2xl`]} />
 							)}
-						</NavLink>
+						</Link>
 					</div>
 				</div>
 				<div className="w-full flex flex-col gap-6">
@@ -58,4 +67,3 @@ const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
 		</div >
 	)
 }
-export default CheckoutLayout

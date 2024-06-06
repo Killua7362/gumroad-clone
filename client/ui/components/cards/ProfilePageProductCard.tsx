@@ -1,5 +1,5 @@
 import { processProducts } from "@/lib/products_process"
-import { Link } from "react-router-dom"
+import { Link } from "@tanstack/react-router"
 import { Fragment } from "react/jsx-runtime"
 
 
@@ -13,7 +13,7 @@ const ProfilePageProductCard = ({ name, url, profileProducts }: ProfilePageCardP
 				{
 					processProducts({ products: profileProducts, searchURL: url }).map(([key, value], i) => {
 						return (
-							<Link className="w-[min(100%,23rem)] min-h-[20rem] no-underline text-white" to={`product/${key}`} key={key}>
+							<Link className="w-[min(100%,23rem)] min-h-[20rem] no-underline text-white" to='/profile/$id' params={{ id: key }} key={key}>
 								<div className="flex flex-col w-full h-full items-center justify-center gap-y-3 hover:border-white border-white/30 border-[0.1px] rounded-md p-5 cursor-pointer">
 									<div className="h-full w-full bg-accent p-4 relative">
 										<div className="absolute right-4">

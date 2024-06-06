@@ -1,5 +1,3 @@
-import { SideBarTopItems } from "@/ui/components/sidebar/items";
-
 interface HistorySchema {
 	[key: string]: string[];
 }
@@ -50,6 +48,6 @@ class BrowserHistory {
 	}
 }
 
-const browserHistory = new BrowserHistory(SideBarTopItems.map(e => e.linkUrl))
+const browserHistory = new BrowserHistory(['/home', '/products/home', '/checkout/form'])
 
 export default browserHistory

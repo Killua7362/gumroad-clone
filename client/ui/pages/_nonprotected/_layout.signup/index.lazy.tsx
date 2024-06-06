@@ -5,7 +5,14 @@ import { useState } from "react"
 import Button from "@/ui/components/button"
 import { signUpSchema } from "@/forms/schema/auth_schema"
 import { setSignUp } from "@/react-query/mutations"
-import { Link } from 'react-router-dom'
+import { Link } from '@tanstack/react-router'
+import { createLazyFileRoute } from '@tanstack/react-router'
+
+export const Route = createLazyFileRoute('/_nonprotected/_layout/signup/')({
+	component: () => {
+		return <SignUpPage />
+	}
+})
 
 const SignUpPage = () => {
 	const [customError, setCustomError] = useState('')
@@ -84,7 +91,7 @@ const SignUpPage = () => {
 
 				</form>
 				<div className="p-4 w-full flex flex-col justify-center gap-y-6 lg:pl-8">
-					<Link to={'/signin'} className='no-underline text-white'>
+					<Link to='/signin' className='no-underline text-white'>
 						<Button buttonName="Sign In" extraClasses={[`!w-full !py-4`]} />
 					</Link>
 				</div>
@@ -92,5 +99,3 @@ const SignUpPage = () => {
 		</div>
 	)
 }
-
-export default SignUpPage

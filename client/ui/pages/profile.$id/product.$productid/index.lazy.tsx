@@ -4,29 +4,32 @@ import { useEffect, useRef, useState } from "react";
 import { RiMoneyEuroCircleLine } from "react-icons/ri";
 import { motion } from 'framer-motion'
 import { getSingleProfileProductFetcher } from "@/react-query/query";
-import { useParams, useRouteLoaderData } from "react-router";
 import { UseFormWatch } from "react-hook-form";
-import Loader from "../components/loader";
+import Loader from "@/ui/components/loader";
+import { createLazyFileRoute } from "@tanstack/react-router";
 
+export const Route = createLazyFileRoute('/profile/$id/product/$productid/')({
+    component:()=>{
+        return <ProductsDetailsPage/>
+    }
+})
 interface ProductsDetailsPageProps {
 	preview?: boolean;
 	watch?: UseFormWatch<EditProductSchemaType>
 }
 
-const ProductsDetailsPage = ({ preview = false, watch }: ProductsDetailsPageProps) => {
+export const ProductsDetailsPage = ({ preview = false, watch }: ProductsDetailsPageProps) => {
 	const titleRef = useRef(null)
 	const priceRef = useRef<HTMLInputElement>(null)
 
 	const titleIsInView = useInView(titleRef, {
 		margin: "-20% 0px 0px 0px"
 	})
+    const initialData = Route.useLoaderData()
 
-	const initialData = useRouteLoaderData('profile_single_product') as {
-		singleProductData: ProductType,
-	}
 
 	const priceInView = useInView(priceRef)
-	const params = useParams()
+	const params = Route.useParams()
 
 	const { data: profileProductData, isPending: profileProductPending, isSuccess: profileProductSuccess } = getSingleProfileProductFetcher({ userId: params.id, productId: params.productid, preview: preview, initialData: initialData?.singleProductData })
 
@@ -135,4 +138,3 @@ const ProductsDetailsPage = ({ preview = false, watch }: ProductsDetailsPageProp
 		</ProductsDetailsPageLayout>
 	)
 }
-export default ProductsDetailsPage

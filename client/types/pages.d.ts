@@ -1,3 +1,4 @@
+
 interface SideBarProps {
 	sideBarOpen: boolean;
 	windowWidth: number;
@@ -9,4 +10,21 @@ interface ProfilePageCardProps {
 	name: string;
 	url: string;
 	profileProducts: Entries<ProductTypePayload>;
+}
+
+interface RootContextProps {
+	sidebaractive: boolean;
+}
+
+interface SideBarCardProps {
+	title: string;
+	url: string;
+	sideBarProps: SideBarProps;
+	icon: React.ReactNode;
+	isOpen: boolean;
+	extraClasses?: string;
+	closeSideBar?: boolean;
+	onClickHandler?: () => void;
+	windowWidth: number;
+	disableLink?: boolean;
 }

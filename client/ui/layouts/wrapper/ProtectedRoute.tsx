@@ -1,5 +1,5 @@
 import { loginStatusFetcher } from "@/react-query/query"
-import { Navigate, Outlet } from "react-router"
+import { Navigate,Outlet } from "@tanstack/react-router"
 import Loader from '@/ui/components/loader'
 
 const ProtectedRoute = () => {

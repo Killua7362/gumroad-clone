@@ -1,8 +1,18 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { Fragment, useState } from "react"
-import { Link, NavLink } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import Button from "@/ui/components/button";
+import { Outlet, createFileRoute, Link } from "@tanstack/react-router";
+import { ProductHomeRouteType } from "./_layout_products.home";
+export const Route = createFileRoute('/_protected/_layout/products/_layout_products')({
+	component: () => {
+		return (
+			<ProductLayout>
+				<Outlet />
+			</ProductLayout>
+		)
+	}
+})
 
 const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 	return (
@@ -13,30 +23,39 @@ const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 						Products
 					</div>
 					<div className="border-b-[1px] h-5 border-white/30 flex gap-x-4">
-						<NavLink to='/products/home'
+						<Link to='/products/home'
+							search={(prev:ProductHomeRouteType) => ({
+								sort_by: prev.sort_by || 'title',
+								reverse: prev.reverse || false,
+								search_word: prev.search_word || '',
+							})}
 							style={{
 								textDecoration: 'none'
 							}}
-							className={({ isActive }) => {
-								return (isActive ? "cursor-default pointer-events-none" : "")
-							}} >
+							activeProps={{
+								className: "cursor-default pointer-events-none"
+							}}
+						>
 							{({ isActive }) => (
 								<Button buttonName="Home" isActive={isActive} extraClasses={[`!text-base !rounded-2xl`]} />
 							)}
-						</NavLink>
-						<NavLink
+						</Link>
+						<Link
 							to='/products/collaborators'
-							className={({ isActive }) => {
-								return (isActive ? "cursor-default pointer-events-none" : "")
-							}}
+							search={() => ({
+								type: 'incoming',
+							})}
 							style={{
 								textDecoration: 'none'
+							}}
+							activeProps={{
+								className: "cursor-default pointer-events-none"
 							}}
 						>
 							{({ isActive }) => (
 								<Button buttonName="Collab" isActive={isActive} extraClasses={[`!text-base !rounded-2xl`]} />
 							)}
-						</NavLink>
+						</Link>
 					</div>
 				</div>
 				{children}
@@ -44,4 +63,3 @@ const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 		</div >
 	)
 }
-export default ProductLayout

@@ -1,22 +1,25 @@
 import { useEffect, useState } from "react"
-import { Navigate, useNavigate, useParams, useRouteLoaderData } from "react-router-dom"
 import ProfilePageLayout from "@/ui/layouts/ProfilePageLayout"
 import ProfilePageProductCard from "@/ui/components/cards/ProfilePageProductCard"
 import { getProfileProductsFetcher, getProfileStatus } from "@/react-query/query"
-import Loader from "../components/loader"
+import Loader from "@/ui/components/loader"
+import { createLazyFileRoute } from "@tanstack/react-router"
+
+export const Route = createLazyFileRoute('/profile/$id/')({
+	component: () => {
+		return <ProfileHomePage />
+	}
+})
 
 interface ProfilePageProps extends Partial<CheckoutFormSchemaType> {
 	preview?: boolean;
 	userId?: string;
 }
 
-const ProfileHomePage = ({ preview = false, userId, ...profilePageProps }: ProfilePageProps) => {
-	const params = useParams()
+export const ProfileHomePage = ({ preview = false, userId, ...profilePageProps }: ProfilePageProps) => {
+	const params = Route.useParams()
 
-	const initialData = useRouteLoaderData('profile_home') as {
-		productData: ProductTypePayload,
-		profileData: CheckoutFormSchemaType
-	}
+	const initialData = Route.useLoaderData()
 
 	document.title = "Profile"
 
@@ -60,5 +63,3 @@ const ProfileHomePage = ({ preview = false, userId, ...profilePageProps }: Profi
 		)
 	}
 }
-
-export default ProfileHomePage

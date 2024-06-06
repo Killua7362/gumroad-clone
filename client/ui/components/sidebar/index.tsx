@@ -3,15 +3,21 @@ import { SideBarTopItems } from '@/ui/components/sidebar/items';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { AnimatePresence, Variants, motion } from 'framer-motion'
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { Link, NavLink, useLocation, useRouteLoaderData } from 'react-router-dom'
+import { useLocation, Link, getRouteApi, rootRouteId } from '@tanstack/react-router';
 import { MdAccountCircle } from "react-icons/md";
-import { IoSettingsSharp } from "react-icons/io5";
+import { IoBagRemove, IoSettingsSharp } from "react-icons/io5";
 import { SiAboutdotme } from "react-icons/si";
 import { CgLogOut } from "react-icons/cg";
 import { useSetRecoilState } from 'recoil';
 import { queryClient } from '@/app/RootPage';
 import { setLogOut } from '@/react-query/mutations';
 import browserHistory from '@/lib/history';
+import _ from 'lodash'
+import SideBarCard from './card';
+import { BsFillBackpack4Fill } from 'react-icons/bs';
+import { IoMdCart } from 'react-icons/io';
+
+const route = getRouteApi(rootRouteId)
 
 const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 
@@ -69,7 +75,7 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 	}, [location.pathname])
 
 
-	const loginStatus = useRouteLoaderData('root') as authSchema
+	const loginStatus = route.useLoaderData() as authSchema
 	const { mutate: loginStatusSetter, isPending } = setLogOut()
 
 	return (
@@ -92,7 +98,7 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 						</div>
 					}
 					<div className='block sm:hidden'>
-						{(SideBarTopItems.filter(e => e.linkUrl === location.pathname))[0]?.title || "Account"}
+						{_.capitalize(location.pathname.split('/')[1])}
 					</div>
 				</div>
 				<div className='relative top-0 sm:top-1 cursor-pointer' onClick={() => { isOpen ? setIsOpen(false) : setIsOpen(true) }}>
@@ -116,43 +122,39 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 					direction: 'rtl'
 				}}
 			>
-				{
-					SideBarTopItems.map((e, i) => {
-						return (
-							<NavLink to={browserHistory.getURL(e.linkUrl) || e.linkUrl}
-								key={`sidebar_items_${i}`}
-								onClick={() => {
-									sideBarProps.setSideBarOpen(false)
-								}}
-								style={{
-									textDecoration: 'none',
-									color: 'white'
-								}}
-							>
-								<motion.div
-									className={`flex flex-row-reverse px-6 items-center py-4 border-white/30 gap-x-4 ${browserHistory.isActive(e.linkUrl) ? "!bg-white text-gray-800" : "cursor-pointer hover:text-white/80 "}`}
-									id={`$sidebarTopitems_${i}`}
-									whileHover={{
-										backgroundColor: browserHistory.isActive(e.linkUrl) ? 'white' : '#2c2c31',
-									}}
-								>
-									<div className='text-lg'>
-										{e.icon}
-									</div>
-									<AnimatePresence>
-										{
-											isOpen &&
-											<motion.div
-												className='overflow-hidden'>
-												{e.title}
-											</motion.div>
-										}
-									</AnimatePresence>
-								</motion.div>
-							</NavLink>
-						)
-					})
-				}
+				<SideBarCard
+					title='Home'
+					url={browserHistory.getURL('/home')}
+					to={browserHistory.getURL('/home')}
+					sideBarProps={sideBarProps}
+					icon={<BsFillBackpack4Fill />}
+					extraClasses='!px-6'
+					isOpen={isOpen}
+					windowWidth={windowWidth}
+					params={{ id: loginStatus.user_id! }}
+				/>
+				<SideBarCard
+					title='Products'
+					url={browserHistory.getURL('/products/home')}
+					to={browserHistory.getURL('/products/home')}
+					sideBarProps={sideBarProps}
+					extraClasses='!px-6'
+					icon={<IoBagRemove />}
+					isOpen={isOpen}
+					windowWidth={windowWidth}
+					params={{ id: loginStatus.user_id! }}
+				/>
+				<SideBarCard
+					title='Checkout'
+					url={browserHistory.getURL('/checkout/form')}
+					to={browserHistory.getURL('/checkout/form')}
+					sideBarProps={sideBarProps}
+					extraClasses='!px-6'
+					icon={<IoMdCart />}
+					isOpen={isOpen}
+					windowWidth={windowWidth}
+					params={{ id: loginStatus.user_id! }}
+				/>
 			</div>
 			<motion.div
 				initial={{
@@ -176,99 +178,59 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 				}}
 			>
 				{isAccountOpen && <>
-					<Link to='/account/settings' className='no-underline text-white'>
-						<motion.div
-							className={`flex flex-row-reverse items-center p-4 border-white/30 gap-x-4 bg-background cursor-pointer hover:text-white/80  rounded-xl`}
-							whileHover={{
-								backgroundColor: '#2c2c31',
-							}}
-						>
-							<div className='text-lg'>
-								<IoSettingsSharp />
-							</div>
-							<AnimatePresence>
-								{
-									isOpen &&
-									<motion.div
-										className='overflow-hidden'>
-										Settings
-									</motion.div>
-								}
-							</AnimatePresence>
-						</motion.div>
-
-					</Link>
-					<Link to={`/profile/${loginStatus.user_id!}`} className='no-underline text-white' target='_blank'
-						rel='noopener noreferrer'>
-						<motion.div
-							className={`flex flex-row-reverse items-center p-4 border-white/30 gap-x-4 bg-background cursor-pointer hover:text-white/80  rounded-xl`}
-							whileHover={{
-								backgroundColor: '#2c2c31',
-							}}
-						>
-							<div className='text-lg'>
-								<SiAboutdotme />
-							</div>
-							<AnimatePresence>
-								{
-									isOpen &&
-									<motion.div
-										className='overflow-hidden'>
-										Profile
-									</motion.div>
-								}
-							</AnimatePresence>
-						</motion.div>
-
-					</Link>
-					<motion.div
-						onClick={() => {
+					<SideBarCard
+						title='Settings'
+						url='/'
+						to='/'
+						sideBarProps={sideBarProps}
+						icon={<IoSettingsSharp />}
+						isOpen={isOpen}
+						disableLink={true}
+						windowWidth={windowWidth}
+						params={{ id: loginStatus.user_id! }}
+						target='_blank'
+					/>
+					<SideBarCard
+						title='Profile'
+						url='/profile/$id'
+						to='/profile/$id'
+						sideBarProps={sideBarProps}
+						icon={<SiAboutdotme />}
+						isOpen={isOpen}
+						windowWidth={windowWidth}
+						params={{ id: loginStatus.user_id! }}
+						target='_blank'
+					/>
+					<SideBarCard
+						title='Logout'
+						url='/'
+						to='/'
+						onClickHandler={() => {
 							loginStatusSetter()
 						}}
-						className={`flex flex-row-reverse items-center p-4 border-white/30 gap-x-4 bg-background cursor-pointer hover:text-white/80 rounded-xl`}
-						whileHover={{
-							backgroundColor: '#2c2c31',
-						}}
-					>
-						<div className='text-lg'>
-							<CgLogOut />
-						</div>
-						<AnimatePresence>
-							{
-								isOpen &&
-								<motion.div
-									className='overflow-hidden'>
-									Logout
-								</motion.div>
-							}
-						</AnimatePresence>
-					</motion.div>
+						disableLink={true}
+						sideBarProps={sideBarProps}
+						icon={<CgLogOut />}
+						isOpen={isOpen}
+						windowWidth={windowWidth}
+					/>
 				</>
 				}
-				<motion.div
-					onClick={() => {
-						isAccountOpen ? setIsAccountOpen(false) : setIsAccountOpen(true)
+				<SideBarCard
+					title='Account'
+					url='/'
+					to='/'
+					onClickHandler={() => {
+						setIsAccountOpen(!isAccountOpen)
 					}}
-					className={
-						`flex ${!isAccountOpen && "border-[1px]"} flex-row-reverse p-4 bg-background text-white hover:text-white/80  items-center w-full rounded-xl border-white/30 gap-x-4 cursor-pointer`
-					}
-					whileHover={{
-						backgroundColor: '#2c2c31',
-					}}
-				>
-					<span className='text-lg'>
-						<MdAccountCircle />
-					</span>
-					<AnimatePresence>
-						{
-							isOpen &&
-							<motion.div
-								className='overflow-hidden'>
-								Account
-							</motion.div>
-						}
-					</AnimatePresence>
-				</motion.div>
+					closeSideBar={false}
+					disableLink={true}
+					extraClasses={`${!isAccountOpen && 'border-[1px]'} rounded-xl`}
+					sideBarProps={sideBarProps}
+					icon={<MdAccountCircle />}
+					isOpen={isOpen}
+					windowWidth={windowWidth}
+				/>
 			</motion.div>
 		</motion.div >
 	)

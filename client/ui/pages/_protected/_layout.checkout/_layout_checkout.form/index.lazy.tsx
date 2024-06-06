@@ -1,4 +1,5 @@
-import ProfileHomePage from '@/ui/pages/ProfileHomePage'
+import { createLazyFileRoute } from '@tanstack/react-router'
+import { ProfileHomePage } from '@/ui/pages/profile.$id/index.lazy';
 import { useEffect, useState } from 'react'
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -8,14 +9,18 @@ import { getProfileStatus } from '@/react-query/query';
 import { getCheckoutFormProps } from '@/forms';
 import { useFieldArray } from 'react-hook-form';
 import { getProfileStatusSetter } from '@/react-query/mutations';
-import { FormInput } from '../components/forms';
-import FilterCheckoutModal from '../components/modal/FilterCheckoutModal';
+import { FormInput } from '@/ui/components/forms';
+import FilterCheckoutModal from '@/ui/components/modal/FilterCheckoutModal';
 import { Runner } from 'react-runner'
-import Loader from '../components/loader';
-import { useRouteLoaderData } from 'react-router';
+import Loader from '@/ui/components/loader';
 
+export const Route = createLazyFileRoute('/_protected/_layout/checkout/_layout_checkout/form/')({
+	component: () => {
+		return <CheckoutForm />
+	}
+})
 const CheckoutForm = () => {
-	const initialData = useRouteLoaderData('checkout_form') as CheckoutFormSchemaType
+	const initialData = Route.useLoaderData()
 
 	const { data: profileStatus, isPending: profileIsLoading, isSuccess: profileIsSuccess } = getProfileStatus({ userId: (queryClient.getQueryData(['loginStatus']) as authSchema).user_id, preview: false, initialData })
 
@@ -154,4 +159,3 @@ const CheckoutForm = () => {
 	)
 }
 
-export default CheckoutForm

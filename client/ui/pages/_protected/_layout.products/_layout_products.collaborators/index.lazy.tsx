@@ -1,33 +1,33 @@
-import { GoLink } from "react-icons/go"
+import { createLazyFileRoute } from '@tanstack/react-router'
 import CollabCard from "@/ui/components/cards/CollabCard"
 import { Fragment } from "react/jsx-runtime"
-import { AnimatePresence, motion } from "framer-motion"
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import { useEffect, useState } from "react"
-import { useParams, useRouteLoaderData } from "react-router"
-import { useSearchParams } from "react-router-dom"
 import Button from "@/ui/components/button"
 import { allProductsFetcher, collabsProductFetcher } from "@/react-query/query"
 import { queryClient } from "@/app/RootPage"
 import { getCollabApprover } from "@/react-query/mutations"
-import Loader from "../components/loader"
+import Loader from "@/ui/components/loader"
+
+export const Route = createLazyFileRoute('/_protected/_layout/products/_layout_products/collaborators/')({
+	component: () => {
+		return <CollaboratorsPage />
+	}
+})
 
 const CollaboratorsPage = () => {
-	const initialData = useRouteLoaderData('collaborators_page') as {
-		allProducts: ProductTypePayload,
-		collabProducts: ProductTypePayload
-	}
+	const initialData = Route.useLoaderData()
 
 	const { data: allProducts, isSuccess: productIsSuccess, isPending: productsIsLoading } = allProductsFetcher({ initialData: initialData?.allProducts })
 	const { data: collabProducts, isSuccess: collabIsSuccess, isPending: collabProductsIsLoading } = collabsProductFetcher({ initialData: initialData?.collabProducts })
 
 	if (productsIsLoading || collabProductsIsLoading) return <Loader />
 
-	const [params, setSearchParams] = useSearchParams()
+	const params = Route.useSearch()
+	const navigate = Route.useNavigate()
+
 	const { mutate: collabProductSetter } = getCollabApprover()
 
 	const productsCollection = () => {
-		if (params.get('type') == 'outgoing') {
+		if (params.type == 'outgoing') {
 			return allProducts;
 		}
 		else {
@@ -53,16 +53,20 @@ const CollaboratorsPage = () => {
 				<Button
 					buttonName="Outgoing"
 					extraClasses={['rounded-xl']}
-					isActive={(params.get('type') === 'outgoing')}
+					isActive={(params.type === 'outgoing')}
 					onClickHandler={() => {
-						setSearchParams({ type: 'outgoing' })
+						navigate({
+							search:()=>({type:'outgoing'})
+						})
 					}} />
 				<Button
 					buttonName="Incoming"
 					extraClasses={['rounded-xl']}
-					isActive={(!params.get('type') || params.get('type') === 'incoming')}
+					isActive={(!params.type || params.type === 'incoming')}
 					onClickHandler={() => {
-						setSearchParams({ type: 'incoming' })
+						navigate({
+							search:()=>({type:'incoming'})
+						})						
 					}} />
 			</div>
 			<div className="w-full mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -85,5 +89,3 @@ const CollaboratorsPage = () => {
 		</Fragment>
 	)
 }
-
-export default CollaboratorsPage

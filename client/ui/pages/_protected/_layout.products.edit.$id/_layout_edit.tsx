@@ -1,5 +1,3 @@
-import { useParams, useRouteLoaderData } from "react-router"
-import { Link, NavLink } from "react-router-dom"
 import { useRecoilState, useSetRecoilState } from "recoil"
 import Button from "@/ui/components/button"
 import { EditProductSchema } from "@/forms/schema/edit_product_schema"
@@ -9,19 +7,34 @@ import { queryClient } from "@/app/RootPage"
 import { createContext, useEffect, useState } from "react"
 import { getProductEditor } from "@/react-query/mutations";
 import _ from 'lodash';
-import { singleProductFetcher } from "@/react-query/query"
+import { singleProductFetcher, singleProductFetcherProps } from "@/react-query/query"
 import { getEditProductFormProps } from "@/forms"
-import Loader from "../components/loader"
+import Loader from "@/ui/components/loader"
+import { Outlet, createFileRoute, Link } from "@tanstack/react-router"
 
+export const Route = createFileRoute('/_protected/_layout/products/edit/$id/_layout_edit')({
+	loader: async ({ params }) => {
+		const singleProductDataQuery = singleProductFetcherProps({ productId: params.id })
+		const singleProductData = await queryClient.ensureQueryData(singleProductDataQuery)
+		return singleProductData as ProductType
+	},
+	component: () => {
+		return (
+			<ProductEditPageLayout>
+				<Outlet />
+			</ProductEditPageLayout>
+		)
+	}
+})
 export const productEditContext = createContext<ReactFormProps<EditProductSchemaType> | null>(null)
 
 const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 
 	const setToastRender = useSetRecoilState(hideToastState)
 
-	const params = useParams()
+	const params = Route.useParams()
 
-	const initialData = useRouteLoaderData('product_edit_page') as ProductType
+	const initialData = Route.useLoaderData()
 
 	const { data: currentProduct, isPending: productsIsLoading, isSuccess: productIsSuccess } = singleProductFetcher({ productId: params.id, initialData })
 
@@ -42,28 +55,30 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 								Edit Product
 							</div>
 							<div className="border-b-[1px] h-5 border-white/30 flex gap-x-4 w-full">
-								<NavLink to={`/products/edit/${params.id}/home`}
+								<Link to='/products/edit/$id/home' params={{ id: params.id }}
 									style={{
 										textDecoration: 'none'
 									}}
-									className={({ isActive }) => {
-										return (isActive ? "cursor-default pointer-events-none" : "")
-									}} >
+									activeProps={{
+										className: "cursor-default pointer-events-none"
+									}}>
 									{({ isActive }) => (
 										<Button buttonName="Product" isActive={isActive} extraClasses={[`!text-base !rounded-2xl`]} />
 									)}
-								</NavLink>
-								<NavLink to={`/products/edit/${params.id}/content?page=1`}
+								</Link>
+								<Link to='/products/edit/$id/content'
+									params={{ id: params.id }}
+									search={() => ({ page: 1 })}
 									style={{
 										textDecoration: 'none'
 									}}
-									className={({ isActive }) => {
-										return (isActive ? "cursor-default pointer-events-none" : "")
-									}} >
+									activeProps={{
+										className: "cursor-default pointer-events-none"
+									}}>
 									{({ isActive }) => (
 										<Button buttonName="Content" isActive={isActive} extraClasses={[`!text-base !rounded-2xl`]} />
 									)}
-								</NavLink>
+								</Link>
 							</div>
 						</div>
 						<div className="flex gap-x-4 border-b-[0.1px] border-white/30 p-5">
@@ -93,5 +108,3 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 		)
 	}
 }
-
-export default ProductEditPageLayout

@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query"
 import { queryClient } from "@/app/RootPage"
 import { hideToastState } from "@/atoms/states"
 import { useSetRecoilState } from "recoil"
-import { useNavigate } from "react-router"
+import { useNavigate } from "@tanstack/react-router"
 import React from "react"
 import { z } from 'zod'
 import { signInSchema, signUpSchema } from "@/forms/schema/auth_schema"
@@ -79,7 +79,7 @@ export const setLogOut = () => {
 			return res.json()
 		}),
 		onSuccess: () => {
-			navigate('/signin')
+			navigate({to:'/signin'})
 			return queryClient.clear()
 		},
 		onError: (err) => {
@@ -225,7 +225,7 @@ export const setLoginStatus = ({ setCustomError }: { setCustomError: React.Dispa
 			return res.json()
 		}),
 		onSuccess: () => {
-			navigate('/')
+			navigate({to:'/'})
 			return queryClient.clear()
 		},
 		onError: (err) => {
@@ -253,7 +253,7 @@ export const setSignUp = ({ setCustomError }: { setCustomError: React.Dispatch<R
 			return {}
 		}),
 		onSuccess: () => {
-			navigate('/signin')
+			navigate({to:'/signin'})
 		},
 		onError: (err) => {
 			setCustomError(err.message)

@@ -7,7 +7,14 @@ import { queryClient } from "@/app/RootPage"
 import Button from "@/ui/components/button"
 import { signInSchema } from "@/forms/schema/auth_schema"
 import { setLoginStatus } from "@/react-query/mutations"
-import { Link } from 'react-router-dom'
+import { Link } from '@tanstack/react-router'
+import { createLazyFileRoute } from '@tanstack/react-router'
+
+export const Route = createLazyFileRoute('/_nonprotected/_layout/signin/')({
+	component: () => {
+		return <SignInPage />
+	}
+})
 
 const SignInPage = () => {
 	const [customError, setCustomError] = useState<string>("")
@@ -72,7 +79,7 @@ const SignInPage = () => {
 
 				</div>
 				<div className="p-4 w-full flex flex-col justify-center gap-y-6 lg:pl-8">
-					<Link className='text-white no-underline' to={'/signup'}>
+					<Link className='text-white no-underline' to='/signup'>
 						<Button buttonName="Sign Up" extraClasses={[`!w-full !py-4`]} />
 					</Link>
 				</div>
@@ -80,5 +87,3 @@ const SignInPage = () => {
 		</div>
 	)
 }
-
-export default SignInPage

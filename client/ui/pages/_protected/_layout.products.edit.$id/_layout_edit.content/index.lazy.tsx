@@ -1,9 +1,4 @@
-/** @jsxImportSource @emotion/react */
-import '@/ui/styles/ProductEditContentPage'
-import { Fragment } from "react/jsx-runtime"
-import { CiStar } from "react-icons/ci";
-import { FaStar } from "react-icons/fa";
-import { RefObject, createRef, useContext, useEffect, useRef, useState } from "react";
+import { createContext, createRef, Fragment, RefObject, useContext, useEffect, useRef, useState } from "react";
 
 import { PlaceholderExtension } from 'remirror/extensions';
 import { EditorComponent, Remirror, Toolbar, useRemirror } from '@remirror/react';
@@ -14,11 +9,20 @@ import { IonItem, IonLabel, IonList, IonReorder, IonReorderGroup, IonRow, ItemRe
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRecoilState } from 'recoil';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useSearchParams } from 'react-router-dom';
 import Button from '@/ui/components/button';
 import ProductEditContentDeleteModal from '@/ui/components/modal/ProductEditContentDeleteModal';
-import { productEditContext } from '../layouts/ProductEditPageLayout';
+import { productEditContext } from "../_layout_edit";
 import { useFieldArray } from 'react-hook-form';
+import { createLazyFileRoute } from '@tanstack/react-router';
+import { FaStar } from "react-icons/fa";
+import { CiStar } from "react-icons/ci";
+import { ProductContentSearchType } from ".";
+
+export const Route = createLazyFileRoute('/_protected/_layout/products/edit/$id/_layout_edit/content/')({
+	component: () => {
+		return <ProductEditContentPage />
+	}
+})
 
 const markDownStyle = css`
 	.remirror-theme{
@@ -107,7 +111,8 @@ const ProductEditContentPage = () => {
 	const [tempReviewDescription, setTempReviewDescription] = useState('')
 	const [reviewDescription, setReviewDescripition] = useState('')
 
-	const [searchParams, setSearchParams] = useSearchParams()
+	const searchParams = Route.useSearch()
+	const navigate = Route.useNavigate()
 
 	const [renaming, setRenaming] = useState(false)
 
@@ -118,8 +123,10 @@ const ProductEditContentPage = () => {
 
 
 	useEffect(() => {
-		if (!searchParams.get('page') || Number(searchParams.get('page')!) > pages.length) {
-			setSearchParams({ page: '1' })
+		if (!searchParams.page || Number(searchParams.page!) > pages.length) {
+			navigate({
+				search: (prev:ProductContentSearchType) => ({ ...prev, page: 1 })
+			})
 		}
 		setRendered(true)
 	}, [])
@@ -145,17 +152,21 @@ const ProductEditContentPage = () => {
 								disabled={false}
 								onIonItemReorder={(event) => {
 									setValue('contents', event.detail.complete(pages))
-									setSearchParams({ page: `${event.detail.to + 1 as number}` })
+									navigate({
+										search: (prev:ProductContentSearchType) => ({ ...prev, page: event.detail.to + 1 as number })
+									})
 								}}
 								className='flex flex-col gap-2'>
 								{
 									fields.map((e, i) => {
 										return (
 											<IonItem key={e.id}>
-												<IonRow className={`justify-between flex-nowrap items-center px-2 py-0 overflow-none ${Number(searchParams.get('page')) === i + 1 && "bg-accent/80 text-white"} `}
+												<IonRow className={`justify-between flex-nowrap items-center px-2 py-0 overflow-none ${searchParams.page === i + 1 && "bg-accent/80 text-white"} `}
 													onClick={() => {
 														if (inputRefs[i].current?.readOnly) {
-															setSearchParams({ page: `${i + 1}` })
+															navigate({
+																search: (prev:ProductContentSearchType) => ({ ...prev, page: i + 1 })
+															})
 														}
 													}}
 													onKeyDown={(e) => {
@@ -167,7 +178,7 @@ const ProductEditContentPage = () => {
 													<IonReorder className='mt-[0.35rem] mr-[0.3rem]' />
 													<IonLabel>
 														<input
-															className={`text-lg outline-none py-2 px-2 my-1 ${Number(searchParams.get('page')) === i + 1 ? "bg-accent/80 text-white" : "bg-background text-white"}`}
+															className={`text-lg outline-none py-2 px-2 my-1 ${searchParams.page === i + 1 ? "bg-accent/80 text-white" : "bg-background text-white"}`}
 															placeholder='Untitled...'
 															ref={inputRefs[i]}
 															readOnly={true}
@@ -287,8 +298,8 @@ const ProductEditContentPage = () => {
 				'w-full left-0 overflow-hidden mr-14'
 			)}>
 				<MarkdownEditor
-					pageContent={pages[(searchParams.get('page') || 1) as number - 1]?.content as string}
-					key={searchParams.get('page')}
+					pageContent={pages[(searchParams.page || 1) as number - 1]?.content as string}
+					key={searchParams.page}
 					placeholder="start typing..."
 					theme={{
 						color: {

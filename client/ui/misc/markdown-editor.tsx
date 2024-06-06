@@ -48,8 +48,8 @@ import { AllStyledComponent } from '@remirror/styles/emotion';
 
 import type { CreateEditorStateProps, RemirrorJSON } from 'remirror';
 import type { RemirrorProps, UseThemeProps } from '@remirror/react';
-import { useSearchParams } from 'react-router-dom';
-import { productEditContext } from '../layouts/ProductEditPageLayout';
+import { productEditContext } from '../pages/_protected/_layout.products.edit.$id/_layout_edit';
+import { getRouteApi } from '@tanstack/react-router';
 
 interface ReactEditorProps
 	extends Pick<CreateEditorStateProps, 'stringHandler'>,
@@ -57,6 +57,8 @@ interface ReactEditorProps
 	placeholder?: string;
 	theme?: UseThemeProps['theme'];
 }
+
+const route = getRouteApi('/_protected/_layout/products/edit/$id/_layout_edit/content/')
 
 export interface MarkdownEditorProps extends Partial<Omit<ReactEditorProps, 'stringHandler'>> {
 	pageContent: string;
@@ -109,7 +111,8 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
 		stringHandler: 'markdown',
 	});
 
-	const [searchParams, setSearchParams] = useSearchParams()
+	const searchParams = route.useSearch()
+
 	const [initContent] = useState<RemirrorJSON | undefined>(() => {
 		if (pageContent) {
 			return JSON.parse(pageContent);
@@ -145,7 +148,7 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
 					<TableComponents />
 					{children}
 					<OnChangeJSON onChange={(data) => {
-						setValue(`contents.${(searchParams.get('page') || 1) as number - 1}.content`,JSON.stringify(data))
+						setValue(`contents.${(searchParams.page || 1) as number - 1}.content`, JSON.stringify(data))
 					}} />
 				</Remirror>
 			</ThemeProvider>

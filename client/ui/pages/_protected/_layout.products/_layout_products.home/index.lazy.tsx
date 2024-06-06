@@ -1,12 +1,8 @@
-import ProductCard from "@/ui/components/cards/ProductCard"
-import { Fragment } from "react/jsx-runtime"
-import { HiOutlineDotsVertical } from "react-icons/hi";
-import { useCallback, useEffect, useRef, useState } from "react";
+
 import { AnimatePresence, motion } from "framer-motion";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { hideToastState } from "@/atoms/states";
 import { IoMdSettings } from "react-icons/io";
-import { useRouteLoaderData } from "react-router";
 import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { EditProductSchema } from "@/forms/schema/edit_product_schema";
@@ -15,20 +11,28 @@ import { queryClient } from "@/app/RootPage";
 import { z } from "zod";
 import { allProductsFetcher } from "@/react-query/query"
 import _ from 'lodash'
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { getProductCreater, getProductDeleter, getProductLiveToggle } from "@/react-query/mutations";
 import { NewProductSchema } from "@/forms/schema/new_product_schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import NewProductModal from "@/ui/components/modal/NewProductModal";
-import DeleteProductModal from "../components/modal/DeleteProductModal";
-import { SelectComponent } from "../components/select";
+import DeleteProductModal from "@/ui/components/modal/DeleteProductModal";
+import { SelectComponent } from "@/ui/components/select";
 import { filterTypeOptions } from "@/forms/schema/misc_schema";
 import { processProducts } from "@/lib/products_process";
-import Loader from "../components/loader";
+import Loader from "@/ui/components/loader";
+import { createLazyFileRoute } from "@tanstack/react-router";
+import { Fragment, useEffect, useState } from "react";
+import ProductCard from "@/ui/components/cards/ProductCard";
+
+export const Route = createLazyFileRoute('/_protected/_layout/products/_layout_products/home/')({
+	component: () => {
+		return <ProductsHomePage />
+	},
+})
 
 const ProductsHomePage = () => {
-
-	const initialData = useRouteLoaderData('products_home') as ProductTypePayload
+	const initialData = Route.useLoaderData()
 
 	const { data: allProducts, isSuccess: productIsSuccess, isPending: productsIsLoading } = allProductsFetcher({ initialData })
 
@@ -40,14 +44,15 @@ const ProductsHomePage = () => {
 	})
 
 	const setToastRender = useSetRecoilState(hideToastState)
-
+	const navigate = Route.useNavigate()
+	const params = Route.useSearch()
 
 	const [searchBarActive, setSearchBarActive] = useState<boolean>(false)
-	const [searchParams, setSearchParams] = useSearchParams()
 
 	const debounceSearchInput = _.debounce((value: string) => {
-		searchParams.set('search_word', value)
-		setSearchParams(searchParams)
+		navigate({
+			search: () => ({ ...params, search_word: value })
+		})
 	}, 300)
 
 	const [sortBarActive, setSortBarActive] = useState(false)
@@ -62,13 +67,6 @@ const ProductsHomePage = () => {
 		document.body.addEventListener('click', closeContextMenu)
 		return () => document.body.removeEventListener('click', closeContextMenu)
 	}, [])
-
-	useEffect(() => {
-		if (!searchParams.get('search_word')) {
-			searchParams.delete('search_word')
-			setSearchParams(searchParams)
-		}
-	}, [searchParams.get('search_word')])
 
 	const { mutate: liveSetter } = getProductLiveToggle()
 
@@ -154,20 +152,22 @@ const ProductsHomePage = () => {
 						<SelectComponent
 							placeholder='Sort by'
 							options={filterTypeOptions}
-							value={filterTypeOptions.filter((e) => e.value === (searchParams.get('sort_by') || 'title'))}
+							value={filterTypeOptions.filter((e) => e.value === (params.sort_by || 'title'))}
 							onChange={(v) => {
-								searchParams.set('sort_by', v?.value || 'title')
-								setSearchParams(searchParams)
+								navigate({
+									search: () => ({ ...params, sort_by: v?.value || 'title' })
+								})
 							}}
 						/>
 						<Button buttonName=""
 							extraClasses={['!text-lg !rounded-xl']}
 							onClickHandler={() => {
-								searchParams.get('reverse') === 'true' ? searchParams.set('reverse', 'false') : searchParams.set('reverse', 'true')
-								setSearchParams(searchParams)
+								navigate({
+									search: () => ({ ...params, reverse: params.reverse ? false : true })
+								})
 							}} >
 							{
-								searchParams.get('reverse') === 'true' ?
+								params.reverse === true ?
 									<FaArrowUpShortWide />
 									:
 									<FaArrowDownWideShort />
@@ -178,7 +178,7 @@ const ProductsHomePage = () => {
 				}
 			</AnimatePresence>
 			<div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
-				{processProducts({ products: Object.entries(allProducts), searchURL: searchParams.toString() }).map(([key, value], i) => {
+				{processProducts({ products: Object.entries(allProducts), searchURL: (new URLSearchParams((params as Record<string, unknown>) as Record<string, string>)).toString() }).map(([key, value], i) => {
 					return (
 						<ProductCard key={key} productData={{
 							...value
@@ -262,5 +262,3 @@ const ProductsHomePage = () => {
 		</div >
 	)
 }
-
-export default ProductsHomePage
