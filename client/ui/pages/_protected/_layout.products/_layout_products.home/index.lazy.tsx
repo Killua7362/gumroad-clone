@@ -7,7 +7,7 @@ import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { EditProductSchema } from "@/forms/schema/edit_product_schema";
 import Button from "@/ui/components/button";
-import { queryClient } from "@/app/RootPage";
+import { queryClient } from  '@/app/RouteComponent';
 import { z } from "zod";
 import { allProductsFetcher } from "@/react-query/query"
 import _ from 'lodash'

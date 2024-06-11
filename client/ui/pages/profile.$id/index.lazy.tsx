@@ -3,7 +3,7 @@ import ProfilePageLayout from "@/ui/layouts/ProfilePageLayout"
 import ProfilePageProductCard from "@/ui/components/cards/ProfilePageProductCard"
 import { getProfileProductsFetcher, getProfileStatus } from "@/react-query/query"
 import Loader from "@/ui/components/loader"
-import { createLazyFileRoute } from "@tanstack/react-router"
+import { createLazyFileRoute, useLoaderData, useParams } from "@tanstack/react-router"
 
 export const Route = createLazyFileRoute('/profile/$id/')({
 	component: () => {
@@ -17,15 +17,15 @@ interface ProfilePageProps extends Partial<CheckoutFormSchemaType> {
 }
 
 export const ProfileHomePage = ({ preview = false, userId, ...profilePageProps }: ProfilePageProps) => {
-	const params = Route.useParams()
+	const params = preview? undefined : useParams({from:'/profile/$id/'})
 
-	const initialData = Route.useLoaderData()
+	const initialData = preview? undefined : useLoaderData({from:'/profile/$id/'})
 
 	document.title = "Profile"
 
-	const { data: profileProducts, isPending: productsIsLoading, isSuccess: productIsSuccess } = getProfileProductsFetcher({ userId: preview ? userId : params.id, initialData: initialData?.productData })
+	const { data: profileProducts, isPending: productsIsLoading, isSuccess: productIsSuccess } = getProfileProductsFetcher({ userId: preview ? userId : params?.id, initialData: initialData?.productData })
 
-	const { data: profileStatus, isPending: profileIsLoading, isSuccess: profileIsSuccess } = getProfileStatus({ userId: params.id, preview: preview, initialData: initialData?.profileData })
+	const { data: profileStatus, isPending: profileIsLoading, isSuccess: profileIsSuccess } = getProfileStatus({ userId: params?.id, preview: preview, initialData: initialData?.profileData })
 
 	if ((preview ? false : profileIsLoading) || productsIsLoading) return <Loader />
 

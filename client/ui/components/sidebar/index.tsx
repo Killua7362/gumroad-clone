@@ -1,17 +1,16 @@
 import '@/ui/styles/sidebar.css'
-import { SideBarTopItems } from '@/ui/components/sidebar/items';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { AnimatePresence, Variants, motion } from 'framer-motion'
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { useLocation, Link, getRouteApi, rootRouteId } from '@tanstack/react-router';
+import { useLocation, Link, getRouteApi, rootRouteId, LinkProps, RegisteredRouter, useSearch } from '@tanstack/react-router';
 import { MdAccountCircle } from "react-icons/md";
 import { IoBagRemove, IoSettingsSharp } from "react-icons/io5";
 import { SiAboutdotme } from "react-icons/si";
 import { CgLogOut } from "react-icons/cg";
 import { useSetRecoilState } from 'recoil';
-import { queryClient } from '@/app/RootPage';
+import { queryClient } from '@/app/RouteComponent';
 import { setLogOut } from '@/react-query/mutations';
-import browserHistory from '@/lib/history';
+import browserHistory from '@/lib/browser_history';
 import _ from 'lodash'
 import SideBarCard from './card';
 import { BsFillBackpack4Fill } from 'react-icons/bs';
@@ -20,7 +19,6 @@ import { IoMdCart } from 'react-icons/io';
 const route = getRouteApi(rootRouteId)
 
 const SideBar = ({ ...sideBarProps }: SideBarProps) => {
-
 	const { sideBarOpen: isOpen, windowWidth, setSideBarOpen: setIsOpen, setWindowWidth } = sideBarProps
 
 	const [isAccountOpen, setIsAccountOpen] = useState(false)
@@ -71,9 +69,8 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 	}, [])
 
 	useEffect(() => {
-		browserHistory.setURL(location.pathname)
-	}, [location.pathname])
-
+		browserHistory.setURL({ to: location.pathname as any, search: location.search })
+	}, [location.pathname, location.search])
 
 	const loginStatus = route.useLoaderData() as authSchema
 	const { mutate: loginStatusSetter, isPending } = setLogOut()
@@ -124,36 +121,30 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 			>
 				<SideBarCard
 					title='Home'
-					url={browserHistory.getURL('/home')}
-					to={browserHistory.getURL('/home')}
 					sideBarProps={sideBarProps}
 					icon={<BsFillBackpack4Fill />}
 					extraClasses='!px-6'
 					isOpen={isOpen}
 					windowWidth={windowWidth}
-					params={{ id: loginStatus.user_id! }}
+					{...browserHistory.getURL('/home') as LinkProps}
 				/>
 				<SideBarCard
 					title='Products'
-					url={browserHistory.getURL('/products/home')}
-					to={browserHistory.getURL('/products/home')}
 					sideBarProps={sideBarProps}
 					extraClasses='!px-6'
 					icon={<IoBagRemove />}
 					isOpen={isOpen}
 					windowWidth={windowWidth}
-					params={{ id: loginStatus.user_id! }}
+					{...browserHistory.getURL('/products/home') as LinkProps}
 				/>
 				<SideBarCard
 					title='Checkout'
-					url={browserHistory.getURL('/checkout/form')}
-					to={browserHistory.getURL('/checkout/form')}
 					sideBarProps={sideBarProps}
 					extraClasses='!px-6'
 					icon={<IoMdCart />}
 					isOpen={isOpen}
 					windowWidth={windowWidth}
-					params={{ id: loginStatus.user_id! }}
+					{...browserHistory.getURL('/checkout/form') as LinkProps}
 				/>
 			</div>
 			<motion.div
@@ -180,8 +171,6 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 				{isAccountOpen && <>
 					<SideBarCard
 						title='Settings'
-						url='/'
-						to='/'
 						sideBarProps={sideBarProps}
 						icon={<IoSettingsSharp />}
 						isOpen={isOpen}
@@ -189,22 +178,20 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 						windowWidth={windowWidth}
 						params={{ id: loginStatus.user_id! }}
 						target='_blank'
+						to='/'
 					/>
 					<SideBarCard
 						title='Profile'
-						url='/profile/$id'
-						to='/profile/$id'
 						sideBarProps={sideBarProps}
 						icon={<SiAboutdotme />}
 						isOpen={isOpen}
 						windowWidth={windowWidth}
 						params={{ id: loginStatus.user_id! }}
 						target='_blank'
+						to='/profile/$id'
 					/>
 					<SideBarCard
 						title='Logout'
-						url='/'
-						to='/'
 						onClickHandler={() => {
 							loginStatusSetter()
 						}}
@@ -213,13 +200,12 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 						icon={<CgLogOut />}
 						isOpen={isOpen}
 						windowWidth={windowWidth}
+						to='/'
 					/>
 				</>
 				}
 				<SideBarCard
 					title='Account'
-					url='/'
-					to='/'
 					onClickHandler={() => {
 						setIsAccountOpen(!isAccountOpen)
 					}}
@@ -230,6 +216,7 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 					icon={<MdAccountCircle />}
 					isOpen={isOpen}
 					windowWidth={windowWidth}
+					to='/'
 				/>
 			</motion.div>
 		</motion.div >

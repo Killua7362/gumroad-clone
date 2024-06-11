@@ -2,13 +2,12 @@ import { z } from 'zod'
 import { useFieldArray, useForm, useFormState, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EditProductSchema } from "@/forms/schema/edit_product_schema";
-import { queryClient } from "@/app/RootPage";
+import { queryClient } from  '@/app/RouteComponent';
 import Button from "@/ui/components/button";
 import { SelectComponent } from "@/ui/components/select";
 import { cx, css } from '@emotion/css'
 import { productTypeOptions } from "@/forms/schema/edit_product_schema";
 import { getProductEditor } from "@/react-query/mutations";
-import { getEditProductFormProps } from "@/forms";
 import { productEditContext } from '../_layout_edit';
 import { currencyTypeOptions } from "@/forms/schema/misc_schema";
 import { ProductsDetailsPage } from '@/ui/pages/profile.$id/product.$productid/index.lazy';
@@ -36,7 +35,7 @@ const stringToTags = (typeString: string) => {
 
 const ProductEditHomePage = () => {
 	const localProductEditContext = useContext(productEditContext)
-	const { errors, register, setValue, watch, control, reset, setError } = localProductEditContext!
+	const { errors, register, setValue, watch, control } = localProductEditContext!
 
 	const setToastRender = useSetRecoilState(hideToastState)
 

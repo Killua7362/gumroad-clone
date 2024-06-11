@@ -11,7 +11,7 @@ const NonProtectedRoute = () => {
 
 	if (!isLoginSuccess || (isLoginSuccess && loginStatus.logged_in === false)) return <Outlet />
 
-	return <Navigate to='/' />
+	return <Navigate to='/home' />
 }
 
 export default NonProtectedRoute

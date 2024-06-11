@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Button from '@/ui/components/button';
-import { queryClient } from '@/app/RootPage';
+import { queryClient } from '@/app/RouteComponent';
 import { getProfileStatus } from '@/react-query/query';
 import { getCheckoutFormProps } from '@/forms';
 import { useFieldArray } from 'react-hook-form';

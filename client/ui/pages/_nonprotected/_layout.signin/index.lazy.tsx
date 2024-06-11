@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSetRecoilState } from "recoil"
 import { useEffect, useState } from "react"
-import { queryClient } from "@/app/RootPage"
+import { queryClient } from  '@/app/RouteComponent'
 import Button from "@/ui/components/button"
 import { signInSchema } from "@/forms/schema/auth_schema"
 import { setLoginStatus } from "@/react-query/mutations"

@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
-import { queryClient } from "@/app/RootPage"
+import { queryClient } from '@/app/RouteComponent';
 import { hideToastState } from "@/atoms/states"
 import { useSetRecoilState } from "recoil"
 import { useNavigate } from "@tanstack/react-router"
@@ -225,7 +225,7 @@ export const setLoginStatus = ({ setCustomError }: { setCustomError: React.Dispa
 			return res.json()
 		}),
 		onSuccess: () => {
-			navigate({to:'/'})
+			navigate({to:'/home'})
 			return queryClient.clear()
 		},
 		onError: (err) => {

@@ -1,13 +1,16 @@
+
 import { Fragment, useEffect, useState } from "react"
 import SideBar from "@/ui/components/sidebar"
 import Footer from "@/ui/components/Footer"
 import { useRecoilValue } from "recoil"
 import Toast from "@/ui/components/toast"
 import { isError } from "remirror"
-import { queryClient } from "@/app/RootPage"
+import { queryClient } from '@/app/RouteComponent'
 import { loginStatusFetcher, loginStatusFetcherProps } from "@/react-query/query"
 import { AnimatePresence, motion } from 'framer-motion'
 import { createRootRoute, getRouteApi, Link, Outlet, useLoaderData, useMatch, useRouteContext, useRouterState } from '@tanstack/react-router'
+import Bar from "../components/loader/Bar"
+import SharedStore from "../misc/shared-storage"
 
 const getSideBarProps = () => {
 	const [sideBarOpen, setSideBarOpen] = useState(false)
@@ -23,14 +26,19 @@ export const Route = createRootRoute({
 		return result;
 	},
 	component: () => {
-		return (
-			<BaseLayout>
-				<Outlet />
-			</BaseLayout>
-		)
-	},
-	errorComponent: () => {
-
+		const { status } = useRouterState()
+		if (status === 'pending') {
+			return <Bar />
+		} else {
+			return (
+				<>
+					<SharedStore />
+					<BaseLayout>
+						<Outlet />
+					</BaseLayout>
+				</>
+			)
+		}
 	}
 })
 
@@ -68,4 +76,5 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 			</motion.div>
 		</div>
 	)
+
 }

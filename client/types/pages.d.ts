@@ -18,7 +18,6 @@ interface RootContextProps {
 
 interface SideBarCardProps {
 	title: string;
-	url: string;
 	sideBarProps: SideBarProps;
 	icon: React.ReactNode;
 	isOpen: boolean;

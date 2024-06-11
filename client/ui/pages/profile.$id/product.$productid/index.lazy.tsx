@@ -25,13 +25,12 @@ export const ProductsDetailsPage = ({ preview = false, watch }: ProductsDetailsP
 	const titleIsInView = useInView(titleRef, {
 		margin: "-20% 0px 0px 0px"
 	})
-    const initialData = Route.useLoaderData()
-
+    const initialData = preview ? undefined : Route.useLoaderData()
+	const params = preview ? undefined : Route.useParams()
 
 	const priceInView = useInView(priceRef)
-	const params = Route.useParams()
 
-	const { data: profileProductData, isPending: profileProductPending, isSuccess: profileProductSuccess } = getSingleProfileProductFetcher({ userId: params.id, productId: params.productid, preview: preview, initialData: initialData?.singleProductData })
+	const { data: profileProductData, isPending: profileProductPending, isSuccess: profileProductSuccess } = getSingleProfileProductFetcher({ userId: params?.id, productId: params?.productid, preview: preview, initialData: initialData?.singleProductData })
 
 	const title = preview ? watch!('title') : profileProductData?.title
 	const price = preview ? watch!('price') : profileProductData?.price
@@ -58,7 +57,7 @@ export const ProductsDetailsPage = ({ preview = false, watch }: ProductsDetailsP
 
 			}
 			<div className={`w-full h-full flex flex-col gap-y-3 ${preview ? "pt-[6rem]" : "mt-[10rem] sm:mt-[14rem] md:mt-[10rem] pt-24 sm:pt-8 md:pt-10"}`}>
-				<div className="w-11/12 lg:w-10/12 xl:w-8/12 mx-auto h-full flex flex-col mt-2 flex flex-col">
+				<div className="w-11/12 lg:w-10/12 xl:w-8/12 mx-auto h-full flex flex-col mt-2">
 					<div className="w-full h-[50rem] bg-accent border-[0.1px] border-white/30">
 						Photo
 					</div>

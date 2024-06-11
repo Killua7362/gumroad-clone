@@ -1,4 +1,4 @@
-import { queryClient } from "@/app/RootPage";
+import { queryClient } from  '@/app/RouteComponent';
 import { loginStatusFetcherProps } from "@/react-query/query";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 

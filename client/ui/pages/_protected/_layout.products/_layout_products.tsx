@@ -4,6 +4,7 @@ import { useRecoilState } from "recoil";
 import Button from "@/ui/components/button";
 import { Outlet, createFileRoute, Link } from "@tanstack/react-router";
 import { ProductHomeRouteType } from "./_layout_products.home";
+import { productPageCollaboratorsSchemaType } from "./_layout_products.collaborators";
 export const Route = createFileRoute('/_protected/_layout/products/_layout_products')({
 	component: () => {
 		return (
@@ -24,10 +25,11 @@ const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 					</div>
 					<div className="border-b-[1px] h-5 border-white/30 flex gap-x-4">
 						<Link to='/products/home'
-							search={(prev:ProductHomeRouteType) => ({
+							search={(prev: ProductHomeRouteType) => ({
 								sort_by: prev.sort_by || 'title',
 								reverse: prev.reverse || false,
 								search_word: prev.search_word || '',
+								...prev,
 							})}
 							style={{
 								textDecoration: 'none'
@@ -36,14 +38,13 @@ const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 								className: "cursor-default pointer-events-none"
 							}}
 						>
-							{({ isActive }) => (
-								<Button buttonName="Home" isActive={isActive} extraClasses={[`!text-base !rounded-2xl`]} />
-							)}
+							<Button buttonName="Home" isActive={location.pathname === '/products/home'} extraClasses={[`!text-base !rounded-2xl`]} />
 						</Link>
 						<Link
 							to='/products/collaborators'
-							search={() => ({
-								type: 'incoming',
+							search={(prev: productPageCollaboratorsSchemaType) => ({
+								type: 'outgoing',
+								...prev,
 							})}
 							style={{
 								textDecoration: 'none'
@@ -52,9 +53,7 @@ const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 								className: "cursor-default pointer-events-none"
 							}}
 						>
-							{({ isActive }) => (
-								<Button buttonName="Collab" isActive={isActive} extraClasses={[`!text-base !rounded-2xl`]} />
-							)}
+							<Button buttonName="Collab" isActive={location.pathname === '/products/collaborators'} extraClasses={[`!text-base !rounded-2xl`]} />
 						</Link>
 					</div>
 				</div>

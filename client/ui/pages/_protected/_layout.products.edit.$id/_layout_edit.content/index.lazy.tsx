@@ -21,7 +21,7 @@ import { ProductContentSearchType } from ".";
 export const Route = createLazyFileRoute('/_protected/_layout/products/edit/$id/_layout_edit/content/')({
 	component: () => {
 		return <ProductEditContentPage />
-	}
+	},
 })
 
 const markDownStyle = css`
@@ -95,7 +95,7 @@ const markDownStyle = css`
 
 const ProductEditContentPage = () => {
 	const localProductEditContext = useContext(productEditContext)
-	const { control, watch, setValue } = localProductEditContext!
+	const { control, watch, setValue, getValues } = localProductEditContext!
 
 	const { append, remove, fields } = useFieldArray({
 		name: 'contents',
@@ -125,7 +125,10 @@ const ProductEditContentPage = () => {
 	useEffect(() => {
 		if (!searchParams.page || Number(searchParams.page!) > pages.length) {
 			navigate({
-				search: (prev:ProductContentSearchType) => ({ ...prev, page: 1 })
+				search: (prev: ProductContentSearchType) => ({ ...prev, page: 1 }),
+				state: {
+					...getValues()
+				},
 			})
 		}
 		setRendered(true)
@@ -153,7 +156,10 @@ const ProductEditContentPage = () => {
 								onIonItemReorder={(event) => {
 									setValue('contents', event.detail.complete(pages))
 									navigate({
-										search: (prev:ProductContentSearchType) => ({ ...prev, page: event.detail.to + 1 as number })
+										search: (prev: ProductContentSearchType) => ({ ...prev, page: event.detail.to + 1 as number }),
+										state: {
+											...getValues()
+										},
 									})
 								}}
 								className='flex flex-col gap-2'>
@@ -165,7 +171,10 @@ const ProductEditContentPage = () => {
 													onClick={() => {
 														if (inputRefs[i].current?.readOnly) {
 															navigate({
-																search: (prev:ProductContentSearchType) => ({ ...prev, page: i + 1 })
+																search: (prev: ProductContentSearchType) => ({ ...prev, page: i + 1 }),
+																state: {
+																	...getValues()
+																},
 															})
 														}
 													}}

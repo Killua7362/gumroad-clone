@@ -7,23 +7,30 @@ const mountElement = document.getElementById('modals')
 
 interface ModalContextContent {
 	active?: boolean,
-	setActive?: React.Dispatch<React.SetStateAction<boolean>>
+	setActive?: React.Dispatch<React.SetStateAction<boolean>>;
+	listeners?: boolean;
 }
 
 export const modalContext = createContext<ModalContextContent>({});
 
-const ModalRoot = ({ children }: { children: React.ReactNode }) => {
-	const [active, setActive] = useState(false)
+const ModalRoot = ({ children, listeners = true }: { children: React.ReactNode, listeners?: boolean }) => {
+	const [active, setActive] = useState(!listeners)
+
+	const contextValue = {
+		active,
+		setActive,
+		listeners,
+	}
 
 	return (
-		<modalContext.Provider value={{ active, setActive }}>
+		<modalContext.Provider value={contextValue}>
 			{children}
 		</modalContext.Provider>
 	)
 }
 
 const ModalBase = ({ children, onClick }: { children: React.ReactNode, onClick?: () => void }) => {
-	const { active, setActive } = useContext(modalContext)
+	const { active, setActive, listeners } = useContext(modalContext)
 
 	useEffect(() => {
 		if (active) {
@@ -52,8 +59,8 @@ const ModalBase = ({ children, onClick }: { children: React.ReactNode, onClick?:
 						}}
 						onClick={(e) => {
 							e.stopPropagation()
-							setActive!(false)
-
+							if (listeners)
+								setActive!(false)
 							onClick && onClick()
 						}}
 
@@ -70,16 +77,17 @@ const ModalBase = ({ children, onClick }: { children: React.ReactNode, onClick?:
 }
 
 const ModalClose = ({ children, onClickHandler, className = "h-full" }: { children: React.ReactNode, onClickHandler?: () => Promise<boolean>, className?: string }) => {
-	const { active, setActive } = useContext(modalContext)
+	const { active, setActive, listeners } = useContext(modalContext)
+
 	return <div
 		className={className}
 		onClick={async (e) => {
 			if (onClickHandler) {
 				const status = await onClickHandler()
-				if (status) {
+				if (status && listeners) {
 					setActive!(false)
 				}
-			} else {
+			} else if (listeners) {
 				setActive!(false)
 			}
 		}}>
@@ -88,10 +96,11 @@ const ModalClose = ({ children, onClickHandler, className = "h-full" }: { childr
 }
 
 const ModalOpen = ({ children, className = "h-full" }: { children: React.ReactNode, className?: string }) => {
-	const { active, setActive } = useContext(modalContext)
+	const { active, setActive, listeners } = useContext(modalContext)
 
 	return <div className={className} onClick={(e) => {
-		setActive!(true)
+		if (listeners)
+			setActive!(true)
 	}}>
 		{children}
 	</div>

@@ -16,7 +16,8 @@ export const getEditProductFormProps = (editProductState: ProductType) => {
 		watch,
 		trigger,
 		resetField,
-		formState: { errors }
+		formState: { errors },
+		getValues,
 	} = useForm<EditProductSchemaType>({
 		resolver: zodResolver(EditProductSchema),
 		defaultValues: {
@@ -33,7 +34,8 @@ export const getEditProductFormProps = (editProductState: ProductType) => {
 		shouldUnregister: false
 	})
 
-	return { handleSubmit, resetField, errors, register, setValue, reset, setError, watch, control, trigger } as ReactFormProps<EditProductSchemaType>
+	return { handleSubmit, resetField, errors, register, setValue, reset, setError, watch, control, trigger, getValues } as ReactFormProps<EditProductSchemaType>
+
 }
 
 export const getCheckoutFormProps = (payload: CheckoutFormSchemaType) => {

@@ -5,10 +5,10 @@ interface ProductDetailsPageLayoutProps {
 	preview?: boolean
 }
 
-const ProductsDetailsPageLayout = ({ children, preview }: ProductDetailsPageLayoutProps) => {
+const ProductsDetailsPageLayout = ({ children, preview = false }: ProductDetailsPageLayoutProps) => {
 	return (
 		<div className="w-full mb-20">
-			<ProfileNavbar name='' />
+			<ProfileNavbar name='' preview={preview} />
 			{children}
 		</div>
 	)

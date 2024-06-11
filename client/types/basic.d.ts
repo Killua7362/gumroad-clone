@@ -94,4 +94,5 @@ interface ReactFormProps<T extends import('react-hook-form').FieldValues> {
 	trigger: import('react-hook-form').UseFormTrigger<T>;
 	resetField: import('react-hook-form').UseFormResetField<T>;
 	isDirty: boolean;
+	getValues: import('react-hook-form').UseFormGetValues;
 }

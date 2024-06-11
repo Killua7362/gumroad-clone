@@ -3,7 +3,7 @@ import CollabCard from "@/ui/components/cards/CollabCard"
 import { Fragment } from "react/jsx-runtime"
 import Button from "@/ui/components/button"
 import { allProductsFetcher, collabsProductFetcher } from "@/react-query/query"
-import { queryClient } from "@/app/RootPage"
+import { queryClient } from  '@/app/RouteComponent'
 import { getCollabApprover } from "@/react-query/mutations"
 import Loader from "@/ui/components/loader"
 

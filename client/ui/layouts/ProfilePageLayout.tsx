@@ -9,7 +9,7 @@ interface ProfilePageLayoutProps {
 const ProfilePageLayout = ({ children, preview = false, name }: ProfilePageLayoutProps) => {
 	return (
 		<div className="h-full w-full mb-20">
-			<ProfileNavbar name={name} />
+			<ProfileNavbar name={name} preview={preview} />
 			{children}
 		</div>
 	)
