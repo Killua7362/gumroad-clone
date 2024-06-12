@@ -1,7 +1,7 @@
 import { QueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
-import { BlockerFn, HistoryLocation, NotFoundRoute, Outlet, RouterProvider, createRouter } from '@tanstack/react-router';
+import { BlockerFn, HistoryLocation, NotFoundRoute, Outlet, RegisteredRouter, RouteIds, Router, RouterProvider, createRouter } from '@tanstack/react-router';
 
 import { routeTree } from '@/ui/routeTree.gen';
 import NotFoundPage from '@/ui/_NotFound';
@@ -27,7 +27,7 @@ const persister = createSyncStoragePersister({
 })
 
 const history = createBrowserHistory({
-	layoutUrls: ['']
+	layoutUrls: ['/_protected/_layout/products/edit/$id/_layout_edit']
 })
 
 export const router = createRouter({

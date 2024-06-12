@@ -1,8 +1,8 @@
-import { getRouterContext } from "@tanstack/react-router"
+import { getRouterContext, Router } from "@tanstack/react-router"
 import { useContext, useEffect } from "react"
 import { AsyncSubject } from 'rxjs'
 
-export const getCustomRouteContext = new AsyncSubject()
+export const getCustomRouteContext = new AsyncSubject<Router<any,any>>()
 
 const SharedStore = () => {
 	const routeContext = useContext(getRouterContext())
@@ -12,7 +12,7 @@ const SharedStore = () => {
 		getCustomRouteContext.complete()
 
 		getCustomRouteContext.subscribe({
-			next: (v: any) => v
+			next: (v: Router<any,any>) => v
 		})
 
 	}, [])

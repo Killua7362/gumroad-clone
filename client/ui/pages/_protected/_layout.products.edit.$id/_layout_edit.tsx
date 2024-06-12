@@ -3,7 +3,7 @@ import Button from "@/ui/components/button"
 import { EditProductSchema } from "@/forms/schema/edit_product_schema"
 import { z } from "zod"
 import { hideToastState } from "@/atoms/states"
-import { queryClient } from  '@/app/RouteComponent'
+import { queryClient } from '@/app/RouteComponent'
 import { createContext, useContext, useEffect, useState } from "react"
 import { getProductEditor } from "@/react-query/mutations";
 import _ from 'lodash';
@@ -96,7 +96,7 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 											</Link>
 											<Link to='/products/edit/$id/content'
 												params={{ id: params.id }}
-												search={() => ({ page: 1 })}
+												search={(prev: any) => ({ ...prev })}
 												style={{
 													textDecoration: 'none'
 												}}

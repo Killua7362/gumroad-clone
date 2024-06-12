@@ -7,6 +7,7 @@
 // making assumptions about the way TanStack Router works
 
 import { getCustomRouteContext } from "@/ui/misc/shared-storage"
+import { RegisteredRouter, RouteIds, Router } from "@tanstack/react-router"
 import { lastValueFrom } from "rxjs"
 
 export interface RouterHistory {
@@ -61,6 +62,50 @@ const stopBlocking = () => {
 	})
 }
 
+let shouldBlockCache: {
+	[ToFromPair: string]: boolean
+} = {}
+
+const shouldBlock = async (layoutUrls: string[], currentLocation: string, nextLocation: string) => {
+	if (`${currentLocation}&&${nextLocation}` in shouldBlockCache) {
+		return shouldBlockCache[`${currentLocation}&&${nextLocation}`]
+	}
+
+	if (`${nextLocation}&&${currentLocation}` in shouldBlockCache) {
+		return shouldBlockCache[`${nextLocation}&&${currentLocation}`]
+	}
+
+	const routerContext: Router<any, any> = await lastValueFrom(getCustomRouteContext)
+	const nextMatches = routerContext.matchRoutes(nextLocation, {}, { throwOnError: false }).map(e => e.routeId)
+	const currentMatches = routerContext.matchRoutes(currentLocation, {}, { throwOnError: false }).map(e => e.routeId)
+
+	let currentRouteId = currentMatches[currentMatches.length - 1]
+	let nextRouteId = nextMatches[nextMatches.length - 1]
+
+	while (currentRouteId !== '__root__' && nextRouteId !== '__root__') {
+		const currentRank: number = routerContext.routesById[currentRouteId].rank || 10000
+		const nextRank: number = routerContext.routesById[nextRouteId].rank || 10000
+
+		if (currentRouteId === nextRouteId) {
+			if (layoutUrls.includes(currentRouteId)) {
+				shouldBlockCache[`${currentLocation}&&${nextLocation}`] = false;
+				return false;
+			} else {
+				currentRouteId = routerContext.routesById[currentRouteId].parentRoute.id
+				nextRouteId = routerContext.routesById[nextRouteId].parentRoute.id
+			}
+		} else if (currentRank < nextRank) {
+			currentRouteId = routerContext.routesById[currentRouteId].parentRoute.id
+		} else {
+			nextRouteId = routerContext.routesById[nextRouteId].parentRoute.id
+		}
+	}
+
+	shouldBlockCache[`${currentLocation}&&${nextLocation}`] = true;
+	// input.replace(/\/\$[\w\s]+(\/|$)/g,'/')
+	return true;
+}
+
 export function createHistory(opts: {
 	getLocation: () => HistoryLocation
 	pushState: (path: string, state: any) => void
@@ -72,6 +117,7 @@ export function createHistory(opts: {
 	flush?: () => void
 	destroy?: () => void
 	onBlocked?: (onUpdate: () => void) => void
+	layoutUrls: string[]
 }): RouterHistory {
 	let location = opts.getLocation()
 	const subscribers = new Set<() => void>()
@@ -82,13 +128,15 @@ export function createHistory(opts: {
 		subscribers.forEach((subscriber) => subscriber())
 	}
 
-	const tryNavigation = async (task: () => void) => {
+	const tryNavigation = async (task: () => void, shouldBlock: boolean = true) => {
 		if (typeof document !== 'undefined' && blockers.length) {
 			for (const blocker of blockers) {
-				const allowed = await blocker()
-				if (!allowed) {
-					opts.onBlocked?.(notify)
-					return
+				if (shouldBlock) {
+					let allowed = await blocker()
+					if (!allowed) {
+						opts.onBlocked?.(notify)
+						return
+					}
 				}
 			}
 		}
@@ -108,14 +156,12 @@ export function createHistory(opts: {
 			}
 		},
 		push: async (path: string, state: any) => {
-			console.log(window.__TSR_ROUTER_CONTEXT__)
-			// const temp = await lastValueFrom(getCustomRouteContext)
-			// console.log(temp)
+			const res = await shouldBlock(opts.layoutUrls, location.pathname, path.split('?')[0])
 			state = assignKey(state)
 			tryNavigation(() => {
 				opts.pushState(path, state)
 				notify()
-			})
+			}, res)
 		},
 		// Use this when you are trying to switch between components which has shared layout,
 		// So when you get history.push for first time it will call block
@@ -219,6 +265,8 @@ export function createBrowserHistory(opts?: {
 	let currentLocation = parseLocation()
 	let rollbackLocation: HistoryLocation | undefined
 
+	let layoutUrls: string[] = (opts?.layoutUrls || []).sort()
+
 	const getLocation = () => currentLocation
 
 	let next:
@@ -309,6 +357,7 @@ export function createBrowserHistory(opts?: {
 				onUpdate()
 			}
 		},
+		layoutUrls
 	})
 
 	win.addEventListener(pushStateEvent, onPushPop)
