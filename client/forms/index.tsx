@@ -29,7 +29,9 @@ export const getEditProductFormProps = (editProductState: ProductType) => {
 			collab_active: editProductState?.collab_active,
 			collabs: editProductState?.collabs,
 			tags: editProductState?.tags,
-			contents: editProductState?.contents
+			contents: editProductState?.contents,
+			thumbimageSource: editProductState?.thumbimageSource,
+			coverimageSource: editProductState?.coverimageSource
 		},
 		shouldUnregister: false
 	})

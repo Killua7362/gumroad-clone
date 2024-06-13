@@ -13,7 +13,7 @@ const ProductCard = ({ children, productData }: { children: React.ReactNode, pro
 			<div>
 				{
 					productData?.thumbimageSource && productData?.thumbimageSource !== '' ?
-						<img src={productData.thumbimageSource!} height={0} width={0} alt='image' className="sm:h-[4rem] sm:w-[4rem] h-[3rem] w-[3rem]" />
+						<img src={productData.thumbimageSource!} height={0} width={0} alt='image' className="h-full w-full object-contain h-[3rem] w-[3rem]" />
 						:
 						<div className="text-[3rem] sm:text-[4rem]">
 							<FaImage />

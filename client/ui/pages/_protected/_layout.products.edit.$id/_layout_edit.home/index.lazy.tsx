@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { useFieldArray, useForm, useFormState, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EditProductSchema } from "@/forms/schema/edit_product_schema";
-import { queryClient } from  '@/app/RouteComponent';
+import { queryClient } from '@/app/RouteComponent';
 import Button from "@/ui/components/button";
 import { SelectComponent } from "@/ui/components/select";
 import { cx, css } from '@emotion/css'
@@ -13,11 +13,12 @@ import { currencyTypeOptions } from "@/forms/schema/misc_schema";
 import { ProductsDetailsPage } from '@/ui/pages/profile.$id/product.$productid/index.lazy';
 import { Runner } from 'react-runner'
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { Fragment, useContext } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { hideToastState } from '@/atoms/states';
 import { IoTrashBin } from 'react-icons/io5';
 import MDEditor from '@uiw/react-md-editor';
+import { convertToBase64 } from '@/lib/image_process';
 
 export const Route = createLazyFileRoute('/_protected/_layout/products/edit/$id/_layout_edit/home/')({
 	component: () => {
@@ -44,6 +45,8 @@ const ProductEditHomePage = () => {
 	const collabs = watch('collabs') || []
 	const description = watch('description') || ''
 	const currency_code = watch('currency_code') || 'USD'
+	const thumbImageSrc = watch('thumbimageSource') || ''
+	const coverImageSrc = watch('coverimageSource') || ''
 
 	const code = `
 		<div className="w-[60vw] mb-[-10rem] min-h-screen relative origin-top-left bg-background pointer-events-none" style={{transform:'scale(0.8)'}}>
@@ -70,7 +73,7 @@ const ProductEditHomePage = () => {
 					</div>
 					<fieldset className="border-white/30 border-[0.1px] rounded-md">
 						<input className="outline-none bg-background text-white w-full text-lg" {...register('title')} />
-						{errors.title && <legend className="text-sm text-red-500">{errors.title.message}</legend>}
+						{errors.title && <legend className="text-sm text-red-400">{errors.title.message}</legend>}
 					</fieldset>
 				</div>
 				<div className="flex flex-col gap-y-2">
@@ -83,10 +86,10 @@ const ProductEditHomePage = () => {
 						value={[...productTypeOptions.filter(data => stringToTags(watch('tags')).includes(data.value))]}
 						placeholder="Proudct type..."
 						onChange={(v) => {
-							setValue('tags', tagsToString([...v]))
+							setValue('tags', tagsToString([...v]), { shouldDirty: true, shouldValidate: true })
 						}}
 					/>
-					{errors.tags && <legend className="text-sm text-red-500">{errors.tags.message}</legend>}
+					{errors.tags && <legend className="text-sm text-red-400">{errors.tags.message}</legend>}
 				</div>
 				<div className="flex flex-col gap-y-2">
 					<div>
@@ -94,7 +97,7 @@ const ProductEditHomePage = () => {
 					</div>
 					<fieldset className="border-white/30 border-[0.1px] rounded-md">
 						<input className="outline-none bg-background text-white w-full text-lg" {...register('summary')} />
-						{errors.summary && <legend className="text-sm text-red-500">{errors.summary.message}</legend>}
+						{errors.summary && <legend className="text-sm text-red-400">{errors.summary.message}</legend>}
 					</fieldset>
 				</div>
 				<div className="flex flex-col gap-y-2">
@@ -104,35 +107,73 @@ const ProductEditHomePage = () => {
 					<MDEditor
 						value={description}
 						onChange={(data) => {
-							setValue('description', data!)
+							setValue('description', data!, { shouldDirty: true, shouldValidate: true })
 						}}
 						preview="edit"
 						className='w-full'
 					/>
-					{errors.description && description?.length! <= 10 && <legend className="text-sm text-red-500">{errors.description.message}</legend>}
+					{errors.description && description?.length! <= 10 && <legend className="text-sm text-red-400">{errors.description.message}</legend>}
 				</div>
 				<div className="flex flex-col gap-y-2">
 					<div>
 						Thumbnail
 					</div>
-					<div className="border-white/30 border-dashed border-[0.1px] p-10 flex cursor-not-allowed items-center justify-center flex-col gap-y-4">
-						<div>
-							Too poor for cdn
+					<div className={`${errors.thumbimageSource ? 'border-red-400' : 'border-white/30'} border-dashed border-[0.1px] p-10 flex items-center justify-center flex-col gap-y-4`}>
+						{
+							thumbImageSrc !== '' &&
+							<img src={thumbImageSrc} className='h-full w-full object-contain' />
+						}
+						<div className='flex gap-x-4'>
+							<Button buttonName='' type='button' extraClasses={['!p-0']}>
+								<label htmlFor='thumbimage' className="px-4 py-2 cursor-pointer overflow-none">Upload</label>
+							</Button>
+							{
+								thumbImageSrc !== '' &&
+								<Button buttonName='Delete' variant='destructive' onClickHandler={() => {
+									setValue('thumbimageSource', '', { shouldDirty: true })
+								}} />
+							}
 						</div>
-						<label htmlFor='thumbimage' className="p-2 cursor-pointer hover:text-white/70 border-white/30 border-[0.1px] text-white/70 rounded-md overflow-none">Upload...</label>
-						<input type="file" id='thumbimage' name='thumnail' accept="image/png, image/gif, image/jpeg" style={{ display: 'none' }} disabled />
+						{errors.thumbimageSource && <legend className="text-sm text-red-400">{errors.thumbimageSource.message}</legend>}
+						<input
+							type="file"
+							id='thumbimage'
+							name='thumnail'
+							accept="image/png, image/jpeg"
+							style={{ display: 'none' }}
+							onChange={async (e) => {
+								e.preventDefault()
+								const convertedImage = await convertToBase64(e.target.files![0]) as string
+								setValue('thumbimageSource', convertedImage, { shouldDirty: true, shouldValidate: true })
+							}} />
 					</div>
 				</div>
 				<div className="flex flex-col gap-y-2">
 					<div>
 						Cover
 					</div>
-					<div className="border-white/30 border-dashed border-[0.1px] p-10 flex cursor-not-allowed items-center justify-center flex-col gap-y-4">
-						<div>
-							Too poor for cdn
+					<div className={`${errors.coverimageSource ? 'border-red-400' : 'border-white/30'} border-dashed border-[0.1px] p-10 flex items-center justify-center flex-col gap-y-4`}>
+						{
+							coverImageSrc !== '' &&
+							<img src={coverImageSrc} className='h-full w-full object-contain' />
+						}
+						<div className='flex gap-x-4'>
+							<Button buttonName='' type='button' extraClasses={['!p-0']}>
+								<label htmlFor='coverImage' className="px-4 py-2 cursor-pointer overflow-none">Upload</label>
+							</Button>
+							{
+								coverImageSrc !== '' &&
+								<Button buttonName='Delete' variant='destructive' onClickHandler={() => {
+									setValue('coverimageSource', '', { shouldDirty: true })
+								}} />
+							}
 						</div>
-						<label htmlFor='coverImage' className="p-2 cursor-pointer hover:text-white/70 border-white/30 border-[0.1px] text-white/70 rounded-md overflow-none">Upload...</label>
-						<input type="file" id='coverImage' name='coverImage' accept="image/png, image/gif, image/jpeg" disabled style={{ display: 'none' }} />
+						{errors.coverimageSource && <legend className="text-sm text-red-400">{errors.coverimageSource.message}</legend>}
+						<input type="file" id='coverImage' name='thumnail' accept="image/png, image/jpeg" style={{ display: 'none' }} onChange={async (e) => {
+							e.preventDefault()
+							const convertedImage = await convertToBase64(e.target.files![0]) as string
+							setValue('coverimageSource', convertedImage, { shouldDirty: true, shouldValidate: true })
+						}} />
 					</div>
 				</div>
 				<div className="flex flex-col gap-y-3">
@@ -146,11 +187,11 @@ const ProductEditHomePage = () => {
 							value={{ value: currency_code, label: currency_code }}
 							width='95px'
 							onChange={(v) => {
-								setValue('currency_code', v?.value || 'USD')
+								setValue('currency_code', v?.value || 'USD', { shouldDirty: true, shouldValidate: true })
 							}}
 						/>
 						<input className="w-full text-lg bg-background text-white outline-none px-4" type="number" step='any' {...register('price')} />
-						{errors.price && <legend className="text-sm text-red-500">{errors.price.message}</legend>}
+						{errors.price && <legend className="text-sm text-red-400">{errors.price.message}</legend>}
 					</fieldset>
 				</div>
 				<div className="flex flex-col gap-y-3">
@@ -159,7 +200,7 @@ const ProductEditHomePage = () => {
 					</div>
 					<div className="flex gap-x-4">
 						<input type="checkbox" className=" bg-background text-white border-white/30 border-[0.1px] p-1 w-fit" defaultChecked={collab_active} onChange={(e) => {
-							setValue('collab_active', !collab_active)
+							setValue('collab_active', !collab_active, { shouldDirty: true, shouldValidate: true })
 						}} />
 						<div className="text-base">
 							Activate Collab
@@ -182,8 +223,8 @@ const ProductEditHomePage = () => {
 									</div>
 								</fieldset>
 							</div>
-							{errors.collabs && errors.collabs['root'] && <div className="text-red-500 text-sm">{errors.collabs['root']?.message}</div>}
-							{errors.collabs && <div className="text-red-500 text-sm">{errors.collabs.message}</div>}
+							{errors.collabs && errors.collabs['root'] && <div className="text-red-400 text-sm">{errors.collabs['root']?.message}</div>}
+							{errors.collabs && <div className="text-red-400 text-sm">{errors.collabs.message}</div>}
 							{
 								fields.map((collab, index) => {
 									return (
@@ -193,13 +234,13 @@ const ProductEditHomePage = () => {
 											</div>
 											<fieldset className="border-white/30 border-[0.1px] rounded-md p-2 focus-within:border-white">
 												<input className="text-lg bg-background text-white outline-none px-4" {...register(`collabs.${index}.email`)} />
-												{errors.collabs && errors.collabs[index]?.email && <legend className="text-red-500 text-sm">{errors.collabs[index]?.email?.message}</legend>}
+												{errors.collabs && errors.collabs[index]?.email && <legend className="text-red-400 text-sm">{errors.collabs[index]?.email?.message}</legend>}
 											</fieldset>
 											<fieldset className="border-white/30 border-[0.1px] rounded-md p-2 focus-within:border-white">
 												<input className="text-lg bg-background text-white outline-none px-4"  {...register(`collabs.${index}.share`)} />
-												{errors.collabs && errors.collabs[index]?.share && <legend className="text-red-500 text-sm">{errors.collabs[index]?.share?.message}</legend>}
+												{errors.collabs && errors.collabs[index]?.share && <legend className="text-red-400 text-sm">{errors.collabs[index]?.share?.message}</legend>}
 											</fieldset>
-											<IoTrashBin className="text-red-500 cursor-pointer" onClick={() => {
+											<IoTrashBin className="text-red-400 cursor-pointer" onClick={() => {
 												remove(index)
 											}} />
 										</div>

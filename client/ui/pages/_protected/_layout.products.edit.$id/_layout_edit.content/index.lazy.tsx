@@ -121,14 +121,14 @@ const ProductEditContentPage = () => {
 
 	const [rendered, setRendered] = useState(false)
 
-
 	useEffect(() => {
-		if (!searchParams.page || Number(searchParams.page!) > pages.length) {
+		if (searchParams.page! > pages.length) {
 			navigate({
 				search: (prev: ProductContentSearchType) => ({ ...prev, page: 1 }),
 				state: {
 					...getValues()
 				},
+				replace: true
 			})
 		}
 		setRendered(true)
@@ -154,12 +154,13 @@ const ProductEditContentPage = () => {
 							<IonReorderGroup
 								disabled={false}
 								onIonItemReorder={(event) => {
-									setValue('contents', event.detail.complete(pages))
+									setValue('contents', event.detail.complete(pages),{shouldDirty:true,shouldValidate:true})
 									navigate({
-										search: (prev: ProductContentSearchType) => ({ ...prev, page: event.detail.to + 1 as number }),
+										search: (prev: ProductContentSearchType) => ({ ...prev, page: (event.detail.to + 1 as number) }),
 										state: {
 											...getValues()
 										},
+										replace: true
 									})
 								}}
 								className='flex flex-col gap-2'>
@@ -175,6 +176,7 @@ const ProductEditContentPage = () => {
 																state: {
 																	...getValues()
 																},
+																replace: true
 															})
 														}
 													}}
@@ -193,7 +195,7 @@ const ProductEditContentPage = () => {
 															readOnly={true}
 															value={pages[i].name}
 															onChange={(e) => {
-																setValue(`contents.${i}.name`, e.target.value)
+																setValue(`contents.${i}.name`, e.target.value,{shouldDirty:true,shouldValidate:true})
 															}}
 															onBlur={() => {
 																inputRefs[i].current!.readOnly = true

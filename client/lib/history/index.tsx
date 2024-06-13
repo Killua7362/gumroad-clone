@@ -156,21 +156,31 @@ export function createHistory(opts: {
 			}
 		},
 		push: async (path: string, state: any) => {
-			const res = await shouldBlock(opts.layoutUrls, location.pathname, path.split('?')[0])
-			state = assignKey(state)
-			tryNavigation(() => {
+			if (location.pathname === path.split('?')[0]) {
 				opts.pushState(path, state)
 				notify()
-			}, res)
+			} else {
+				const res = await shouldBlock(opts.layoutUrls, location.pathname, path.split('?')[0])
+				state = assignKey(state)
+				tryNavigation(() => {
+					opts.pushState(path, state)
+					notify()
+				}, res)
+			}
 		},
 		// Use this when you are trying to switch between components which has shared layout,
 		// So when you get history.push for first time it will call block
 		replace: (path: string, state: any) => {
 			state = assignKey(state)
-			tryNavigation(() => {
+			if (location.pathname === path.split('?')[0]) {
 				opts.replaceState(path, state)
 				notify()
-			})
+			} else {
+				tryNavigation(() => {
+					opts.replaceState(path, state)
+					notify()
+				})
+			}
 		},
 		go: (index) => {
 			tryNavigation(() => {

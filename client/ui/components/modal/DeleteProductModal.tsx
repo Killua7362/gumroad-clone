@@ -24,7 +24,8 @@ const DeleteProductModal = ({ idx, setContextMenuConfig }: { idx: string, setCon
 								type="button" onClickHandler={() => {
 									productDeleter(idx)
 								}}
-								extraClasses={['!border-red-500/70 !text-red-500 hover:text-red-500/70']} />
+								variant='destructive'
+							/>
 						</Modal.Close>
 					</div>
 				</div>

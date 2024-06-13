@@ -79,7 +79,7 @@ export const setLogOut = () => {
 			return res.json()
 		}),
 		onSuccess: () => {
-			navigate({to:'/signin'})
+			navigate({ to: '/signin' })
 			return queryClient.clear()
 		},
 		onError: (err) => {
@@ -145,7 +145,7 @@ export const getProductEditor = ({ setError }: { setError: UseFormSetError<EditP
 		}
 	})
 
-	const { mutate, isPending } = useMutation({
+	const { mutate, isPending: productCollabValidating } = useMutation({
 		mutationFn: ({ payload, id }: { payload: ProductType, id: string }) => fetch(`${window.location.origin}/api/collabs/validate_user`, {
 			method: 'POST',
 			credentials: 'include',
@@ -158,9 +158,9 @@ export const getProductEditor = ({ setError }: { setError: UseFormSetError<EditP
 			}
 			return res.json()
 		}),
-		onSuccess: (data, { payload, id }) => {
+		onSuccess: async (data, { payload, id }) => {
 			if (data.valid) {
-				productSet({ payload: { ...payload }, id })
+				await productSet({ payload: { ...payload }, id })
 			} else {
 				(data.data || []).map((e: string, index: number) => {
 					e &&
@@ -173,7 +173,7 @@ export const getProductEditor = ({ setError }: { setError: UseFormSetError<EditP
 		},
 		onError: (error) => { }
 	})
-
+	let isPending: boolean = productIsSetting || productCollabValidating
 	return { mutate, isPending } as { mutate: ({ payload, id }: { payload: ProductType, id: string }) => void, isPending: boolean }
 }
 
@@ -225,7 +225,7 @@ export const setLoginStatus = ({ setCustomError }: { setCustomError: React.Dispa
 			return res.json()
 		}),
 		onSuccess: () => {
-			navigate({to:'/home'})
+			navigate({ to: '/home' })
 			return queryClient.clear()
 		},
 		onError: (err) => {
@@ -253,7 +253,7 @@ export const setSignUp = ({ setCustomError }: { setCustomError: React.Dispatch<R
 			return {}
 		}),
 		onSuccess: () => {
-			navigate({to:'/signin'})
+			navigate({ to: '/signin' })
 		},
 		onError: (err) => {
 			setCustomError(err.message)

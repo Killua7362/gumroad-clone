@@ -14,9 +14,16 @@ interface ButtonSchema {
 	isActive?: boolean;
 	isLoading?: boolean;
 	form?: string;
+	variant?: 'normal' | 'destructive'
 }
 
-const Button = ({ buttonName, extraClasses = [""], type = 'button', onClickHandler, children, isActive = false, isLoading = false, form = '' }: ButtonSchema) => {
+const Button = ({ buttonName, extraClasses = [""], type = 'button', onClickHandler, children, isActive = false, isLoading = false, form = '', variant = 'normal' }: ButtonSchema) => {
+
+	const variants = {
+		'normal': 'border-white/30 text-white',
+		'destructive': 'border-red-500 text-red-500'
+	}
+
 	return (
 		<motion.button
 			form={form}
@@ -44,8 +51,8 @@ const Button = ({ buttonName, extraClasses = [""], type = 'button', onClickHandl
 					duration: 0.1
 				}
 			}}
-			className={cx(`save-button px-4 py-2 flex justify-center gap-x-3 items-center ${isActive ? 'border-white' : 'border-white/30 cursor-pointer'} rounded-md border-[0.1px] bg-background text-white text-lg w-fit`,
-				...extraClasses)}
+			className={cx(`save-button px-4 py-2 flex justify-center gap-x-3 items-center ${isActive && '!border-white !cursor-normal'} cursor-pointer rounded-md border-[0.1px] bg-background text-lg w-fit`,
+				variants[variant], ...extraClasses)}
 		>
 			{
 				isLoading &&
@@ -53,7 +60,7 @@ const Button = ({ buttonName, extraClasses = [""], type = 'button', onClickHandl
 			}
 			{
 				buttonName !== "" &&
-				<span className={`${isLoading && 'invisible'}`}>
+				<span className={`${isLoading && 'invisible'} `}>
 					{buttonName}
 				</span>
 			}

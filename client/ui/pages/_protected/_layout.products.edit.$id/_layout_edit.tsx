@@ -13,6 +13,7 @@ import Loader from "@/ui/components/loader"
 import { Outlet, createFileRoute, Link, useMatchRoute, Block, useRouterState, useMatch, getRouterContext } from "@tanstack/react-router"
 import { useFormState } from "react-hook-form"
 import NavigationBlocker from "@/ui/components/modal/NavigationBlocker"
+import { ProductContentSearchType } from "./_layout_edit.content"
 
 export const productEditContext = createContext<ReactFormProps<EditProductSchemaType> | null>(null)
 
@@ -96,7 +97,7 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 											</Link>
 											<Link to='/products/edit/$id/content'
 												params={{ id: params.id }}
-												search={(prev: any) => ({ ...prev })}
+												search={(prev: ProductContentSearchType) => ({ ...(prev?.page) ? { page: 1 } : { ...prev } })}
 												style={{
 													textDecoration: 'none'
 												}}
@@ -110,29 +111,39 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 											</Link>
 										</div>
 									</div>
-									<div className="flex gap-x-4 border-b-[0.1px] border-white/30 p-5">
-										<Button type='button' buttonName="Revert" extraClasses={['!text-lg !rounded-xl']} onClickHandler={() => {
-											reset()
-										}} />
-										<Button type='submit' buttonName="Save" isLoading={productIsLoading} extraClasses={['!text-lg !rounded-xl']} form={'edit_product_form'}
-											onClickHandler={async () => {
-												const result = await trigger()
-												if (!result) {
-													setToastRender({
-														active: false,
-														message: 'Some fields are empty move to main edit page to fix it'
-													})
-												}
-											}}
-										/>
-										<Button buttonName="Testing" onClickHandler={() => {
-										}} />
+									<div className="border-b-[0.1px] border-white/30 p-5 flex w-full items-center">
+										<div className="flex gap-x-4 w-full">
+											<Button type='button' buttonName="Revert" extraClasses={['!text-lg !rounded-xl']} onClickHandler={() => {
+												reset()
+											}} />
+											<Button type='submit' buttonName="Save" isLoading={productIsLoading} extraClasses={['!text-lg !rounded-xl']} form={'edit_product_form'}
+												onClickHandler={async () => {
+													const result = await trigger()
+													if (!result) {
+														setToastRender({
+															active: false,
+															message: 'Error occured for some fields'
+														})
+													}
+												}}
+											/>
+										</div>
+										<div className={`whitespace-nowrap ${isDirty ? 'text-red-400' : 'text-green-400'} `}>
+											{isDirty ? 'Changes detected' : 'No changes'}
+										</div>
 									</div>
 									<form className="w-full mt-4 text-xl flex flex-col md:flex-row gap-4 relative left-0" id="edit_product_form"
 										onSubmit={handleSubmit((data) => {
-											collabChecker({ payload: { ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType, ...data }, id: params.id! })
+											if (isDirty) {
+												collabChecker({ payload: { ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType, ...data }, id: params.id! })
 
-											reset(_.pick({ ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType, ...data as ProductType }, Object.keys(getValues())))
+												reset(_.pick({ ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType, ...data as ProductType }, Object.keys(getValues())))
+											} else {
+												setToastRender({
+													active: false,
+													message: 'No changes detected'
+												})
+											}
 										})}
 									>
 										{children}
@@ -141,8 +152,9 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 							</div>
 						</productEditContext.Provider>
 					</>
-				)}
-			</Block>
+				)
+				}
+			</Block >
 		)
 	}
 }

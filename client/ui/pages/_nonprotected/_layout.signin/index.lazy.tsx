@@ -71,7 +71,7 @@ const SignInPage = () => {
 					</div>
 					{
 						customError !== "" &&
-						<div className="text-red-500 text-base">
+						<div className="text-red-400 text-base">
 							{customError}
 						</div>
 					}

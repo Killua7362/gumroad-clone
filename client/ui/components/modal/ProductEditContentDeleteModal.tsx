@@ -22,7 +22,7 @@ const ProductEditContentDeleteModal = ({ i, remove }: { i: number, remove: UseFi
 								type="button" onClickHandler={() => {
 									remove(i)
 								}}
-								extraClasses={['!border-red-500/70 !text-red-500 hover:text-red-500/70']} />
+								extraClasses={['!border-red-400/70 !text-red-400 hover:text-red-400/70']} />
 						</Modal.Close>
 					</div>
 				</div>

@@ -1,3 +1,4 @@
+import { isBase64Url } from '@/lib/image_process'
 import { z } from 'zod'
 
 export const productTypeOptions = [
@@ -60,5 +61,41 @@ export const EditProductSchema = z.object({
 				break;
 			}
 		}
-	})
+	}),
+	thumbimageSource: z.string().superRefine(async (data, ctx) => {
+		if (!(await isBase64Url(data)) || data.length < 5) {
+			ctx.addIssue({
+				message: 'Image is not valid',
+				code: z.ZodIssueCode.custom
+			})
+			return;
+		}
+
+		const dataBlob = data.substring(data.indexOf(',') + 1)
+		if ((atob(dataBlob).length / 1e+6) > 5 && (atob(dataBlob).length / 1e+6) < 0.5) {
+			ctx.addIssue({
+				message: 'Image size should be <5mb',
+				code: z.ZodIssueCode.custom
+			})
+		}
+
+	}),
+	coverimageSource: z.string().superRefine(async (data, ctx) => {
+		if (!(await isBase64Url(data)) || data.length < 5) {
+			ctx.addIssue({
+				message: 'Image is not valid',
+				code: z.ZodIssueCode.custom
+			})
+			return;
+		}
+
+		const dataBlob = data.substring(data.indexOf(',') + 1)
+		if ((atob(dataBlob).length / 1e+6) > 5 && (atob(dataBlob).length / 1e+6) < 0.5) {
+			ctx.addIssue({
+				message: 'Image size should be <5mb',
+				code: z.ZodIssueCode.custom
+			})
+		}
+
+	}),
 })

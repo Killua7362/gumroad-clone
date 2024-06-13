@@ -48,7 +48,7 @@ const SignUpPage = () => {
 							<div>
 								Name
 							</div>
-							<fieldset className={`${errors.name ? "border-red-500" : "border-white/30 focus-within:border-white"} border-[0.1px] rounded-md overflow-none`}>
+							<fieldset className={`${errors.name ? "border-red-400" : "border-white/30 focus-within:border-white"} border-[0.1px] rounded-md overflow-none`}>
 								<input className="bg-background outline-none text-white text-lg" {...register('name')} />
 								{errors.name && <legend className="text-sm">{errors.name.message}</legend>}
 							</fieldset>
@@ -57,7 +57,7 @@ const SignUpPage = () => {
 							<div>
 								Email
 							</div>
-							<fieldset className={`${errors.email ? "border-red-500" : "border-white/30 focus-within:border-white"} border-[0.1px] rounded-md overflow-none`}>
+							<fieldset className={`${errors.email ? "border-red-400" : "border-white/30 focus-within:border-white"} border-[0.1px] rounded-md overflow-none`}>
 								<input className="bg-background outline-none text-white text-lg" {...register('email')} />
 								{errors.email && <legend className="text-sm">{errors.email.message}</legend>}
 							</fieldset>
@@ -66,7 +66,7 @@ const SignUpPage = () => {
 							<div>
 								Password
 							</div>
-							<fieldset className={`${errors.password ? "border-red-500" : "border-white/30 focus-within:border-white"} border-[0.1px] rounded-md overflow-none`}>
+							<fieldset className={`${errors.password ? "border-red-400" : "border-white/30 focus-within:border-white"} border-[0.1px] rounded-md overflow-none`}>
 								<input className="bg-background outline-none text-white text-lg" {...register('password')} type="password" />
 								{errors.password && <legend className="text-sm">{errors.password.message}</legend>}
 							</fieldset>
@@ -75,14 +75,14 @@ const SignUpPage = () => {
 							<div>
 								Confirm Password
 							</div>
-							<fieldset className={`${errors.password_confirmation ? "border-red-500" : "border-white/30 focus-within:border-white"} border-[0.1px] rounded-md overflow-none`}>
+							<fieldset className={`${errors.password_confirmation ? "border-red-400" : "border-white/30 focus-within:border-white"} border-[0.1px] rounded-md overflow-none`}>
 								<input className="bg-background outline-none text-white text-lg" type="password" {...register('password_confirmation')} />
 								{errors.password_confirmation && <legend className="text-sm">{errors.password_confirmation.message}</legend>}
 							</fieldset>
 						</div>
 						{
 							customError !== "" &&
-							<div className="text-red-500 text-base">
+							<div className="text-red-400 text-base">
 								{customError}
 							</div>
 						}

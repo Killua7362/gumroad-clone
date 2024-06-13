@@ -9,9 +9,9 @@ import Loader from "@/ui/components/loader";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute('/profile/$id/product/$productid/')({
-    component:()=>{
-        return <ProductsDetailsPage/>
-    }
+	component: () => {
+		return <ProductsDetailsPage />
+	}
 })
 interface ProductsDetailsPageProps {
 	preview?: boolean;
@@ -25,7 +25,7 @@ export const ProductsDetailsPage = ({ preview = false, watch }: ProductsDetailsP
 	const titleIsInView = useInView(titleRef, {
 		margin: "-20% 0px 0px 0px"
 	})
-    const initialData = preview ? undefined : Route.useLoaderData()
+	const initialData = preview ? undefined : Route.useLoaderData()
 	const params = preview ? undefined : Route.useParams()
 
 	const priceInView = useInView(priceRef)
@@ -34,6 +34,7 @@ export const ProductsDetailsPage = ({ preview = false, watch }: ProductsDetailsP
 
 	const title = preview ? watch!('title') : profileProductData?.title
 	const price = preview ? watch!('price') : profileProductData?.price
+	const coverImageSrc = preview ? watch!('coverimageSource') : profileProductData?.coverimageSource
 
 	if (profileProductPending && !preview) return <Loader />
 
@@ -58,8 +59,11 @@ export const ProductsDetailsPage = ({ preview = false, watch }: ProductsDetailsP
 			}
 			<div className={`w-full h-full flex flex-col gap-y-3 ${preview ? "pt-[6rem]" : "mt-[10rem] sm:mt-[14rem] md:mt-[10rem] pt-24 sm:pt-8 md:pt-10"}`}>
 				<div className="w-11/12 lg:w-10/12 xl:w-8/12 mx-auto h-full flex flex-col mt-2">
-					<div className="w-full h-[50rem] bg-accent border-[0.1px] border-white/30">
-						Photo
+					<div className="w-full min-h-[30rem] max-h-[50rem] bg-accent border-[0.1px] border-white/30">
+						{
+							coverImageSrc !== '' &&
+							<img className="object-contain h-full w-full" src={coverImageSrc} />
+						}
 					</div>
 					<div className="flex md:flex-row flex-col border-[0.1px] border-white/30 divide-y-2 md:divide-y-0 md:divide-x-2 divide-white/30">
 						<div className="flex flex-col w-full md:w-8/12 divide-y-2 divide-white/30">

@@ -26,7 +26,7 @@ const NavigationBlocker = ({ listeners, proceed, reset }: { listeners: boolean, 
 								onClickHandler={async () => {
 									await proceed()
 								}}
-								extraClasses={['!border-red-500/70 !text-red-500 hover:text-red-500/70']} />
+								extraClasses={['!border-red-400/70 !text-red-400 hover:text-red-400/70']} />
 						</Modal.Close>
 					</div>
 				</div>
