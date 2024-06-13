@@ -1,4 +1,4 @@
-import { queryClient } from  '@/app/RouteComponent';
+import { queryClient } from '@/app/RouteComponent';
 import { useQuery } from "@tanstack/react-query";
 
 export const loginStatusFetcherProps = {

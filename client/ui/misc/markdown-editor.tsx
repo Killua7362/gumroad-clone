@@ -148,7 +148,7 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
 					<TableComponents />
 					{children}
 					<OnChangeJSON onChange={(data) => {
-						setValue(`contents.${(searchParams.page || 1) as number - 1}.content`, JSON.stringify(data),{shouldDirty:true,shouldValidate:true})
+						setValue(`contents.${(searchParams.page || 1) as number - 1}.content`, JSON.stringify(data), { shouldDirty: true })
 					}} />
 				</Remirror>
 			</ThemeProvider>

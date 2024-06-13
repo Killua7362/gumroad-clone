@@ -71,7 +71,7 @@ const NewProductModal = () => {
 										}}
 										width='95px'
 										onChange={(v) => {
-											setValue('currency_code', v?.value || 'USD',{shouldDirty:true,shouldValidate:true})
+											setValue('currency_code', v?.value || 'USD',{shouldDirty:true})
 										}}
 									/>
 								</FormInput>

@@ -2,7 +2,7 @@ export const filterTypeOptions = [
 	{ value: 'title', label: 'Title' },
 	{ value: 'price', label: 'Price' },
 	{ value: 'created_date', label: 'Created Date' },
-	{ value: 'modified_date', label: 'Modified Date' }
+	{ value: 'updated_date', label: 'Updated Date' }
 ]
 
 export const currencyTypeOptions = [

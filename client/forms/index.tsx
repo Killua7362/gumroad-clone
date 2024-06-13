@@ -2,7 +2,6 @@ import { z } from "zod"
 import { EditProductSchema } from "./schema/edit_product_schema"
 import { useFieldArray, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useState } from "react"
 import { CheckoutFormSchema } from "./schema/checkout_schema"
 
 export const getEditProductFormProps = (editProductState: ProductType) => {

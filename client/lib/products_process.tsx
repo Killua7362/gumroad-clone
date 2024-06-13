@@ -2,8 +2,12 @@ const sortFunction = ([keyA, valueA]: [keyA: string, valueA: ProductType], [keyB
 	switch (searchParams.get('sort_by')) {
 		case 'title':
 			return (((valueA.title as any) - (valueB.title as any)))
-		default:
+		case 'price':
 			return (valueA.price - valueB.price)
+		case 'created_date':
+			return valueA.created_at!.localeCompare(valueB.created_at!)
+		default:
+			return valueA.updated_at!.localeCompare(valueB.updated_at!)
 	}
 }
 

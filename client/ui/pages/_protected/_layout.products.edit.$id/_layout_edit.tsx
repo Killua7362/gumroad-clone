@@ -51,7 +51,7 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 		const { reset, setError, handleSubmit, errors, trigger, control, watch, getValues } = productEditProps!
 		const { isDirty } = useFormState({ control })
 
-		const { mutate: collabChecker, isPending: productIsLoading } = getProductEditor({ setError })
+		const { mutate: collabChecker, isPending: productIsLoading, isSuccess } = getProductEditor({ setError })
 		const routerState = useRouterState()
 
 		const [rendered, setRendered] = useState(false)
@@ -97,7 +97,7 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 											</Link>
 											<Link to='/products/edit/$id/content'
 												params={{ id: params.id }}
-												search={(prev: ProductContentSearchType) => ({ ...(prev?.page) ? { page: 1 } : { ...prev } })}
+												search={(prev: ProductContentSearchType) => ({ page: 1, ...prev })}
 												style={{
 													textDecoration: 'none'
 												}}
@@ -133,11 +133,12 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
 										</div>
 									</div>
 									<form className="w-full mt-4 text-xl flex flex-col md:flex-row gap-4 relative left-0" id="edit_product_form"
-										onSubmit={handleSubmit((data) => {
+										onSubmit={handleSubmit(async (data) => {
 											if (isDirty) {
-												collabChecker({ payload: { ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType, ...data }, id: params.id! })
-
-												reset(_.pick({ ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType, ...data as ProductType }, Object.keys(getValues())))
+												await collabChecker({ payload: { ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType, ...data }, id: params.id! })
+												if (isSuccess) {
+													reset(_.pick({ ...queryClient.getQueryData(['allProducts', params.id!]) as ProductType, ...data as ProductType }, Object.keys(getValues())))
+												}
 											} else {
 												setToastRender({
 													active: false,

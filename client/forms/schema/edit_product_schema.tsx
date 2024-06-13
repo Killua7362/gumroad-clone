@@ -1,4 +1,4 @@
-import { isBase64Url } from '@/lib/image_process'
+import { isImage } from '@/lib/image_process'
 import { z } from 'zod'
 
 export const productTypeOptions = [
@@ -63,39 +63,44 @@ export const EditProductSchema = z.object({
 		}
 	}),
 	thumbimageSource: z.string().superRefine(async (data, ctx) => {
-		if (!(await isBase64Url(data)) || data.length < 5) {
+		if (await isImage(data) && data.length > 5) {
+			// can be blob or can be a image
+			if (data.startsWith('data:image')) {
+				const dataBlob = data.substring(data.indexOf(',') + 1)
+				if ((atob(dataBlob).length / 1e+6) > 5 && (atob(dataBlob).length / 1e+6) < 0.5) {
+					ctx.addIssue({
+						message: 'Image size should be <5mb',
+						code: z.ZodIssueCode.custom
+					})
+				}
+			}
+		} else {
 			ctx.addIssue({
 				message: 'Image is not valid',
 				code: z.ZodIssueCode.custom
 			})
 			return;
-		}
-
-		const dataBlob = data.substring(data.indexOf(',') + 1)
-		if ((atob(dataBlob).length / 1e+6) > 5 && (atob(dataBlob).length / 1e+6) < 0.5) {
-			ctx.addIssue({
-				message: 'Image size should be <5mb',
-				code: z.ZodIssueCode.custom
-			})
 		}
 
 	}),
 	coverimageSource: z.string().superRefine(async (data, ctx) => {
-		if (!(await isBase64Url(data)) || data.length < 5) {
+		if (await isImage(data) && data.length > 5) {
+			// can be blob or can be a image
+			if (data.startsWith('data:image')) {
+				const dataBlob = data.substring(data.indexOf(',') + 1)
+				if ((atob(dataBlob).length / 1e+6) > 5 && (atob(dataBlob).length / 1e+6) < 0.5) {
+					ctx.addIssue({
+						message: 'Image size should be <5mb',
+						code: z.ZodIssueCode.custom
+					})
+				}
+			}
+		} else {
 			ctx.addIssue({
 				message: 'Image is not valid',
 				code: z.ZodIssueCode.custom
 			})
 			return;
 		}
-
-		const dataBlob = data.substring(data.indexOf(',') + 1)
-		if ((atob(dataBlob).length / 1e+6) > 5 && (atob(dataBlob).length / 1e+6) < 0.5) {
-			ctx.addIssue({
-				message: 'Image size should be <5mb',
-				code: z.ZodIssueCode.custom
-			})
-		}
-
 	}),
 })

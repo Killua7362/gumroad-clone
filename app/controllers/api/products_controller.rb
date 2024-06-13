@@ -89,7 +89,6 @@ module Api
 
     def getExtension(_base64string)
       signs = { "/9j/": 'image/jpeg', "iVBORw0KGgo": 'image/png' }
-
       for s in signs.keys do
         return Rack::Mime::MIME_TYPES.invert[signs[s]], signs[s] if _base64string.include? s.to_s
       end
@@ -97,7 +96,7 @@ module Api
 
     def isBase64(base64string)
       pattern = Regexp.new('^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$')
-      base64string.is_a?(String) && !pattern.match?(base64string)
+      base64string.is_a?(String) && pattern.match?(base64string.split(',')[1])
     end
 
     def base64ToImg(base64string, _filename, extension)
@@ -109,7 +108,7 @@ module Api
     end
 
     def uploadImage(key, filename)
-      return unless params.has_key?(key) and isBase64(params[key])
+      return params[key] unless params.has_key?(key) and isBase64(params[key].to_s)
 
       extension, type = getExtension(params[key])
       image = base64ToImg(params[key], filename, extension)

@@ -116,7 +116,7 @@ export const getCollabApprover = () => {
 export const getProductEditor = ({ setError }: { setError: UseFormSetError<EditProductSchemaType> }) => {
 	const setToastRender = useSetRecoilState(hideToastState)
 
-	const { mutate: productSet, isPending: productIsSetting } = useMutation({
+	const { mutate: productSet, isPending: productIsSetting, isSuccess: productSettingSuccess } = useMutation({
 		mutationFn: ({ payload, id }: { payload: ProductType, id: string }) => fetch(`${window.location.origin}/api/products/${id}`, {
 			method: 'PATCH',
 			credentials: 'include',
@@ -145,7 +145,7 @@ export const getProductEditor = ({ setError }: { setError: UseFormSetError<EditP
 		}
 	})
 
-	const { mutate, isPending: productCollabValidating } = useMutation({
+	const { mutate, isPending: productCollabValidating, isSuccess: productCollabSuccess } = useMutation({
 		mutationFn: ({ payload, id }: { payload: ProductType, id: string }) => fetch(`${window.location.origin}/api/collabs/validate_user`, {
 			method: 'POST',
 			credentials: 'include',
@@ -174,7 +174,8 @@ export const getProductEditor = ({ setError }: { setError: UseFormSetError<EditP
 		onError: (error) => { }
 	})
 	let isPending: boolean = productIsSetting || productCollabValidating
-	return { mutate, isPending } as { mutate: ({ payload, id }: { payload: ProductType, id: string }) => void, isPending: boolean }
+	let isSuccess: boolean = productSettingSuccess && productCollabSuccess
+	return { mutate, isPending, isSuccess } as { mutate: ({ payload, id }: { payload: ProductType, id: string }) => void, isPending: boolean, isSuccess: boolean }
 }
 
 export const getProductLiveToggle = () => {

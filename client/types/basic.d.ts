@@ -60,6 +60,8 @@ interface ProductType {
 	description: string;
 	summary: string;
 	contents?: ProductContetPage[];
+	created_at?: string;
+	updated_at?: string;
 }
 
 interface ProductTypePayload {

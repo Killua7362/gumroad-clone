@@ -10,7 +10,7 @@ export const convertToBase64 = (image: File) => {
 	})
 }
 
-export const isBase64Url = (imageSrc: string) => {
+export const isImage = (imageSrc: string) => {
 	let image = new Image()
 	image.src = imageSrc
 

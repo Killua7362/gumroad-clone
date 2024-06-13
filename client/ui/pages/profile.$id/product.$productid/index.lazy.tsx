@@ -35,6 +35,7 @@ export const ProductsDetailsPage = ({ preview = false, watch }: ProductsDetailsP
 	const title = preview ? watch!('title') : profileProductData?.title
 	const price = preview ? watch!('price') : profileProductData?.price
 	const coverImageSrc = preview ? watch!('coverimageSource') : profileProductData?.coverimageSource
+	const description = preview ? watch!('description') : profileProductData?.description
 
 	if (profileProductPending && !preview) return <Loader />
 
@@ -84,7 +85,7 @@ export const ProductsDetailsPage = ({ preview = false, watch }: ProductsDetailsP
 								</div>
 							</div>
 							<div className="p-5 text-justify text-lg">
-								{`Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro molestias hic perferendis dignissimos autem inventore, magnam tempora aut unde ratione itaque, cupiditate similique nisi eligendi beatae quas excepturi eos facere!`.repeat(10)}
+								{description}
 							</div>
 						</div>
 						<div className="md:w-4/12 w-full">

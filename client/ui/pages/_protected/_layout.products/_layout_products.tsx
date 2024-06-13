@@ -29,7 +29,8 @@ const ProductLayout = ({ children }: { children: React.ReactNode }) => {
 								sort_by: prev.sort_by || 'title',
 								reverse: prev.reverse || false,
 								search_word: prev.search_word || '',
-								...prev,
+								search_bar_active: prev.search_bar_active || false,
+								sort_bar_active: prev.sort_bar_active || false
 							})}
 							style={{
 								textDecoration: 'none'

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { cx, css } from '@emotion/css'
 import Loader from '../loader';
 import { motion } from 'framer-motion'

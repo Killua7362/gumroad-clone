@@ -93,7 +93,7 @@ const CheckoutForm = () => {
 												<FilterCheckoutModal watch={watch} setValue={setValue} i={i} resetField={resetField} />
 
 												<Button buttonName='' onClickHandler={() => {
-													setValue(`category.${i}.hidden`, !watch(`category.${i}.hidden`),{shouldDirty:true,shouldValidate:true})
+													setValue(`category.${i}.hidden`, !watch(`category.${i}.hidden`),{shouldDirty:true})
 												}}>
 													{
 														watch(`category.${i}.hidden`) ?

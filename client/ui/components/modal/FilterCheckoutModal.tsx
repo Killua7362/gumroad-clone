@@ -159,7 +159,7 @@ const FilterCheckoutModal = ({ watch, setValue, i, resetField }: { watch: UseFor
 									buttonName="Save"
 									type="button"
 									onClickHandler={() => {
-										setValue(`category.${i}.url`, tempURL,{shouldDirty:true,shouldValidate:true})
+										setValue(`category.${i}.url`, tempURL,{shouldDirty:true})
 									}}
 								/>
 							</Modal.Close>

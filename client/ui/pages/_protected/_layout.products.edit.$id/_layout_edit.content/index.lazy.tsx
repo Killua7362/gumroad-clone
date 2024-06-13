@@ -154,7 +154,7 @@ const ProductEditContentPage = () => {
 							<IonReorderGroup
 								disabled={false}
 								onIonItemReorder={(event) => {
-									setValue('contents', event.detail.complete(pages),{shouldDirty:true,shouldValidate:true})
+									setValue('contents', event.detail.complete(pages),{shouldDirty:true})
 									navigate({
 										search: (prev: ProductContentSearchType) => ({ ...prev, page: (event.detail.to + 1 as number) }),
 										state: {
@@ -195,7 +195,7 @@ const ProductEditContentPage = () => {
 															readOnly={true}
 															value={pages[i].name}
 															onChange={(e) => {
-																setValue(`contents.${i}.name`, e.target.value,{shouldDirty:true,shouldValidate:true})
+																setValue(`contents.${i}.name`, e.target.value,{shouldDirty:true})
 															}}
 															onBlur={() => {
 																inputRefs[i].current!.readOnly = true

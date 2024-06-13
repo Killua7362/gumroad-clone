@@ -7,7 +7,7 @@ import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { EditProductSchema } from "@/forms/schema/edit_product_schema";
 import Button from "@/ui/components/button";
-import { queryClient } from  '@/app/RouteComponent';
+import { queryClient } from '@/app/RouteComponent';
 import { z } from "zod";
 import { allProductsFetcher } from "@/react-query/query"
 import _ from 'lodash'
@@ -47,15 +47,11 @@ const ProductsHomePage = () => {
 	const navigate = Route.useNavigate()
 	const params = Route.useSearch()
 
-	const [searchBarActive, setSearchBarActive] = useState<boolean>(false)
-
 	const debounceSearchInput = _.debounce((value: string) => {
 		navigate({
 			search: () => ({ ...params, search_word: value })
 		})
 	}, 300)
-
-	const [sortBarActive, setSortBarActive] = useState(false)
 
 	useEffect(() => {
 		const closeContextMenu = () => {
@@ -80,11 +76,13 @@ const ProductsHomePage = () => {
 					onClickHandler={() => {
 					}} />
 				<Button
-					extraClasses={['rounded-xl', `${sortBarActive && "!border-white"}`]}
+					extraClasses={['rounded-xl', `${params.sort_bar_active && "!border-white"}`]}
 					buttonName="Sort"
-					isActive={sortBarActive}
+					isActive={params.sort_bar_active}
 					onClickHandler={() => {
-						setSortBarActive(!sortBarActive)
+						navigate({
+							search: () => ({ ...params, sort_bar_active: !params.sort_bar_active })
+						})
 					}} >
 
 				</Button>
@@ -92,18 +90,20 @@ const ProductsHomePage = () => {
 					<motion.div
 						layout={true}
 						transition={{ duration: 0.1 }}
-						className={`min-h-[2.4rem] w-fit border-white/30 flex rounded-xl items-center ${searchBarActive && "focus-within:border-white border-[0.1px] bg-background text-white"}`}>
+						className={`min-h-[2.4rem] w-fit border-white/30 flex rounded-xl items-center ${params.search_bar_active && "focus-within:border-white border-[0.1px] bg-background text-white"}`}>
 						<Button buttonName=""
-							isActive={searchBarActive}
-							extraClasses={["!text-lg !py-[0.82rem] !rounded-xl !cursor-pointer", `${searchBarActive && "!border-0"}`]}
+							isActive={params.search_bar_active}
+							extraClasses={["!text-lg !py-[0.82rem] !rounded-xl !cursor-pointer", `${params.search_bar_active && "!border-0"}`]}
 							onClickHandler={() => {
-								setSearchBarActive(!searchBarActive)
+								navigate({
+									search: () => ({ ...params, search_bar_active: !params.search_bar_active })
+								})
 							}}
 						>
 							<FaSearch />
 						</Button>
 						<AnimatePresence>
-							{searchBarActive &&
+							{params.search_bar_active &&
 								<motion.input
 									initial={{
 										width: 0
@@ -132,7 +132,7 @@ const ProductsHomePage = () => {
 			</div>
 
 			<AnimatePresence>
-				{sortBarActive &&
+				{params.sort_bar_active &&
 					<motion.div
 						initial={{
 							opacity: 0
