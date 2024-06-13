@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -10,19 +12,17 @@
     "target": "es2015",
     "jsx": "react-jsx",
     "noEmit": false,
-"jsxImportSource": "@emotion/react",
+    "jsxImportSource": "@emotion/react",
     "noEmitOnError": false,
-	"noImplicitAny":true,
-	"strictNullChecks":true,
-	"esModuleInterop": true,
-		"baseUrl":".",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "client/*"
-      ]
+      "@/*": ["client/*"]
     }
   },
-	"include":["./client/**/*.ts","./client/**/*.d.ts","./client/**/*.tsx"],
+  "include": ["./client/**/*.ts", "./client/**/*.d.ts", "./client/**/*.tsx"],
   "exclude": ["**/*.spec.ts", "node_modules", "vendor", "public"],
   "compileOnSave": false
 }

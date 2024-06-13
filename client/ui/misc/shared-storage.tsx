@@ -1,23 +1,22 @@
-import { getRouterContext, Router } from "@tanstack/react-router"
-import { useContext, useEffect } from "react"
-import { AsyncSubject } from 'rxjs'
+import { getRouterContext, Router } from '@tanstack/react-router';
+import { useContext, useEffect } from 'react';
+import { AsyncSubject } from 'rxjs';
 
-export const getCustomRouteContext = new AsyncSubject<Router<any,any>>()
+export const getCustomRouteContext = new AsyncSubject<Router<any, any>>();
 
 const SharedStore = () => {
-	const routeContext = useContext(getRouterContext())
+  const routeContext = useContext(getRouterContext());
 
-	useEffect(() => {
-		getCustomRouteContext.next(routeContext)
-		getCustomRouteContext.complete()
+  useEffect(() => {
+    getCustomRouteContext.next(routeContext);
+    getCustomRouteContext.complete();
 
-		getCustomRouteContext.subscribe({
-			next: (v: Router<any,any>) => v
-		})
+    getCustomRouteContext.subscribe({
+      next: (v: Router<any, any>) => v,
+    });
+  }, []);
 
-	}, [])
+  return null;
+};
 
-	return null;
-}
-
-export default SharedStore
+export default SharedStore;

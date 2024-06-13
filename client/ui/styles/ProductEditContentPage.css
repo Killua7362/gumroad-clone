@@ -1,4 +1,3 @@
-ion-item :host-context(.item-native){
-	color:green;
- }
-
+ion-item :host-context(.item-native) {
+  color: green;
+}

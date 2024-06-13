@@ -3,7 +3,7 @@
   height: 1.125rem;
   border-radius: 50%;
   display: inline-block;
-  border-top: 3px solid #FFF;
+  border-top: 3px solid #fff;
   border-right: 3px solid transparent;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
@@ -16,4 +16,4 @@
   100% {
     transform: rotate(360deg);
   }
-} 
+}

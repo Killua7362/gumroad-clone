@@ -1,9 +1,9 @@
-import { atom } from "recoil";
+import { atom } from 'recoil';
 
 export const hideToastState = atom({
-	key: 'hideToastState',
-	default: {
-		active: true,
-		message: ''
-	}
-})
+  key: 'hideToastState',
+  default: {
+    active: true,
+    message: '',
+  },
+});

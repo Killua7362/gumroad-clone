@@ -3,11 +3,11 @@
 one:
   name: MyString
   bio: MyString
-  category: 
+  category:
   user: one
 
 two:
   name: MyString
   bio: MyString
-  category: 
+  category:
   user: two
