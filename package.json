@@ -104,7 +104,7 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
+    "./client/**/*.{ts,tsx}": [
       "prettier --write --ignore-unknown"
     ]
   }
