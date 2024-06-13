@@ -1,13 +1,13 @@
+import { hideToastState } from '@/atoms/states'
+import { filterTypeOptions } from '@/forms/schema/misc_schema'
 import * as Modal from '@/ui/components/modal'
+import { useState } from 'react'
+import { UseFormResetField, UseFormSetValue, UseFormWatch } from 'react-hook-form'
+import { FaClipboard } from "react-icons/fa"
+import { MdEdit, MdEditOff } from "react-icons/md"
+import { useSetRecoilState } from 'recoil'
 import Button from '../button'
 import { SelectComponent } from '../select'
-import { filterTypeOptions } from '@/forms/schema/misc_schema'
-import { UseFormResetField, UseFormSetValue, UseFormWatch } from 'react-hook-form'
-import { useState } from 'react'
-import { FaClipboard } from "react-icons/fa";
-import { MdEdit, MdEditOff } from "react-icons/md";
-import { useSetRecoilState } from 'recoil'
-import { hideToastState } from '@/atoms/states'
 
 const FilterCheckoutModal = ({ watch, setValue, i, resetField }: { watch: UseFormWatch<CheckoutFormSchemaType>, setValue: UseFormSetValue<CheckoutFormSchemaType>, i: number, resetField: UseFormResetField<CheckoutFormSchemaType> }) => {
 

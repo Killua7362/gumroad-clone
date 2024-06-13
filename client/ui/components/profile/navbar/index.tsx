@@ -1,5 +1,5 @@
-import { IoMdCart } from "react-icons/io"
 import { Link, useParams } from "@tanstack/react-router";
+import { IoMdCart } from "react-icons/io";
 
 const ProfileNavbar = ({ name, preview }: { name: string, preview: boolean }) => {
 	const params = preview ? undefined : useParams({ from: '/profile/$id/' });

@@ -1,6 +1,6 @@
-import { cx, css } from '@emotion/css'
+import { cx } from '@emotion/css';
+import { motion } from 'framer-motion';
 import Loader from '../loader';
-import { motion } from 'framer-motion'
 
 type ButtonTypes = "button" | "submit" | "reset" | undefined
 

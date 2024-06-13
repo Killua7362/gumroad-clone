@@ -1,7 +1,7 @@
+import { cx } from "@emotion/css"
 import { AnimatePresence, motion } from 'framer-motion'
+import { createContext, useContext, useEffect, useState } from "react"
 import { createPortal } from "react-dom"
-import { RefObject, createContext, useContext, useEffect, useState } from "react"
-import { cx, css } from "@emotion/css"
 
 const mountElement = document.getElementById('modals')
 
@@ -107,8 +107,7 @@ const ModalOpen = ({ children, className = "h-full" }: { children: React.ReactNo
 }
 
 export {
-	ModalRoot as Root,
 	ModalBase as Base,
 	ModalClose as Close,
-	ModalOpen as Open
+	ModalOpen as Open, ModalRoot as Root
 }

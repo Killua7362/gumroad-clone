@@ -1,7 +1,7 @@
 import browserHistory from "@/lib/browser_history"
-import { Link, LinkProps, RegisteredRouter } from "@tanstack/react-router"
-import { AnimatePresence, motion } from "framer-motion"
 import { cx } from '@emotion/css'
+import { Link, LinkProps } from "@tanstack/react-router"
+import { AnimatePresence, motion } from "framer-motion"
 
 const SideBarCard = ({ title, sideBarProps, icon, isOpen, extraClasses = '', closeSideBar = true, onClickHandler, windowWidth, disableLink = false, ...props }: SideBarCardProps & LinkProps & React.RefAttributes<HTMLAnchorElement>) => {
 

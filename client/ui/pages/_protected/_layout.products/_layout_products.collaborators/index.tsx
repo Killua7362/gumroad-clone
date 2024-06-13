@@ -1,4 +1,4 @@
-import { queryClient } from  '@/app/RouteComponent';
+import { queryClient } from '@/app/RouteComponent';
 import { allProductsFetcherProps, collabsProductFetcherProps } from "@/react-query/query";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";

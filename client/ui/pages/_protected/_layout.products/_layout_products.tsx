@@ -1,10 +1,7 @@
-import { AnimatePresence, motion } from "framer-motion"
-import { Fragment, useState } from "react"
-import { useRecoilState } from "recoil";
 import Button from "@/ui/components/button";
-import { Outlet, createFileRoute, Link } from "@tanstack/react-router";
-import { ProductHomeRouteType } from "./_layout_products.home";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { productPageCollaboratorsSchemaType } from "./_layout_products.collaborators";
+import { ProductHomeRouteType } from "./_layout_products.home";
 export const Route = createFileRoute('/_protected/_layout/products/_layout_products')({
 	component: () => {
 		return (

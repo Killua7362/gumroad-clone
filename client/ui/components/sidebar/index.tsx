@@ -1,20 +1,17 @@
-import '@/ui/styles/sidebar.css'
-import { useEffect, useLayoutEffect, useState } from 'react';
-import { AnimatePresence, Variants, motion } from 'framer-motion'
-import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { useLocation, Link, getRouteApi, rootRouteId, LinkProps, RegisteredRouter, useSearch } from '@tanstack/react-router';
-import { MdAccountCircle } from "react-icons/md";
-import { IoBagRemove, IoSettingsSharp } from "react-icons/io5";
-import { SiAboutdotme } from "react-icons/si";
-import { CgLogOut } from "react-icons/cg";
-import { useSetRecoilState } from 'recoil';
-import { queryClient } from '@/app/RouteComponent';
-import { setLogOut } from '@/react-query/mutations';
 import browserHistory from '@/lib/browser_history';
-import _ from 'lodash'
-import SideBarCard from './card';
+import { setLogOut } from '@/react-query/mutations';
+import '@/ui/styles/sidebar.css';
+import { LinkProps, getRouteApi, rootRouteId, useLocation } from '@tanstack/react-router';
+import { motion } from 'framer-motion';
+import _ from 'lodash';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { BsFillBackpack4Fill } from 'react-icons/bs';
+import { CgLogOut } from "react-icons/cg";
 import { IoMdCart } from 'react-icons/io';
+import { IoBagRemove, IoSettingsSharp } from "react-icons/io5";
+import { MdAccountCircle, MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { SiAboutdotme } from "react-icons/si";
+import SideBarCard from './card';
 
 const route = getRouteApi(rootRouteId)
 

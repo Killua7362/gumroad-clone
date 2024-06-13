@@ -1,24 +1,18 @@
-import { z } from 'zod'
-import { useFieldArray, useForm, useFormState, useWatch } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { EditProductSchema } from "@/forms/schema/edit_product_schema";
-import { queryClient } from '@/app/RouteComponent';
+import { hideToastState } from '@/atoms/states';
+import { productTypeOptions } from "@/forms/schema/edit_product_schema";
+import { currencyTypeOptions } from "@/forms/schema/misc_schema";
+import { convertToBase64 } from '@/lib/image_process';
 import Button from "@/ui/components/button";
 import { SelectComponent } from "@/ui/components/select";
-import { cx, css } from '@emotion/css'
-import { productTypeOptions } from "@/forms/schema/edit_product_schema";
-import { getProductEditor } from "@/react-query/mutations";
-import { productEditContext } from '../_layout_edit';
-import { currencyTypeOptions } from "@/forms/schema/misc_schema";
 import { ProductsDetailsPage } from '@/ui/pages/profile.$id/product.$productid/index.lazy';
-import { Runner } from 'react-runner'
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { Fragment, useContext, useEffect, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { hideToastState } from '@/atoms/states';
-import { IoTrashBin } from 'react-icons/io5';
 import MDEditor from '@uiw/react-md-editor';
-import { convertToBase64 } from '@/lib/image_process';
+import { Fragment, useContext } from 'react';
+import { useFieldArray } from 'react-hook-form';
+import { IoTrashBin } from 'react-icons/io5';
+import { Runner } from 'react-runner';
+import { useSetRecoilState } from 'recoil';
+import { productEditContext } from '../_layout_edit';
 
 export const Route = createLazyFileRoute('/_protected/_layout/products/edit/$id/_layout_edit/home/')({
 	component: () => {

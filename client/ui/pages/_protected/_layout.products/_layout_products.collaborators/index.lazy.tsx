@@ -1,11 +1,11 @@
-import { createLazyFileRoute } from '@tanstack/react-router'
-import CollabCard from "@/ui/components/cards/CollabCard"
-import { Fragment } from "react/jsx-runtime"
-import Button from "@/ui/components/button"
-import { allProductsFetcher, collabsProductFetcher } from "@/react-query/query"
-import { queryClient } from  '@/app/RouteComponent'
+import { queryClient } from '@/app/RouteComponent'
 import { getCollabApprover } from "@/react-query/mutations"
+import { allProductsFetcher, collabsProductFetcher } from "@/react-query/query"
+import Button from "@/ui/components/button"
+import CollabCard from "@/ui/components/cards/CollabCard"
 import Loader from "@/ui/components/loader"
+import { createLazyFileRoute } from '@tanstack/react-router'
+import { Fragment } from "react/jsx-runtime"
 
 export const Route = createLazyFileRoute('/_protected/_layout/products/_layout_products/collaborators/')({
 	component: () => {

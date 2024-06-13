@@ -1,6 +1,27 @@
 import '@remirror/styles/all.css';
 
-import React, { FC, PropsWithChildren, useCallback, useContext, useEffect, useState } from 'react';
+import {
+	CommandButtonGroup,
+	CreateTableButton,
+	EditorComponent,
+	HeadingLevelButtonGroup,
+	HistoryButtonGroup,
+	ListButtonGroup,
+	OnChangeJSON,
+	Remirror,
+	TableComponents,
+	ThemeProvider,
+	ToggleBlockquoteButton,
+	ToggleBoldButton,
+	ToggleCodeBlockButton,
+	ToggleCodeButton,
+	ToggleItalicButton,
+	ToggleStrikeButton,
+	Toolbar,
+	useRemirror
+} from '@remirror/react';
+import { AllStyledComponent } from '@remirror/styles/emotion';
+import { FC, PropsWithChildren, useCallback, useContext, useState } from 'react';
 import jsx from 'refractor/lang/jsx.js';
 import typescript from 'refractor/lang/typescript.js';
 import { ExtensionPriority } from 'remirror';
@@ -22,34 +43,11 @@ import {
 	TableExtension,
 	TrailingNodeExtension,
 } from 'remirror/extensions';
-import {
-	CommandButtonGroup,
-	CreateTableButton,
-	EditorComponent,
-	HeadingLevelButtonGroup,
-	HistoryButtonGroup,
-	ListButtonGroup,
-	MarkdownToolbar,
-	OnChangeJSON,
-	Remirror,
-	TableComponents,
-	ThemeProvider,
-	ToggleBlockquoteButton,
-	ToggleBoldButton,
-	ToggleCodeBlockButton,
-	ToggleCodeButton,
-	ToggleItalicButton,
-	ToggleStrikeButton,
-	Toolbar,
-	VerticalDivider,
-	useRemirror,
-} from '@remirror/react';
-import { AllStyledComponent } from '@remirror/styles/emotion';
 
-import type { CreateEditorStateProps, RemirrorJSON } from 'remirror';
 import type { RemirrorProps, UseThemeProps } from '@remirror/react';
-import { productEditContext } from '../pages/_protected/_layout.products.edit.$id/_layout_edit';
 import { getRouteApi } from '@tanstack/react-router';
+import type { CreateEditorStateProps, RemirrorJSON } from 'remirror';
+import { productEditContext } from '../pages/_protected/_layout.products.edit.$id/_layout_edit';
 
 interface ReactEditorProps
 	extends Pick<CreateEditorStateProps, 'stringHandler'>,

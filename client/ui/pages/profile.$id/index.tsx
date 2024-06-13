@@ -1,4 +1,4 @@
-import { queryClient } from  '@/app/RouteComponent';
+import { queryClient } from '@/app/RouteComponent';
 import { getProfileProductsFetcherProps, getProfileStatusProps } from "@/react-query/query";
 import { createFileRoute } from "@tanstack/react-router";
 

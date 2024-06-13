@@ -1,18 +1,18 @@
-import { createLazyFileRoute } from '@tanstack/react-router'
-import { ProfileHomePage } from '@/ui/pages/profile.$id/index.lazy';
-import { useEffect, useState } from 'react'
-import { RiDeleteBin2Fill } from "react-icons/ri";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Button from '@/ui/components/button';
 import { queryClient } from '@/app/RouteComponent';
-import { getProfileStatus } from '@/react-query/query';
 import { getCheckoutFormProps } from '@/forms';
-import { useFieldArray } from 'react-hook-form';
 import { getProfileStatusSetter } from '@/react-query/mutations';
+import { getProfileStatus } from '@/react-query/query';
+import Button from '@/ui/components/button';
 import { FormInput } from '@/ui/components/forms';
-import FilterCheckoutModal from '@/ui/components/modal/FilterCheckoutModal';
-import { Runner } from 'react-runner'
 import Loader from '@/ui/components/loader';
+import FilterCheckoutModal from '@/ui/components/modal/FilterCheckoutModal';
+import { ProfileHomePage } from '@/ui/pages/profile.$id/index.lazy';
+import { createLazyFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
+import { useFieldArray } from 'react-hook-form';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { RiDeleteBin2Fill } from "react-icons/ri";
+import { Runner } from 'react-runner';
 
 export const Route = createLazyFileRoute('/_protected/_layout/checkout/_layout_checkout/form/')({
 	component: () => {

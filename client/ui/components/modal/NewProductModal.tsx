@@ -1,13 +1,12 @@
-import { getProductCreater } from '@/react-query/mutations';
+import { currencyTypeOptions } from '@/forms/schema/misc_schema';
 import { NewProductSchema } from '@/forms/schema/new_product_schema';
-import * as Modal from '@/ui/components/modal'
-import { zodResolver } from '@hookform/resolvers/zod';
-import { FieldErrors, FieldPath, FieldValues, UseFormRegister, useForm } from "react-hook-form";
-import { z } from 'zod'
+import { getProductCreater } from '@/react-query/mutations';
 import Button from '@/ui/components/button';
 import { FormInput } from '@/ui/components/forms';
+import * as Modal from '@/ui/components/modal';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from "react-hook-form";
 import { SelectComponent } from '../select';
-import { currencyTypeOptions } from '@/forms/schema/misc_schema';
 
 const NewProductModal = () => {
 	const {

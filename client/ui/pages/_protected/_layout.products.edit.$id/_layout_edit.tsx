@@ -1,18 +1,16 @@
-import { useRecoilState, useSetRecoilState } from "recoil"
-import Button from "@/ui/components/button"
-import { EditProductSchema } from "@/forms/schema/edit_product_schema"
-import { z } from "zod"
-import { hideToastState } from "@/atoms/states"
 import { queryClient } from '@/app/RouteComponent'
-import { createContext, useContext, useEffect, useState } from "react"
-import { getProductEditor } from "@/react-query/mutations";
-import _ from 'lodash';
-import { singleProductFetcher, singleProductFetcherProps } from "@/react-query/query"
+import { hideToastState } from "@/atoms/states"
 import { getEditProductFormProps } from "@/forms"
+import { getProductEditor } from "@/react-query/mutations"
+import { singleProductFetcher, singleProductFetcherProps } from "@/react-query/query"
+import Button from "@/ui/components/button"
 import Loader from "@/ui/components/loader"
-import { Outlet, createFileRoute, Link, useMatchRoute, Block, useRouterState, useMatch, getRouterContext } from "@tanstack/react-router"
-import { useFormState } from "react-hook-form"
 import NavigationBlocker from "@/ui/components/modal/NavigationBlocker"
+import { Block, createFileRoute, Link, Outlet, useMatchRoute, useRouterState } from "@tanstack/react-router"
+import _ from 'lodash'
+import { createContext, useEffect, useState } from "react"
+import { useFormState } from "react-hook-form"
+import { useSetRecoilState } from "recoil"
 import { ProductContentSearchType } from "./_layout_edit.content"
 
 export const productEditContext = createContext<ReactFormProps<EditProductSchemaType> | null>(null)

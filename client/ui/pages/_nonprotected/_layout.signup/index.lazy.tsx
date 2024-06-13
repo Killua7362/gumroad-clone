@@ -1,12 +1,10 @@
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from "react"
-import Button from "@/ui/components/button"
 import { signUpSchema } from "@/forms/schema/auth_schema"
 import { setSignUp } from "@/react-query/mutations"
-import { Link } from '@tanstack/react-router'
-import { createLazyFileRoute } from '@tanstack/react-router'
+import Button from "@/ui/components/button"
+import { zodResolver } from '@hookform/resolvers/zod'
+import { createLazyFileRoute, Link } from '@tanstack/react-router'
+import { useState } from "react"
+import { useForm } from 'react-hook-form'
 
 export const Route = createLazyFileRoute('/_nonprotected/_layout/signup/')({
 	component: () => {

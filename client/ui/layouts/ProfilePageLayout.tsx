@@ -1,4 +1,4 @@
-import ProfileNavbar from "@/ui/components/profile/navbar"
+import ProfileNavbar from "@/ui/components/profile/navbar";
 
 interface ProfilePageLayoutProps {
 	children: React.ReactNode,

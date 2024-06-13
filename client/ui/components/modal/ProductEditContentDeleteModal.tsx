@@ -1,5 +1,5 @@
-import * as Modal from '@/ui/components/modal'
 import Button from '@/ui/components/button'
+import * as Modal from '@/ui/components/modal'
 import { UseFieldArrayRemove } from 'react-hook-form'
 
 const ProductEditContentDeleteModal = ({ i, remove }: { i: number, remove: UseFieldArrayRemove }) => {

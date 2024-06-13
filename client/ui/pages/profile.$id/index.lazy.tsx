@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react"
-import ProfilePageLayout from "@/ui/layouts/ProfilePageLayout"
-import ProfilePageProductCard from "@/ui/components/cards/ProfilePageProductCard"
 import { getProfileProductsFetcher, getProfileStatus } from "@/react-query/query"
+import ProfilePageProductCard from "@/ui/components/cards/ProfilePageProductCard"
 import Loader from "@/ui/components/loader"
+import ProfilePageLayout from "@/ui/layouts/ProfilePageLayout"
 import { createLazyFileRoute, useLoaderData, useParams } from "@tanstack/react-router"
 
 export const Route = createLazyFileRoute('/profile/$id/')({

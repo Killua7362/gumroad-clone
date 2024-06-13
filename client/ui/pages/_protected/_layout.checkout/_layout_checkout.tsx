@@ -1,10 +1,6 @@
-import { AnimatePresence, motion } from "framer-motion"
-import { Fragment, useState } from "react"
-import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
-import { FaSearch } from "react-icons/fa";
-import { Link } from "@tanstack/react-router";
 import Button from "@/ui/components/button";
-import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 
 export const Route = createFileRoute('/_protected/_layout/checkout/_layout_checkout')({
 	component: () => {

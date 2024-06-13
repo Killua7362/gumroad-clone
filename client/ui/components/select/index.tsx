@@ -1,7 +1,5 @@
-import { cx, css } from '@emotion/css'
-import Select from 'react-select';
-import { GroupBase } from 'react-select';
-import { Props } from 'react-select';
+import { css, cx } from '@emotion/css';
+import Select, { GroupBase, Props } from 'react-select';
 
 type SelectProps<Option, IsMulti extends boolean = false, Group extends GroupBase<Option> = GroupBase<Option>> = Props<
 	Option,

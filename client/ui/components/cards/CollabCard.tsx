@@ -1,5 +1,5 @@
-import { GoLink } from "react-icons/go"
 import { FaDotCircle } from "react-icons/fa";
+import { GoLink } from "react-icons/go";
 
 const CollabCard = ({ children, productData }: { children: React.ReactNode, productData: ProductType }) => {
 

@@ -1,8 +1,8 @@
 import { hideToastState } from "@/atoms/states"
 import { AnimatePresence, motion } from "framer-motion"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { createPortal } from "react-dom"
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilState } from "recoil"
 
 const mountElement = document.getElementById('toasts')
 

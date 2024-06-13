@@ -1,22 +1,18 @@
-import { createContext, createRef, Fragment, RefObject, useContext, useEffect, useRef, useState } from "react";
+import { createRef, Fragment, RefObject, useContext, useEffect, useState } from "react";
 
-import { PlaceholderExtension } from 'remirror/extensions';
-import { EditorComponent, Remirror, Toolbar, useRemirror } from '@remirror/react';
-import { MarkdownToolbar } from '@remirror/react'
-import { cx, css } from '@emotion/css';
-import { MarkdownEditor } from '@/ui/misc/markdown-editor';
-import { IonItem, IonLabel, IonList, IonReorder, IonReorderGroup, IonRow, ItemReorderEventDetail } from '@ionic/react'
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { useRecoilState } from 'recoil';
-import { AnimatePresence, motion } from 'framer-motion';
 import Button from '@/ui/components/button';
 import ProductEditContentDeleteModal from '@/ui/components/modal/ProductEditContentDeleteModal';
-import { productEditContext } from "../_layout_edit";
-import { useFieldArray } from 'react-hook-form';
+import { MarkdownEditor } from '@/ui/misc/markdown-editor';
+import { css, cx } from '@emotion/css';
+import { IonItem, IonLabel, IonList, IonReorder, IonReorderGroup, IonRow } from '@ionic/react';
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { FaStar } from "react-icons/fa";
+import { motion } from 'framer-motion';
+import { useFieldArray } from 'react-hook-form';
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { CiStar } from "react-icons/ci";
+import { FaStar } from "react-icons/fa";
 import { ProductContentSearchType } from ".";
+import { productEditContext } from "../_layout_edit";
 
 export const Route = createLazyFileRoute('/_protected/_layout/products/edit/$id/_layout_edit/content/')({
 	component: () => {

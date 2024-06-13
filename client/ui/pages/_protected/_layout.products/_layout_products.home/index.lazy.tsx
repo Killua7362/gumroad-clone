@@ -1,29 +1,25 @@
 
-import { AnimatePresence, motion } from "framer-motion";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { hideToastState } from "@/atoms/states";
-import { IoMdSettings } from "react-icons/io";
-import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
-import { FaSearch } from "react-icons/fa";
 import { EditProductSchema } from "@/forms/schema/edit_product_schema";
-import Button from "@/ui/components/button";
-import { queryClient } from '@/app/RouteComponent';
-import { z } from "zod";
-import { allProductsFetcher } from "@/react-query/query"
-import _ from 'lodash'
-import { Link } from "@tanstack/react-router";
-import { getProductCreater, getProductDeleter, getProductLiveToggle } from "@/react-query/mutations";
-import { NewProductSchema } from "@/forms/schema/new_product_schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import NewProductModal from "@/ui/components/modal/NewProductModal";
-import DeleteProductModal from "@/ui/components/modal/DeleteProductModal";
-import { SelectComponent } from "@/ui/components/select";
 import { filterTypeOptions } from "@/forms/schema/misc_schema";
 import { processProducts } from "@/lib/products_process";
-import Loader from "@/ui/components/loader";
-import { createLazyFileRoute } from "@tanstack/react-router";
-import { Fragment, useEffect, useState } from "react";
+import { getProductLiveToggle } from "@/react-query/mutations";
+import { allProductsFetcher } from "@/react-query/query";
+import Button from "@/ui/components/button";
 import ProductCard from "@/ui/components/cards/ProductCard";
+import Loader from "@/ui/components/loader";
+import DeleteProductModal from "@/ui/components/modal/DeleteProductModal";
+import NewProductModal from "@/ui/components/modal/NewProductModal";
+import { SelectComponent } from "@/ui/components/select";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "framer-motion";
+import _ from 'lodash';
+import { Fragment, useEffect, useState } from "react";
+import { FaSearch } from "react-icons/fa";
+import { FaArrowDownWideShort, FaArrowUpShortWide } from "react-icons/fa6";
+import { IoMdSettings } from "react-icons/io";
+import { useSetRecoilState } from "recoil";
+import { z } from "zod";
 
 export const Route = createLazyFileRoute('/_protected/_layout/products/_layout_products/home/')({
 	component: () => {

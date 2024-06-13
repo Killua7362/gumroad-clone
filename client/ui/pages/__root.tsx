@@ -1,14 +1,12 @@
 
-import { Fragment, useEffect, useState } from "react"
-import SideBar from "@/ui/components/sidebar"
-import Footer from "@/ui/components/Footer"
-import { useRecoilValue } from "recoil"
-import Toast from "@/ui/components/toast"
-import { isError } from "remirror"
 import { queryClient } from '@/app/RouteComponent'
-import { loginStatusFetcher, loginStatusFetcherProps } from "@/react-query/query"
+import { loginStatusFetcherProps } from "@/react-query/query"
+import Footer from "@/ui/components/Footer"
+import SideBar from "@/ui/components/sidebar"
+import Toast from "@/ui/components/toast"
+import { createRootRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { AnimatePresence, motion } from 'framer-motion'
-import { createRootRoute, getRouteApi, Link, Outlet, useLoaderData, useMatch, useRouteContext, useRouterState } from '@tanstack/react-router'
+import { useState } from "react"
 import Bar from "../components/loader/Bar"
 import SharedStore from "../misc/shared-storage"
 

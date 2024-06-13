@@ -1,6 +1,6 @@
 import { loginStatusFetcher } from "@/react-query/query"
 import Loader from "@/ui/components/loader"
-import { Navigate,Outlet } from "@tanstack/react-router"
+import { Navigate, Outlet } from "@tanstack/react-router"
 
 const NonProtectedRoute = () => {
 	const { data: loginStatus, isSuccess: isLoginSuccess, isPending: isLoginStatusLoading } = loginStatusFetcher()

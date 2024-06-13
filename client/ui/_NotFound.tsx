@@ -1,5 +1,5 @@
-import { Link } from '@tanstack/react-router'
 import '@/ui/styles/404.css'
+import { Link } from '@tanstack/react-router'
 import { useState } from "react"
 
 const NotFoundPage = () => {
