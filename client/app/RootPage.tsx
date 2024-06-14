@@ -1,4 +1,4 @@
-import RouteComponent from './RouteComponent';
+import RouteComponent from '@/app/RouteComponent';
 import './global.module.css';
 
 import { RecoilRoot } from 'recoil';

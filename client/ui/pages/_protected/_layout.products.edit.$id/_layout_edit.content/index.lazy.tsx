@@ -264,6 +264,7 @@ const ProductEditContentPage = () => {
                             <ProductEditContentDeleteModal
                               i={i}
                               remove={remove}
+                              pagesLength={pages.length}
                             />
                           )}
                         </motion.div>

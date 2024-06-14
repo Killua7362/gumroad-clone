@@ -7,7 +7,8 @@ import { SelectComponent } from '@/ui/components/select';
 import { ProductsDetailsPage } from '@/ui/pages/profile.$id/product.$productid/index.lazy';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import MDEditor from '@uiw/react-md-editor';
-import { Fragment, useContext } from 'react';
+import { Fragment, useCallback, useContext } from 'react';
+import { useDropzone } from 'react-dropzone';
 import { useFieldArray } from 'react-hook-form';
 import { IoTrashBin } from 'react-icons/io5';
 import { Runner } from 'react-runner';
@@ -60,6 +61,33 @@ const ProductEditHomePage = () => {
     name: 'collabs',
     control,
   });
+
+  const onDropThumb = useCallback(async (files: any) => {
+    const convertedImage = (await convertToBase64(files[0])) as string;
+    setValue('thumbimageSource', convertedImage, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  }, []);
+
+  const onDropCover = useCallback(async (files: any) => {
+    const convertedImage = (await convertToBase64(files[0])) as string;
+    setValue('coverimageSource', convertedImage, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  }, []);
+
+  const {
+    getRootProps: getRootPropsThumb,
+    getInputProps: getInputPropsThumb,
+    isDragActive: isDragActiveThumb,
+  } = useDropzone({ onDrop: onDropThumb });
+  const {
+    getRootProps: getRootPropsCover,
+    getInputProps: getInputPropsCover,
+    isDragActive: isDragActiveCover,
+  } = useDropzone({ onDrop: onDropCover });
 
   return (
     <Fragment>
@@ -135,10 +163,11 @@ const ProductEditHomePage = () => {
             </legend>
           )}
         </div>
-        <div className="flex flex-col gap-y-2">
+        <div className="flex flex-col gap-y-2 relative">
           <div>Thumbnail</div>
           <div
-            className={`${errors.thumbimageSource ? 'border-red-400' : 'border-white/30'} border-dashed border-[0.1px] p-10 flex items-center justify-center flex-col gap-y-4`}>
+            className={`${errors.thumbimageSource ? 'border-red-400' : 'border-white/30'} border-dashed border-[0.1px] p-10 flex items-center justify-center flex-col gap-y-4`}
+            {...getRootPropsThumb()}>
             {thumbImageSrc !== '' && (
               <img
                 src={thumbImageSrc}
@@ -163,6 +192,11 @@ const ProductEditHomePage = () => {
                 />
               )}
             </div>
+            {isDragActiveThumb && (
+              <div className="absolute w-full h-[95%] m-auto flex items-center justify-center backdrop-blur-sm border-2 border-dashed text-2xl">
+                Drop the image here
+              </div>
+            )}
             {errors.thumbimageSource && (
               <legend className="text-sm text-red-400">
                 {errors.thumbimageSource.message}
@@ -184,13 +218,15 @@ const ProductEditHomePage = () => {
                   shouldValidate: true,
                 });
               }}
+              {...getInputPropsThumb()}
             />
           </div>
         </div>
-        <div className="flex flex-col gap-y-2">
+        <div className="flex flex-col gap-y-2 relative">
           <div>Cover</div>
           <div
-            className={`${errors.coverimageSource ? 'border-red-400' : 'border-white/30'} border-dashed border-[0.1px] p-10 flex items-center justify-center flex-col gap-y-4`}>
+            className={`${errors.coverimageSource ? 'border-red-400' : 'border-white/30'} border-dashed border-[0.1px] p-10 flex items-center justify-center flex-col gap-y-4`}
+            {...getRootPropsCover()}>
             {coverImageSrc !== '' && (
               <img
                 src={coverImageSrc}
@@ -215,6 +251,11 @@ const ProductEditHomePage = () => {
                 />
               )}
             </div>
+            {isDragActiveCover && (
+              <div className="absolute w-full h-[95%] m-auto flex items-center justify-center backdrop-blur-sm border-2 border-dashed text-2xl">
+                Drop the image here
+              </div>
+            )}
             {errors.coverimageSource && (
               <legend className="text-sm text-red-400">
                 {errors.coverimageSource.message}
@@ -236,6 +277,7 @@ const ProductEditHomePage = () => {
                   shouldValidate: true,
                 });
               }}
+              {...getInputPropsCover()}
             />
           </div>
         </div>

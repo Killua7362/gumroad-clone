@@ -34,8 +34,8 @@ export const Route = createRootRoute({
     return result;
   },
   component: () => {
-    const { status } = useRouterState();
-    if (status === 'pending') {
+    const { status, isLoading } = useRouterState();
+    if (status === 'pending' || isLoading) {
       return <Bar />;
     } else {
       return (

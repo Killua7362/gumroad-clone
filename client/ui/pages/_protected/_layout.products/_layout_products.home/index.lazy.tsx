@@ -119,7 +119,7 @@ const ProductsHomePage = () => {
                 {params.search_bar_active && (
                   <motion.input
                     initial={{
-                      width: 0,
+                      width: params.search_bar_active ? '20rem' : 0,
                     }}
                     animate={{
                       width: '20rem',
@@ -131,6 +131,8 @@ const ProductsHomePage = () => {
                     exit={{
                       width: 0,
                     }}
+                    autoFocus={true}
+                    defaultValue={params.search_word}
                     onChange={(e) => {
                       e.preventDefault();
                       debounceSearchInput(e.target.value);
