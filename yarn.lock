@@ -2200,6 +2200,18 @@
     "@remirror/core" "^2.0.19"
     "@remirror/messages" "^2.0.6"
 
+"@remirror/extension-file@^1.0.18":
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/@remirror/extension-file/-/extension-file-1.0.18.tgz#877bb0e45592a9a1e738dd1351e89a3271624f41"
+  integrity sha512-AxkGlwaYMKG9langhPsPKGqrBYqn2F6ILYcyp3IIRquyPY9lPp1nxu7GRLsPp6uHCOVj28xUT0hpPEKvhRULpg==
+  dependencies:
+    "@babel/runtime" "^7.22.3"
+    "@remirror/core" "^2.0.17"
+    "@remirror/extension-react-component" "^2.0.13"
+    "@remirror/react-core" "^2.0.18"
+    "@remirror/theme" "^2.0.8"
+    nanoevents "^5.1.13"
+
 "@remirror/extension-find@^0.1.6":
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/@remirror/extension-find/-/extension-find-0.1.6.tgz#efdb5b6ca28aa0e517b031c2f3817425bbdeb6af"
@@ -2738,7 +2750,7 @@
     multishift "^2.0.8"
     react-color "^2.19.3"
 
-"@remirror/react-core@^2.0.20", "@remirror/react-core@^2.0.21":
+"@remirror/react-core@^2.0.18", "@remirror/react-core@^2.0.20", "@remirror/react-core@^2.0.21":
   version "2.0.21"
   resolved "https://registry.yarnpkg.com/@remirror/react-core/-/react-core-2.0.21.tgz#11ab05e476bf53849aa28680321957c1154b791f"
   integrity sha512-8c7+e0Y0LmwErqR4nPdUs73WLFKGqVs/DuE9q0wxSfXWbArAFVAAZB4PWrpcbYMbb0jSvG7rKDgnFN8NM/1f5A==

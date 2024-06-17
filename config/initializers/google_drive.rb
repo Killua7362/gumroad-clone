@@ -8,8 +8,8 @@ Rails.application.reloader.to_prepare do
   module Drive
     def self.create_file; end
 
-    def self.find_files(_file_name)
-      query = "name contains '#{_file_name}' and '#{ENV.fetch('PARENT_DRIVE_ID')}' in parents and trashed = false and mimeType contains 'image/'"
+    def self.find_files(_file_name, folder_id)
+      query = "name contains '#{_file_name}' and '#{folder_id}' in parents and trashed = false and mimeType contains 'image/'"
       DRIVE.list_files(
         q: query
       ).files[0]

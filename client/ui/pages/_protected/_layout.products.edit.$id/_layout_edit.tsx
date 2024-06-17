@@ -79,10 +79,10 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
     const { isDirty } = useFormState({ control });
 
     const {
-      mutate: collabChecker,
+      mutateAsync: collabChecker,
       isPending: productIsLoading,
       isSuccess,
-    } = getProductEditor({ setError });
+    } = getProductEditor({ setError, reset, getValues });
     const routerState = useRouterState();
 
     const [rendered, setRendered] = useState(false);
@@ -226,20 +226,6 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
                             },
                             id: params.id!,
                           });
-                          if (isSuccess) {
-                            reset(
-                              _.pick(
-                                {
-                                  ...(queryClient.getQueryData([
-                                    'allProducts',
-                                    params.id!,
-                                  ]) as ProductType),
-                                  ...(data as ProductType),
-                                },
-                                Object.keys(getValues())
-                              )
-                            );
-                          }
                         } else {
                           setToastRender({
                             active: false,

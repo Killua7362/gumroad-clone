@@ -10,6 +10,7 @@
     "@babel/runtime": "7",
     "@hookform/resolvers": "^3.3.4",
     "@ionic/react": "^8.0.0",
+    "@remirror/extension-file": "^1.0.18",
     "@remirror/pm": "^2.0.8",
     "@remirror/react": "^2.0.35",
     "@remirror/react-editors": "^1.0.41",

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_26_164006) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_16_173840) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -30,6 +30,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_26_164006) do
     t.string "tags", default: ""
     t.jsonb "contents", default: [{"name"=>"Default Page", "content"=>""}]
     t.integer "currency_code", default: 0
+    t.string "folder_id"
     t.index ["user_id"], name: "index_products_on_user_id"
   end
 
@@ -62,6 +63,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_26_164006) do
     t.datetime "updated_at", null: false
     t.string "name"
     t.string "provider", default: "rails_login"
+    t.string "folder_id"
   end
 
   add_foreign_key "products", "users"

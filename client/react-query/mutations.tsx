@@ -2,8 +2,13 @@ import { queryClient } from '@/app/RouteComponent';
 import { hideToastState } from '@/atoms/states';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import _ from 'lodash';
 import React from 'react';
-import { UseFormSetError } from 'react-hook-form';
+import {
+  UseFormGetValues,
+  UseFormReset,
+  UseFormSetError,
+} from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 
 // adding id to all delete function and modal
@@ -46,6 +51,8 @@ export const getProductDeleter = () => {
 };
 
 export const getProductCreater = () => {
+  const setToastRender = useSetRecoilState(hideToastState);
+
   const { mutate, isPending } = useMutation({
     mutationFn: (payload: ProductType) =>
       fetch(`${window.location.origin}/api/products`, {
@@ -65,8 +72,12 @@ export const getProductCreater = () => {
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: ['allProducts'] });
     },
-    onError: (err) => {},
-    onSettled: () => {},
+    onError: (err) => {
+      setToastRender({
+        active: false,
+        message: err.message,
+      });
+    },
   });
 
   return { mutate, isPending } as {
@@ -134,13 +145,17 @@ export const getCollabApprover = () => {
 
 export const getProductEditor = ({
   setError,
+  reset,
+  getValues,
 }: {
   setError: UseFormSetError<EditProductSchemaType>;
+  reset: UseFormReset<EditProductSchemaType>;
+  getValues: UseFormGetValues<EditProductSchemaType>;
 }) => {
   const setToastRender = useSetRecoilState(hideToastState);
 
   const {
-    mutate: productSet,
+    mutateAsync: productSet,
     isPending: productIsSetting,
     isSuccess: productSettingSuccess,
   } = useMutation({
@@ -174,15 +189,12 @@ export const getProductEditor = ({
       });
     },
     onError: (err) => {
-      setToastRender({
-        active: false,
-        message: err.message,
-      });
+      return Promise.reject(err);
     },
   });
 
   const {
-    mutate,
+    mutateAsync,
     isPending: productCollabValidating,
     isSuccess: productCollabSuccess,
   } = useMutation({
@@ -205,7 +217,22 @@ export const getProductEditor = ({
       }),
     onSuccess: async (data, { payload, id }) => {
       if (data.valid) {
-        await productSet({ payload: { ...payload }, id });
+        try {
+          await productSet({ payload: { ...payload }, id });
+          reset(
+            _.pick(
+              {
+                ...payload,
+              },
+              Object.keys(getValues())
+            )
+          );
+          queryClient.invalidateQueries({
+            queryKey: ['allProducts', id!],
+          });
+        } catch (err) {
+          setToastRender({ active: false, message: err.message });
+        }
       } else {
         (data.data || []).map((e: string, index: number) => {
           e &&
@@ -216,12 +243,20 @@ export const getProductEditor = ({
         });
       }
     },
-    onError: (error) => {},
+    onError: (error) => {
+      setToastRender({ active: false, message: error.message });
+    },
   });
   const isPending: boolean = productIsSetting || productCollabValidating;
   const isSuccess: boolean = productSettingSuccess && productCollabSuccess;
-  return { mutate, isPending, isSuccess } as {
-    mutate: ({ payload, id }: { payload: ProductType; id: string }) => void;
+  return { mutateAsync, isPending, isSuccess } as {
+    mutateAsync: ({
+      payload,
+      id,
+    }: {
+      payload: ProductType;
+      id: string;
+    }) => Promise<ProductType>;
     isPending: boolean;
     isSuccess: boolean;
   };

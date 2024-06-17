@@ -37,6 +37,7 @@ import {
   BulletListExtension,
   CodeBlockExtension,
   CodeExtension,
+  DropCursorExtension,
   HardBreakExtension,
   HeadingExtension,
   ItalicExtension,
@@ -50,10 +51,16 @@ import {
   TrailingNodeExtension,
 } from 'remirror/extensions';
 
+import {
+  FileExtension,
+  createDataUrlFileUploader,
+} from '@remirror/extension-file';
+
+import { productEditContext } from '@/ui/pages/_protected/_layout.products.edit.$id/_layout_edit';
 import type { RemirrorProps, UseThemeProps } from '@remirror/react';
 import { getRouteApi } from '@tanstack/react-router';
 import type { CreateEditorStateProps, RemirrorJSON } from 'remirror';
-import { productEditContext } from '../pages/_protected/_layout.products.edit.$id/_layout_edit';
+import FileCard from './file-card';
 
 interface ReactEditorProps
   extends Pick<CreateEditorStateProps, 'stringHandler'>,
@@ -106,6 +113,15 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
        * e.g. in a list item
        */
       new HardBreakExtension(),
+      new FileExtension({
+        render: (props) => {
+          return <FileCard {...props} />;
+        },
+        uploadFileHandler: () => {
+          return createDataUrlFileUploader();
+        },
+      }),
+      new DropCursorExtension({ color: 'white' }),
     ],
     [placeholder]
   );

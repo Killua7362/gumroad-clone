@@ -1,13 +1,23 @@
 export const convertToBase64 = (image: File) => {
-  const reader = new FileReader();
+  if (image.type.match('image/png') || image.type.match('image/jpeg')) {
+    const reader = new FileReader();
 
-  reader.readAsDataURL(image);
+    reader.readAsDataURL(image);
 
-  return new Promise((res) => {
-    reader.onload = () => {
-      return res(reader.result);
-    };
-  });
+    return new Promise((res) => {
+      reader.onload = () => {
+        return res(reader.result);
+      };
+    });
+  }
+  throw 'Not a image';
+};
+
+export const isBase64 = (base64string: string) => {
+  const pattern = new RegExp(
+    '^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$'
+  );
+  return base64string.match(pattern);
 };
 
 export const isImage = (imageSrc: string) => {

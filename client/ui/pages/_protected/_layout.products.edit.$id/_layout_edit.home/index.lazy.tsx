@@ -33,7 +33,7 @@ const stringToTags = (typeString: string) => {
 
 const ProductEditHomePage = () => {
   const localProductEditContext = useContext(productEditContext);
-  const { errors, register, setValue, watch, control } =
+  const { errors, register, setValue, watch, control, setError } =
     localProductEditContext!;
 
   const setToastRender = useSetRecoilState(hideToastState);
@@ -63,19 +63,27 @@ const ProductEditHomePage = () => {
   });
 
   const onDropThumb = useCallback(async (files: any) => {
-    const convertedImage = (await convertToBase64(files[0])) as string;
-    setValue('thumbimageSource', convertedImage, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
+    try {
+      const convertedImage = (await convertToBase64(files[0])) as string;
+      setValue('thumbimageSource', convertedImage, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    } catch (err) {
+      setError('thumbimageSource', { type: 'thumbimageSource', message: err });
+    }
   }, []);
 
   const onDropCover = useCallback(async (files: any) => {
-    const convertedImage = (await convertToBase64(files[0])) as string;
-    setValue('coverimageSource', convertedImage, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
+    try {
+      const convertedImage = (await convertToBase64(files[0])) as string;
+      setValue('coverimageSource', convertedImage, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    } catch (err) {
+      setError('coverimageSource', { type: 'coverimageSource', message: err });
+    }
   }, []);
 
   const {
@@ -198,9 +206,9 @@ const ProductEditHomePage = () => {
               </div>
             )}
             {errors.thumbimageSource && (
-              <legend className="text-sm text-red-400">
+              <div className="text-sm text-red-400">
                 {errors.thumbimageSource.message}
-              </legend>
+              </div>
             )}
             <input
               type="file"
@@ -210,13 +218,20 @@ const ProductEditHomePage = () => {
               style={{ display: 'none' }}
               onChange={async (e) => {
                 e.preventDefault();
-                const convertedImage = (await convertToBase64(
-                  e.target.files![0]
-                )) as string;
-                setValue('thumbimageSource', convertedImage, {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                });
+                try {
+                  const convertedImage = (await convertToBase64(
+                    e.target.files![0]
+                  )) as string;
+                  setValue('thumbimageSource', convertedImage, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  });
+                } catch (err) {
+                  setError('thumbimageSource', {
+                    type: 'thumbimageSource',
+                    message: err,
+                  });
+                }
               }}
               {...getInputPropsThumb()}
             />
@@ -257,9 +272,9 @@ const ProductEditHomePage = () => {
               </div>
             )}
             {errors.coverimageSource && (
-              <legend className="text-sm text-red-400">
+              <div className="text-sm text-red-400">
                 {errors.coverimageSource.message}
-              </legend>
+              </div>
             )}
             <input
               type="file"
@@ -269,13 +284,20 @@ const ProductEditHomePage = () => {
               style={{ display: 'none' }}
               onChange={async (e) => {
                 e.preventDefault();
-                const convertedImage = (await convertToBase64(
-                  e.target.files![0]
-                )) as string;
-                setValue('coverimageSource', convertedImage, {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                });
+                try {
+                  const convertedImage = (await convertToBase64(
+                    e.target.files![0]
+                  )) as string;
+                  setValue('coverimageSource', convertedImage, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  });
+                } catch (err) {
+                  setError('coverimageSource', {
+                    type: 'coverimageSource',
+                    message: err,
+                  });
+                }
               }}
               {...getInputPropsCover()}
             />

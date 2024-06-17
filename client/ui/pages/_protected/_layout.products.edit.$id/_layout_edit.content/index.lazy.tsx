@@ -21,7 +21,7 @@ import {
 } from '@ionic/react';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
-import { useFieldArray } from 'react-hook-form';
+import { useFieldArray, useFormState } from 'react-hook-form';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { CiStar } from 'react-icons/ci';
 import { FaStar } from 'react-icons/fa';
@@ -61,11 +61,17 @@ const markDownStyle = css`
       min-height: 60vh !important;
       overflow: hidden !important;
       box-shadow: none !important;
+      .file-node-view-wrapper {
+        outline: 0;
+        margin: 1rem 0;
+      }
     }
+
     .ProseMirror:focus {
       box-shadow: none;
       overflow: hidden !important;
     }
+
     .MuiStack-root {
       background-color: #09090b;
       border: rgba(255, 255, 255, 0.6) 0.3px solid;
@@ -115,6 +121,15 @@ const ProductEditContentPage = () => {
 
   const pages = watch('contents') || [];
 
+  const { dirtyFields } = useFormState({ control });
+
+  useEffect(() => {
+    const temp = pages[0]!.content;
+    if (temp !== '') {
+      console.log(JSON.parse(temp));
+    }
+  }, [pages[0]!.content]);
+
   const [reviewScore, setReviewScore] = useState(1);
   const [tempReviewScore, setTempReviewScore] = useState(1);
   const [reviewEdit, setReviewEdit] = useState(false);
@@ -133,7 +148,7 @@ const ProductEditContentPage = () => {
   const [rendered, setRendered] = useState(false);
 
   useEffect(() => {
-    if (searchParams.page! > pages.length) {
+    if (!searchParams.page || searchParams.page! > pages.length) {
       navigate({
         search: (prev: ProductContentSearchType) => ({ ...prev, page: 1 }),
         state: {
@@ -340,7 +355,7 @@ const ProductEditContentPage = () => {
           className={cx(markDownStyle, 'w-full left-0 overflow-hidden mr-14')}>
           <MarkdownEditor
             pageContent={
-              pages[((searchParams.page || 1) as number) - 1]?.content as string
+              pages[(searchParams.page as number) - 1]?.content as string
             }
             key={searchParams.page}
             placeholder="start typing..."

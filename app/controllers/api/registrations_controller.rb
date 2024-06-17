@@ -1,4 +1,5 @@
 module Api
+  require 'google/apis/drive_v3'
   class RegistrationsController < ApplicationController
     def create
       check_user = User.find_by(email: params[:email])
@@ -13,11 +14,14 @@ module Api
           }, status: 500
         end
       else
+        drive_file = nil
         begin
-          user = User.create!(users_params)
+          drive_file = DriveUtils.create_folder(params[:email])
+          user = User.create!(users_params.merge(folder_id: drive_file))
           profile = Profile.create!(name: user.name, bio: '', category: [], user_id: user.id)
           head :no_content
         rescue StandardError => e
+          DRIVE.delete_file(drive_file) unless drive_file.nil?
           render json: {
             error: e
           }, status: 500
