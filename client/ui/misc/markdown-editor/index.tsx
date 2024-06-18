@@ -51,15 +51,17 @@ import {
   TrailingNodeExtension,
 } from 'remirror/extensions';
 
-import {
-  FileExtension,
-  createDataUrlFileUploader,
-} from '@remirror/extension-file';
+import { FileExtension } from '@remirror/extension-file';
 
 import { productEditContext } from '@/ui/pages/_protected/_layout.products.edit.$id/_layout_edit';
 import type { RemirrorProps, UseThemeProps } from '@remirror/react';
-import { getRouteApi } from '@tanstack/react-router';
-import type { CreateEditorStateProps, RemirrorJSON } from 'remirror';
+import type {
+  ApplySchemaAttributes,
+  CreateEditorStateProps,
+  NodeExtensionSpec,
+  NodeSpecOverride,
+  RemirrorJSON,
+} from 'remirror';
 import FileCard from './file-card';
 
 interface ReactEditorProps
@@ -69,13 +71,26 @@ interface ReactEditorProps
   theme?: UseThemeProps['theme'];
 }
 
-const route = getRouteApi(
-  '/_protected/_layout/products/edit/$id/_layout_edit/content/'
-);
-
 export interface MarkdownEditorProps
   extends Partial<Omit<ReactEditorProps, 'stringHandler'>> {
   pageContent: string;
+  setContent: (data: RemirrorJSON) => void;
+}
+
+class CustomUploadExtension extends FileExtension {
+  createNodeSpec(
+    extra: ApplySchemaAttributes,
+    override: NodeSpecOverride
+  ): NodeExtensionSpec {
+    const spec = super.createNodeSpec(extra, override);
+    return {
+      ...spec,
+      attrs: {
+        ...spec.attrs,
+        description: { default: '' },
+      },
+    };
+  }
 }
 
 /**
@@ -84,6 +99,7 @@ export interface MarkdownEditorProps
 export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
   pageContent,
   placeholder,
+  setContent,
   children,
   theme,
   ...rest
@@ -113,12 +129,9 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
        * e.g. in a list item
        */
       new HardBreakExtension(),
-      new FileExtension({
+      new CustomUploadExtension({
         render: (props) => {
           return <FileCard {...props} />;
-        },
-        uploadFileHandler: () => {
-          return createDataUrlFileUploader();
         },
       }),
       new DropCursorExtension({ color: 'white' }),
@@ -127,20 +140,19 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
   );
 
   const localProductEditContext = useContext(productEditContext);
-  const { watch, setValue } = localProductEditContext!;
+  const { setValue } = localProductEditContext!;
 
   const { manager, state, setState } = useRemirror({
     extensions,
     stringHandler: 'markdown',
   });
 
-  const searchParams = route.useSearch();
-
   const [initContent] = useState<RemirrorJSON | undefined>(() => {
-    if (pageContent) {
+    try {
       return JSON.parse(pageContent);
+    } catch (err) {
+      return undefined;
     }
-    return undefined;
   });
 
   return (
@@ -173,11 +185,7 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
           {children}
           <OnChangeJSON
             onChange={(data) => {
-              setValue(
-                `contents.${((searchParams.page || 1) as number) - 1}.content`,
-                JSON.stringify(data),
-                { shouldDirty: true }
-              );
+              setContent(data);
             }}
           />
         </Remirror>

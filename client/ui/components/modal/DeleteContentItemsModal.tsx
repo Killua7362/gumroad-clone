@@ -1,7 +1,7 @@
+import Button from '@/ui/components/button';
 import * as Modal from '@/ui/components/modal';
 import { useCommands } from '@remirror/react';
 import { IoTrashBin } from 'react-icons/io5';
-import Button from '../button';
 
 const DeleteContentItemModal = ({ pos }: { pos: number }) => {
   const { deleteFile } = useCommands();
@@ -22,9 +22,8 @@ const DeleteContentItemModal = ({ pos }: { pos: number }) => {
                 onClickHandler={() => {
                   deleteFile(pos);
                 }}
-                extraClasses={[
-                  '!border-red-400/70 !text-red-400 hover:text-red-400/70',
-                ]}
+                extraClasses={[`!rounded-none`]}
+                variant="destructive"
               />
             </Modal.Close>
           </div>

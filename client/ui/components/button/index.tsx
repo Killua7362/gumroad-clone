@@ -52,8 +52,10 @@ const Button = ({
         },
       }}
       whileTap={{
-        transform: 'translate(2px,2px)',
-        boxShadow: '0px 0px 0px 0px',
+        ...(!isActive && {
+          transform: 'translate(2px,2px)',
+          boxShadow: '0px 0px 0px 0px',
+        }),
         transition: {
           type: 'ease-in',
           duration: 0.1,

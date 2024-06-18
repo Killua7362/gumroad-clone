@@ -4,15 +4,17 @@ import { currencyTypeOptions } from '@/forms/schema/misc_schema';
 import { convertToBase64 } from '@/lib/image_process';
 import Button from '@/ui/components/button';
 import { SelectComponent } from '@/ui/components/select';
+import { MarkdownEditor } from '@/ui/misc/markdown-editor';
 import { ProductsDetailsPage } from '@/ui/pages/profile.$id/product.$productid/index.lazy';
+import { css, cx } from '@emotion/css';
 import { createLazyFileRoute } from '@tanstack/react-router';
-import MDEditor from '@uiw/react-md-editor';
 import { Fragment, useCallback, useContext } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useFieldArray } from 'react-hook-form';
 import { IoTrashBin } from 'react-icons/io5';
 import { Runner } from 'react-runner';
 import { useSetRecoilState } from 'recoil';
+import { RemirrorJSON } from 'remirror';
 import { productEditContext } from '../_layout_edit';
 
 export const Route = createLazyFileRoute(
@@ -31,6 +33,23 @@ const stringToTags = (typeString: string) => {
   return (typeString || '').trim().split(',');
 };
 
+const markdownStyle = css`
+  .remirror-theme {
+    .remirror-editor-wrapper {
+      padding: 0;
+    }
+
+    .ProseMirror {
+      padding: 1rem !important;
+      box-shadow: none !important;
+      height: 15rem !important;
+    }
+    .ProseMirror:focus {
+      box-shadow: none;
+    }
+  }
+`;
+
 const ProductEditHomePage = () => {
   const localProductEditContext = useContext(productEditContext);
   const { errors, register, setValue, watch, control, setError } =
@@ -41,7 +60,7 @@ const ProductEditHomePage = () => {
   const params = Route.useParams();
   const collab_active = watch('collab_active') || false;
   const collabs = watch('collabs') || [];
-  const description = watch('description') || '';
+  const description = watch('description') || '**Testing**';
   const currency_code = watch('currency_code') || 'USD';
   const thumbImageSrc = watch('thumbimageSource') || '';
   const coverImageSrc = watch('coverimageSource') || '';
@@ -154,17 +173,22 @@ const ProductEditHomePage = () => {
         </div>
         <div className="flex flex-col gap-y-2">
           <div>Description</div>
-          <MDEditor
-            value={description}
-            onChange={(data) => {
-              setValue('description', data!, {
-                shouldDirty: true,
-                shouldValidate: true,
-              });
-            }}
-            preview="edit"
-            className="w-full"
-          />
+          <div className={cx(markdownStyle)}>
+            <MarkdownEditor
+              pageContent={description}
+              setContent={(data: RemirrorJSON) => {
+                setValue(`description`, JSON.stringify(data), {
+                  shouldDirty: true,
+                });
+              }}
+              placeholder="start typing..."
+              theme={{
+                color: {
+                  outline: '#09090B',
+                  text: 'white',
+                },
+              }}></MarkdownEditor>
+          </div>
           {errors.description && description?.length! <= 10 && (
             <legend className="text-sm text-red-400">
               {errors.description.message}

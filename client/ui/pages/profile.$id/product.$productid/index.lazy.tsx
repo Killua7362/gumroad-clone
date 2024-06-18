@@ -1,11 +1,14 @@
 import { getSingleProfileProductFetcher } from '@/react-query/query';
 import Loader from '@/ui/components/loader';
 import ProductsDetailsPageLayout from '@/ui/layouts/ProductsDetailsPageLayout';
+import { css, cx } from '@emotion/css';
+import { Remirror, useRemirror, useRemirrorContext } from '@remirror/react';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { UseFormWatch } from 'react-hook-form';
 import { RiMoneyEuroCircleLine } from 'react-icons/ri';
+import { RemirrorJSON } from 'remirror';
 
 export const Route = createLazyFileRoute('/profile/$id/product/$productid/')({
   component: () => {
@@ -16,6 +19,27 @@ interface ProductsDetailsPageProps {
   preview?: boolean;
   watch?: UseFormWatch<EditProductSchemaType>;
 }
+const markdownStyles = css`
+  padding: 1rem;
+`;
+
+const MarkdownChild = ({ data }: { data: string }) => {
+  const { setContent } = useRemirrorContext();
+
+  const getJSON = () => {
+    try {
+      return JSON.parse(data);
+    } catch (err) {
+      return undefined;
+    }
+  };
+
+  useEffect(() => {
+    setContent(getJSON());
+  }, [data]);
+
+  return null!;
+};
 
 export const ProductsDetailsPage = ({
   preview = false,
@@ -51,6 +75,18 @@ export const ProductsDetailsPage = ({
   const description = preview
     ? watch!('description')
     : profileProductData?.description;
+
+  const [initContent] = useState<RemirrorJSON | undefined>(() => {
+    try {
+      return JSON.parse(description);
+    } catch (err) {
+      return undefined;
+    }
+  });
+
+  const { manager, state, onChange } = useRemirror({
+    stringHandler: 'markdown',
+  });
 
   if (profileProductPending && !preview) return <Loader />;
 
@@ -93,7 +129,20 @@ export const ProductsDetailsPage = ({
                     <div className="w-full p-5">3</div>
                   </div>
                 </div>
-                <div className="p-5 text-justify text-lg">{description}</div>
+                <div className={cx(markdownStyles)}>
+                  <Remirror
+                    manager={manager}
+                    state={state}
+                    onChange={onChange}
+                    autoRender="end"
+                    editable={false}>
+                    <MarkdownChild data={description} />
+                  </Remirror>
+                </div>
+                {/*
+
+								<div className="p-5 text-justify text-lg">{description}</div>
+								*/}
               </div>
               <div className="md:w-4/12 w-full">
                 <div className="flex flex-col gap-y-4 p-8 items-center w-full">

@@ -79,7 +79,8 @@ module Api
 
                   file_metadata = {
                     'name': "(#{product.user_id}_#{product.id}_content)_#{file_name}",
-                    'mime_type': mime_type
+                    'mime_type': mime_type,
+                    'description': node['attrs']['description']
                   }
 
                   drive_file = if isBase64(node['attrs']['url'])

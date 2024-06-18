@@ -25,6 +25,7 @@ import { useFieldArray, useFormState } from 'react-hook-form';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { CiStar } from 'react-icons/ci';
 import { FaStar } from 'react-icons/fa';
+import { RemirrorJSON } from 'remirror';
 import { ProductContentSearchType } from '.';
 import { productEditContext } from '../_layout_edit';
 
@@ -358,6 +359,13 @@ const ProductEditContentPage = () => {
               pages[(searchParams.page as number) - 1]?.content as string
             }
             key={searchParams.page}
+            setContent={(data: RemirrorJSON) => {
+              setValue(
+                `contents.${((searchParams.page || 1) as number) - 1}.content`,
+                JSON.stringify(data),
+                { shouldDirty: true }
+              );
+            }}
             placeholder="start typing..."
             theme={{
               color: {
