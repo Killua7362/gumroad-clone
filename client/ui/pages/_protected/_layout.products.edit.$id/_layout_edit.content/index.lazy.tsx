@@ -38,6 +38,12 @@ export const Route = createLazyFileRoute(
 });
 
 const markDownStyle = css`
+  img {
+    max-width: 80%;
+    margin-left: 10%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
   .remirror-theme {
     @media (min-width: 1280px) {
       width: 96% !important;
@@ -175,7 +181,7 @@ const ProductEditContentPage = () => {
   return (
     rendered && (
       <Fragment>
-        <div className="flex justify-between md:justify-start md:flex-col gap-y-3 gap-x-6">
+        <div className="flex lg:justify-start lg:flex-col gap-y-3 gap-x-6">
           <div className="border-white/30 border-[0.1px] rounded-md flex flex-col gap-y-4 justify-between">
             <div className="flex flex-col">
               <IonList>
@@ -298,7 +304,7 @@ const ProductEditContentPage = () => {
               }}
             />
           </div>
-          <div className="flex flex-col w-fit md:w-full border-white/30 border-[0.1px] h-fit rounded-md p-5 justify-center items-center gap-y-3">
+          <div className="flex flex-col w-fit lg:w-full border-white/30 border-[0.1px] h-fit rounded-md p-5 justify-center items-center gap-y-3">
             <div className="p-2 text-2xl">Review</div>
             <div className="flex gap-x-4 px-1 justify-between w-full">
               <div className="text-lg">Your Rating:</div>

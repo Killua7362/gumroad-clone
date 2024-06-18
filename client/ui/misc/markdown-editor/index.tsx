@@ -51,17 +51,13 @@ import {
   TrailingNodeExtension,
 } from 'remirror/extensions';
 
-import { FileExtension } from '@remirror/extension-file';
-
+import {
+  CustomImageExtension,
+  CustomUploadExtension,
+} from '@/ui/misc/markdown-editor/components';
 import { productEditContext } from '@/ui/pages/_protected/_layout.products.edit.$id/_layout_edit';
 import type { RemirrorProps, UseThemeProps } from '@remirror/react';
-import type {
-  ApplySchemaAttributes,
-  CreateEditorStateProps,
-  NodeExtensionSpec,
-  NodeSpecOverride,
-  RemirrorJSON,
-} from 'remirror';
+import type { CreateEditorStateProps, RemirrorJSON } from 'remirror';
 import FileCard from './file-card';
 
 interface ReactEditorProps
@@ -75,22 +71,6 @@ export interface MarkdownEditorProps
   extends Partial<Omit<ReactEditorProps, 'stringHandler'>> {
   pageContent: string;
   setContent: (data: RemirrorJSON) => void;
-}
-
-class CustomUploadExtension extends FileExtension {
-  createNodeSpec(
-    extra: ApplySchemaAttributes,
-    override: NodeSpecOverride
-  ): NodeExtensionSpec {
-    const spec = super.createNodeSpec(extra, override);
-    return {
-      ...spec,
-      attrs: {
-        ...spec.attrs,
-        description: { default: '' },
-      },
-    };
-  }
 }
 
 /**
@@ -135,6 +115,7 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
         },
       }),
       new DropCursorExtension({ color: 'white' }),
+      new CustomImageExtension({}),
     ],
     [placeholder]
   );

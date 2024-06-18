@@ -190,6 +190,14 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
                           }}
                         />
                         <Button
+                          buttonName="testing"
+                          onClickHandler={() => {
+                            queryClient.invalidateQueries({
+                              queryKey: ['allProducts', '49'],
+                            });
+                          }}
+                        />
+                        <Button
                           type="submit"
                           buttonName="Save"
                           isLoading={productIsLoading}
@@ -212,7 +220,7 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
                       </div>
                     </div>
                     <form
-                      className="w-full mt-4 text-xl flex flex-col md:flex-row gap-4 relative left-0"
+                      className="w-full mt-4 text-xl flex flex-col lg:flex-row gap-4 relative left-0"
                       id="edit_product_form"
                       onSubmit={handleSubmit(async (data) => {
                         if (isDirty) {

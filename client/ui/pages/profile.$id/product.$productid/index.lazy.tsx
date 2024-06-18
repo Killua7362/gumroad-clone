@@ -1,11 +1,16 @@
 import { getSingleProfileProductFetcher } from '@/react-query/query';
 import Loader from '@/ui/components/loader';
 import ProductsDetailsPageLayout from '@/ui/layouts/ProductsDetailsPageLayout';
+import {
+  CustomImageExtension,
+  CustomUploadExtension,
+} from '@/ui/misc/markdown-editor/components';
+import FileCard from '@/ui/misc/markdown-editor/file-card';
 import { css, cx } from '@emotion/css';
 import { Remirror, useRemirror, useRemirrorContext } from '@remirror/react';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { motion, useInView } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { UseFormWatch } from 'react-hook-form';
 import { RiMoneyEuroCircleLine } from 'react-icons/ri';
 import { RemirrorJSON } from 'remirror';
@@ -21,6 +26,12 @@ interface ProductsDetailsPageProps {
 }
 const markdownStyles = css`
   padding: 1rem;
+  img {
+    max-width: 70%;
+    margin-left: 15%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const MarkdownChild = ({ data }: { data: string }) => {
@@ -84,8 +95,21 @@ export const ProductsDetailsPage = ({
     }
   });
 
+  const extensions = useCallback(
+    () => [
+      new CustomUploadExtension({
+        render: (props) => {
+          return <FileCard {...props} />;
+        },
+      }),
+      new CustomImageExtension({}),
+    ],
+    []
+  );
+
   const { manager, state, onChange } = useRemirror({
     stringHandler: 'markdown',
+    extensions,
   });
 
   if (profileProductPending && !preview) return <Loader />;

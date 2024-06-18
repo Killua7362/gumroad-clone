@@ -34,18 +34,66 @@ const stringToTags = (typeString: string) => {
 };
 
 const markdownStyle = css`
+  img {
+    max-width: 80%;
+    margin-left: 10%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
   .remirror-theme {
-    .remirror-editor-wrapper {
-      padding: 0;
-    }
-
     .ProseMirror {
       padding: 1rem !important;
+      height: 20rem;
+      outline: 0.1px solid rgba(255, 255, 255, 0.3) !important;
+      overflow: auto !important;
       box-shadow: none !important;
-      height: 15rem !important;
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb, initial)
+        var(--scrollbar-track, initial);
+      .file-node-view-wrapper {
+        outline: 0;
+        margin: 1rem 0;
+      }
     }
+
     .ProseMirror:focus {
       box-shadow: none;
+    }
+
+    .MuiStack-root {
+      background-color: #09090b;
+      border: rgba(255, 255, 255, 0.6) 0.3px solid;
+      padding: 8px;
+      border-radius: 0.375rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      @media (min-width: 768px) {
+        width: fit-content;
+      }
+      width: 100%;
+      .MuiBox-root {
+        display: flex;
+        gap: 5px;
+        background-color: #09090b;
+        margin: 0;
+        .MuiButtonBase-root {
+          background-color: #09090b;
+          svg {
+            color: white;
+            height: 1rem;
+            width: 1rem;
+          }
+        }
+        .Mui-selected {
+          background-color: white;
+          svg {
+            color: black;
+            height: 1rem;
+            width: 1rem;
+          }
+        }
+      }
     }
   }
 `;
@@ -118,7 +166,7 @@ const ProductEditHomePage = () => {
 
   return (
     <Fragment>
-      <div className="flex flex-col gap-y-4 w-full xl:w-7/12 xl:h-[50rem] px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background flex flex-col justify-between gap-y-4">
+      <div className="flex flex-col gap-y-4 w-11/12 xl:w-6/12 xl:h-[50rem] px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background flex flex-col justify-between gap-y-4">
         <div className="flex flex-col gap-y-2">
           <div>Name</div>
           <fieldset className="border-white/30 border-[0.1px] rounded-md">
@@ -479,7 +527,7 @@ const ProductEditHomePage = () => {
         </div>
       </div>
       <div
-        className={`w-5/12 h-[50rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}>
+        className={`w-6/12 h-[50rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}>
         <div className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">
           Preview
         </div>
