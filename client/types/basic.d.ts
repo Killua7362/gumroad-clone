@@ -38,15 +38,6 @@ interface ProductContetPage {
   content: string;
 }
 
-type Review = Record<
-  string,
-  {
-    title: string;
-    description: string;
-    score: number;
-  }
->;
-
 interface ProductType {
   title: string;
   tags: string;
@@ -95,4 +86,13 @@ interface ReactFormProps<T extends import('react-hook-form').FieldValues> {
   resetField: import('react-hook-form').UseFormResetField<T>;
   isDirty: boolean;
   getValues: import('react-hook-form').UseFormGetValues;
+}
+
+interface Review {
+  reviewEdit: boolean;
+  reviewScore: number;
+  tempReviewScore: number;
+  tempSelectReviewScore: number;
+  reviewDescription: string;
+  tempReviewDescription: string;
 }

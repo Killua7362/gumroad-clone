@@ -64,7 +64,6 @@ const markdownStyle = css`
       background-color: #09090b;
       border: rgba(255, 255, 255, 0.6) 0.3px solid;
       padding: 8px;
-      border-radius: 0.375rem;
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
@@ -165,10 +164,10 @@ const ProductEditHomePage = () => {
   } = useDropzone({ onDrop: onDropCover });
 
   return (
-    <Fragment>
-      <div className="flex flex-col gap-y-4 w-11/12 xl:w-6/12 xl:h-[50rem] px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background flex flex-col justify-between gap-y-4">
+    <div className="flex flex-col items-center justify-end lg:justify-start xl:justify-center lg:flex-row w-full">
+      <div className="flex flex-col gap-y-4 w-11/12 xl:w-6/12 xl:h-[50rem] px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background justify-between gap-y-4">
         <div className="flex flex-col gap-y-2">
-          <div>Name</div>
+          <span>Name</span>
           <fieldset className="border-white/30 border-[0.1px] rounded-md">
             <input
               className="outline-none bg-background text-white w-full text-lg"
@@ -533,6 +532,6 @@ const ProductEditHomePage = () => {
         </div>
         <Runner scope={scope} code={code} />
       </div>
-    </Fragment>
+    </div>
   );
 };
