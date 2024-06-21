@@ -6,7 +6,6 @@ import Button from '@/ui/components/button';
 import { SelectComponent } from '@/ui/components/select';
 import { MarkdownEditor } from '@/ui/misc/markdown-editor';
 import { ProductsDetailsPage } from '@/ui/pages/profile.$id/product.$productid/index.lazy';
-import { css, cx } from '@emotion/css';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { Fragment, useCallback, useContext } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -32,70 +31,6 @@ const tagsToString = (tags: typeof productTypeOptions) => {
 const stringToTags = (typeString: string) => {
   return (typeString || '').trim().split(',');
 };
-
-const markdownStyle = css`
-  img {
-    max-width: 80%;
-    margin-left: 10%;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-  }
-  .remirror-theme {
-    .ProseMirror {
-      padding: 1rem !important;
-      height: 20rem;
-      outline: 0.1px solid rgba(255, 255, 255, 0.3) !important;
-      overflow: auto !important;
-      box-shadow: none !important;
-      scrollbar-width: thin;
-      scrollbar-color: var(--scrollbar-thumb, initial)
-        var(--scrollbar-track, initial);
-      .file-node-view-wrapper {
-        outline: 0;
-        margin: 1rem 0;
-      }
-    }
-
-    .ProseMirror:focus {
-      box-shadow: none;
-    }
-
-    .MuiStack-root {
-      background-color: #09090b;
-      border: rgba(255, 255, 255, 0.6) 0.3px solid;
-      padding: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      @media (min-width: 768px) {
-        width: fit-content;
-      }
-      width: 100%;
-      .MuiBox-root {
-        display: flex;
-        gap: 5px;
-        background-color: #09090b;
-        margin: 0;
-        .MuiButtonBase-root {
-          background-color: #09090b;
-          svg {
-            color: white;
-            height: 1rem;
-            width: 1rem;
-          }
-        }
-        .Mui-selected {
-          background-color: white;
-          svg {
-            color: black;
-            height: 1rem;
-            width: 1rem;
-          }
-        }
-      }
-    }
-  }
-`;
 
 const ProductEditHomePage = () => {
   const localProductEditContext = useContext(productEditContext);
@@ -181,7 +116,7 @@ const ProductEditHomePage = () => {
           </fieldset>
         </div>
         <div className="flex flex-col gap-y-2">
-          <div>Product Type</div>
+          <span>Product Type</span>
           <SelectComponent
             isMulti={true}
             options={productTypeOptions}
@@ -220,22 +155,20 @@ const ProductEditHomePage = () => {
         </div>
         <div className="flex flex-col gap-y-2">
           <div>Description</div>
-          <div className={cx(markdownStyle)}>
-            <MarkdownEditor
-              pageContent={description}
-              setContent={(data: RemirrorJSON) => {
-                setValue(`description`, JSON.stringify(data), {
-                  shouldDirty: true,
-                });
-              }}
-              placeholder="start typing..."
-              theme={{
-                color: {
-                  outline: '#09090B',
-                  text: 'white',
-                },
-              }}></MarkdownEditor>
-          </div>
+          <MarkdownEditor
+            pageContent={description}
+            setContent={(data: RemirrorJSON) => {
+              setValue(`description`, JSON.stringify(data), {
+                shouldDirty: true,
+              });
+            }}
+            placeholder="start typing..."
+            theme={{
+              color: {
+                outline: '#09090B',
+                text: 'white',
+              },
+            }}></MarkdownEditor>
           {errors.description && description?.length! <= 10 && (
             <legend className="text-sm text-red-400">
               {errors.description.message}

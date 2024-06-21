@@ -65,7 +65,7 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
       </AnimatePresence>
       <motion.div
         layout
-        className={`absolute w-full sm:w-auto flex flex-col justify-between overflow-y-auto overflow-x-auto sm:ml-8 sm:right-0 px-2 sm:px-0 scrollbar-thin scrollbar-thumb-white scrollbar-track-background top-[6rem] sm:top-0`}
+        className={`absolute w-full min-h-screen sm:w-auto flex flex-col justify-between overflow-y-auto overflow-x-auto sm:ml-8 sm:right-0 px-2 sm:px-0 scrollbar-thin scrollbar-thumb-white scrollbar-track-background top-[4.5rem] sm:top-0`}
         transition={{
           x: { type: 'spring', bounce: 0 },
         }}
@@ -77,7 +77,7 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
                 : '5rem'
               : 0,
         }}>
-        <div className="mb-14">{children}</div>
+        <div className="mb-14 relative">{children}</div>
         <Footer />
       </motion.div>
     </div>

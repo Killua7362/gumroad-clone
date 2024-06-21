@@ -14,6 +14,7 @@ interface ButtonSchema {
   isLoading?: boolean;
   form?: string;
   variant?: 'normal' | 'destructive';
+  title?: string;
 }
 
 const Button = ({
@@ -26,6 +27,7 @@ const Button = ({
   isLoading = false,
   form = '',
   variant = 'normal',
+  title,
 }: ButtonSchema) => {
   const variants = {
     normal: 'border-white/30 text-white',
@@ -34,6 +36,7 @@ const Button = ({
 
   return (
     <motion.button
+      title={title || ''}
       form={form}
       onClick={async () => {
         if (onClickHandler) {

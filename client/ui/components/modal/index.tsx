@@ -115,7 +115,7 @@ const ModalClose = ({
 
 const ModalOpen = ({
   children,
-  className = 'h-full',
+  className = 'h-full w-full',
 }: {
   children: React.ReactNode;
   className?: string;

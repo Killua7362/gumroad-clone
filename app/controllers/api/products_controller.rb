@@ -62,46 +62,16 @@ module Api
             next e if e['content'].blank? # Skip if content is empty
 
             begin
-              jsonObject = JSON.parse(e['content'])
-
-              sizes = jsonObject['content'].map do |node|
-                node['type'] == 'file' ? node['attrs']['fileSize'].to_i : 0
-              end
-
-              total_size_mb = sizes.inject(0, :+) / 1e6
-
-              render json: { error: 'Content size is larger than 10mb' }, status: 401 and return if total_size_mb > 10
-
-              jsonObject['content'].map! do |node|
-                if node['type'] == 'file'
-                  mime_type = node['attrs']['fileType']
-                  file_name = node['attrs']['fileName']
-
-                  file_metadata = {
-                    'name': "(#{product.user_id}_#{product.id}_content)_#{file_name}",
-                    'mime_type': mime_type,
-                    'description': node['attrs']['description']
-                  }
-
-                  drive_file = if isBase64(node['attrs']['url'])
-                                 file_name, extension = file_name.split('.')
-                                 file = base64ToFile(node['attrs']['url'], file_name, '.' + extension)
-                                 DRIVE.create_file(file_metadata.merge('parents': [product.folder_id]), upload_source: file.path,
-                                                                                                        content_type: mime_type)
-                               else
-                                 DRIVE.update_file(node['attrs']['url'], file_metadata)
-                               end
-                  node['attrs']['url'] = drive_file.id
-                  existing_ids.push(node['attrs']['url'])
-                end
-                node
-              end
-              e['content'] = JSON.generate(jsonObject)
+              e['content'], existing_ids = fileUploader(e['content'], existing_ids, product.id, product.user_id,
+                                                        product.folder_id)
               e
             rescue JSON::ParserError => e
               render json: { error: 'Invalid contents JSON format' }, status: 400 and return
             end
           end
+
+          modifiedDescription, existing_ids = fileUploader(params.to_unsafe_h[:description], existing_ids, product.id, product.user_id,
+                                                           product.folder_id)
 
           # delete other files which are not in the existing_ids
 
@@ -118,7 +88,7 @@ module Api
 
           baseImageURL = 'https://drive.google.com/thumbnail?id='
 
-          if product.update(products_params.merge(user_id: @current_user.id, thumbimageSource: "#{baseImageURL}#{thumbID}", coverimageSource: "#{baseImageURL}#{coverID}",
+          if product.update(products_params.merge(user_id: @current_user.id, thumbimageSource: "#{baseImageURL}#{thumbID}", coverimageSource: "#{baseImageURL}#{coverID}", description: modifiedDescription,
                                                   live: params['product'].keys == ['live'] ? params[:live] : false, contents: modifiedContents))
             render json: ProductSerializer.new(product, options).serializable_hash.to_json
           else
@@ -153,12 +123,6 @@ module Api
 
     def options
       @options ||= { include: %i[reviews] }
-    end
-
-    def getExtension(_base64string)
-      for s in signs.keys do
-        return Rack::Mime::MIME_TYPES.invert[signs[s]], signs[s] if _base64string.include? s.to_s
-      end
     end
 
     def isBase64(base64string)
@@ -202,6 +166,49 @@ module Api
                      DRIVE.update_file(imageExist.id, image_metadata, upload_source: image.path)
                    end
       drive_file.id
+    end
+
+    def fileUploader(content, existing_ids, product_id, user_id, folder_id)
+      jsonObject = JSON.parse(content)
+
+      sizes = jsonObject['content'].map do |node|
+        node['type'] == 'file' ? node['attrs']['fileSize'].to_i : 0
+      end
+
+      total_size_mb = sizes.inject(0, :+) / 1e6
+
+      render json: { error: 'Content size is larger than 10mb' }, status: 401 and return if total_size_mb > 10
+
+      jsonObject['content'].map! do |node|
+        if node['type'] == 'file' or node['type'] == 'image'
+          file_name = node['attrs']['fileName']
+
+          extension = file_name.split('.')[-1]
+          file_name = file_name.split('.').drop(1).join('.')
+          mime_type = Rack::Mime.mime_type(extension)
+
+          file_metadata = {
+            'name': "(#{user_id}_#{product_id}_content)_#{file_name}.#{extension}",
+            'mime_type': mime_type,
+            'description': node['attrs']['description']
+          }
+
+          drive_file = if isBase64(node['attrs']['src'])
+                         file = base64ToFile(node['attrs']['src'], file_name, '.' + extension)
+                         DRIVE.create_file(file_metadata.merge('parents': [folder_id]), upload_source: file.path,
+                                                                                        content_type: mime_type)
+                       else
+                         DRIVE.update_file(node['type'] == 'image' ? node['attrs']['src'].split('?id=')[1] : node['attrs']['src'],
+                                           file_metadata)
+                       end
+
+          node['attrs']['src'] =
+            node['type'] == 'image' ? "https://drive.google.com/thumbnail?id=#{drive_file.id}" : drive_file.id
+          existing_ids.push(drive_file.id)
+        end
+        node
+      end
+      [JSON.generate(jsonObject), existing_ids]
     end
   end
 end

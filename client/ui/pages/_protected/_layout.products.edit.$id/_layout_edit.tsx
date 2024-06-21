@@ -124,9 +124,44 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
                 />
               )}
               <productEditContext.Provider value={productEditProps}>
-                <div className="flex flex-col text-white/90 pb-5 pt-3 sm:pb-6 sm:pt-10 gap-y-7">
-                  <div className="text-2xl sm:text-3xl md:text-4xl uppercase tracking-wide">
-                    {watch('title') || 'Untitled'}
+                <div className="flex flex-col text-white/90 pb-5 pt-3 sm:pt-10 mr-4 gap-y-2">
+                  <div className="flex justify-between">
+                    <div className="text-3xl sm:text-4xl uppercase tracking-wide ml-4">
+                      {watch('title') || 'Untitled'}
+                    </div>
+                    <div className="flex flex-col gap-y-4 items-center">
+                      <span className="flex gap-x-4">
+                        <Button
+                          type="button"
+                          buttonName="Revert"
+                          extraClasses={['!text-lg !rounded-xl']}
+                          onClickHandler={() => {
+                            reset();
+                          }}
+                        />
+                        <Button
+                          type="submit"
+                          buttonName="Save"
+                          isLoading={productIsLoading}
+                          extraClasses={['!text-lg !rounded-xl']}
+                          form={'edit_product_form'}
+                          onClickHandler={async () => {
+                            const result = await trigger();
+                            if (!result) {
+                              setToastRender({
+                                active: false,
+                                message: 'Error occured for some fields',
+                              });
+                            }
+                          }}
+                        />
+                      </span>
+
+                      <div
+                        className={`whitespace-nowrap ${isDirty ? 'text-red-400' : 'text-green-400'} `}>
+                        {isDirty ? 'Changes detected' : 'No changes'}
+                      </div>
+                    </div>
                   </div>
                   <div className="border-b-[1px] h-5 border-white/30 flex gap-x-4 w-full">
                     <Link
@@ -177,40 +212,8 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
                     </Link>
                   </div>
                 </div>
-                <div className="border-b-[0.1px] border-white/30 p-5 flex w-full items-center">
-                  <div className="flex gap-x-4 w-full">
-                    <Button
-                      type="button"
-                      buttonName="Revert"
-                      extraClasses={['!text-lg !rounded-xl']}
-                      onClickHandler={() => {
-                        reset();
-                      }}
-                    />
-                    <Button
-                      type="submit"
-                      buttonName="Save"
-                      isLoading={productIsLoading}
-                      extraClasses={['!text-lg !rounded-xl']}
-                      form={'edit_product_form'}
-                      onClickHandler={async () => {
-                        const result = await trigger();
-                        if (!result) {
-                          setToastRender({
-                            active: false,
-                            message: 'Error occured for some fields',
-                          });
-                        }
-                      }}
-                    />
-                  </div>
-                  <div
-                    className={`whitespace-nowrap ${isDirty ? 'text-red-400' : 'text-green-400'} `}>
-                    {isDirty ? 'Changes detected' : 'No changes'}
-                  </div>
-                </div>
                 <form
-                  className="mt-4 ml-2 lg:ml-0 mx-3 text-xl flex flex-col lg:flex-row gap-4 relative left-0"
+                  className="text-xl flex flex-col lg:flex-row gap-4 relative left-0 top-4"
                   id="edit_product_form"
                   onSubmit={handleSubmit(async (data) => {
                     if (isDirty) {

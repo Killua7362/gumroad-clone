@@ -33,12 +33,12 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 
   const divDesktopVariants = {
     initial: {
-      width: '4rem',
-      height: 'calc(100% - 2rem)',
+      width: '5rem',
+      height: '100%',
     },
     animate: {
       width: isOpen ? '18rem' : '5rem',
-      height: 'calc(100% - 2rem)',
+      height: '100%',
       transition: {
         duration: 0.2,
       },
@@ -47,12 +47,12 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 
   const divMobileVariants = {
     initial: {
-      width: 'calc(100% - 3.9rem)',
-      height: '3.9rem',
+      width: '100%',
+      height: '4rem',
     },
     animate: {
-      width: 'calc(100% - 2rem)',
-      height: isOpen ? 'calc(100% - 2rem)' : '3.9rem',
+      width: '100%',
+      height: isOpen ? '100%' : '4rem',
       transition: {
         duration: 0.2,
       },
@@ -100,7 +100,7 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
         animate="animate"
         exit="initial"
         variants={windowWidth! < 640 ? divMobileVariants : divDesktopVariants}
-        className="fixed flex bg-background flex-col font-medium rounded-xl border-[0.1px] border-white/30 m-4 overflow-hidden"
+        className="fixed flex bg-background flex-col font-medium border-b-[0.1px] sm:border-[0.1px] border-white/30 overflow-hidden"
         style={{
           zIndex: 30,
         }}>
@@ -165,12 +165,10 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
         </div>
         <motion.div
           initial={{
-            height: '0',
-            opacity: 0,
+            height: '5rem',
           }}
           animate={{
             height: isAccountOpen ? '16.1rem' : '5rem',
-            opacity: 1,
             transition: {
               duration: 0.2,
             },

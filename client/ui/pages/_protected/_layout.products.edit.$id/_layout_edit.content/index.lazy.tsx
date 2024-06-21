@@ -10,7 +10,6 @@ import {
 import Button from '@/ui/components/button';
 import ProductEditContentDeleteModal from '@/ui/components/modal/ProductEditContentDeleteModal';
 import { MarkdownEditor } from '@/ui/misc/markdown-editor';
-import { css, cx } from '@emotion/css';
 import {
   IonItem,
   IonLabel,
@@ -36,73 +35,6 @@ export const Route = createLazyFileRoute(
     return <ProductEditContentPage />;
   },
 });
-
-const markDownStyle = css`
-  img {
-    max-width: 80%;
-    margin-left: 10%;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-  }
-  .remirror-theme {
-    @media (min-width: 640px) {
-      width: 97% !important;
-    }
-
-    width: 100% !important;
-
-    .ProseMirror {
-      padding: 0 !important;
-      min-height: 60vh !important;
-      overflow: hidden !important;
-      box-shadow: none !important;
-      .file-node-view-wrapper {
-        outline: 0;
-        margin: 1rem 0;
-      }
-    }
-
-    .ProseMirror:focus {
-      box-shadow: none;
-      overflow: hidden !important;
-    }
-
-    .MuiStack-root {
-      background-color: #09090b;
-      border: rgba(255, 255, 255, 0.6) 0.3px solid;
-      padding: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      @media (min-width: 768px) {
-        width: fit-content;
-      }
-      width: 100%;
-      .MuiBox-root {
-        display: flex;
-        gap: 5px;
-        background-color: #09090b;
-        margin: 0;
-        .MuiButtonBase-root {
-          background-color: #09090b;
-          svg {
-            color: white;
-            height: 1rem;
-            width: 1rem;
-          }
-        }
-        .Mui-selected {
-          background-color: white;
-          svg {
-            color: black;
-            height: 1rem;
-            width: 1rem;
-          }
-        }
-      }
-    }
-  }
-`;
 
 const ProductEditContentPage = () => {
   const localProductEditContext = useContext(productEditContext);
@@ -170,7 +102,7 @@ const ProductEditContentPage = () => {
   return (
     rendered && (
       <Fragment>
-        <div className="flex lg:justify-start flex-row lg:flex-col gap-y-3 gap-x-6">
+        <div className="flex lg:justify-start flex-row lg:flex-col gap-y-3 gap-x-6 mt-10 mx-4">
           <div className="border-white/30 border-[0.1px] flex flex-col gap-y-4 justify-between w-full max-w-[20rem]">
             <IonList>
               <IonReorderGroup
@@ -408,27 +340,25 @@ const ProductEditContentPage = () => {
             )}
           </div>
         </div>
-        <div className={cx(markDownStyle, 'w-full overflow-hidden')}>
-          <MarkdownEditor
-            pageContent={
-              pages[(searchParams.page as number) - 1]?.content as string
-            }
-            key={searchParams.page}
-            setContent={(data: RemirrorJSON) => {
-              setValue(
-                `contents.${((searchParams.page || 1) as number) - 1}.content`,
-                JSON.stringify(data),
-                { shouldDirty: true }
-              );
-            }}
-            placeholder="start typing..."
-            theme={{
-              color: {
-                outline: '#09090B',
-                text: 'white',
-              },
-            }}></MarkdownEditor>
-        </div>
+        <MarkdownEditor
+          pageContent={
+            pages[(searchParams.page as number) - 1]?.content as string
+          }
+          key={searchParams.page}
+          setContent={(data: RemirrorJSON) => {
+            setValue(
+              `contents.${((searchParams.page || 1) as number) - 1}.content`,
+              JSON.stringify(data),
+              { shouldDirty: true }
+            );
+          }}
+          placeholder="start typing..."
+          theme={{
+            color: {
+              outline: '#09090B',
+              text: 'white',
+            },
+          }}></MarkdownEditor>
       </Fragment>
     )
   );

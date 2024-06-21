@@ -1,19 +1,13 @@
 import { getSingleProfileProductFetcher } from '@/react-query/query';
 import Loader from '@/ui/components/loader';
 import ProductsDetailsPageLayout from '@/ui/layouts/ProductsDetailsPageLayout';
-import {
-  CustomImageExtension,
-  CustomUploadExtension,
-} from '@/ui/misc/markdown-editor/components';
-import FileCard from '@/ui/misc/markdown-editor/file-card';
-import { css, cx } from '@emotion/css';
-import { Remirror, useRemirror, useRemirrorContext } from '@remirror/react';
+import { MarkdownEditor } from '@/ui/misc/markdown-editor';
+import { useRemirrorContext } from '@remirror/react';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { motion, useInView } from 'framer-motion';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { UseFormWatch } from 'react-hook-form';
 import { RiMoneyEuroCircleLine } from 'react-icons/ri';
-import { RemirrorJSON } from 'remirror';
 
 export const Route = createLazyFileRoute('/profile/$id/product/$productid/')({
   component: () => {
@@ -24,15 +18,6 @@ interface ProductsDetailsPageProps {
   preview?: boolean;
   watch?: UseFormWatch<EditProductSchemaType>;
 }
-const markdownStyles = css`
-  padding: 1rem;
-  img {
-    max-width: 70%;
-    margin-left: 15%;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-  }
-`;
 
 const MarkdownChild = ({ data }: { data: string }) => {
   const { setContent } = useRemirrorContext();
@@ -87,31 +72,6 @@ export const ProductsDetailsPage = ({
     ? watch!('description')
     : profileProductData?.description;
 
-  const [initContent] = useState<RemirrorJSON | undefined>(() => {
-    try {
-      return JSON.parse(description);
-    } catch (err) {
-      return undefined;
-    }
-  });
-
-  const extensions = useCallback(
-    () => [
-      new CustomUploadExtension({
-        render: (props) => {
-          return <FileCard {...props} />;
-        },
-      }),
-      new CustomImageExtension({}),
-    ],
-    []
-  );
-
-  const { manager, state, onChange } = useRemirror({
-    stringHandler: 'markdown',
-    extensions,
-  });
-
   if (profileProductPending && !preview) return <Loader />;
 
   return (
@@ -153,20 +113,17 @@ export const ProductsDetailsPage = ({
                     <div className="w-full p-5">3</div>
                   </div>
                 </div>
-                <div className={cx(markdownStyles)}>
-                  <Remirror
-                    manager={manager}
-                    state={state}
-                    onChange={onChange}
-                    autoRender="end"
-                    editable={false}>
-                    <MarkdownChild data={description} />
-                  </Remirror>
-                </div>
-                {/*
-
-								<div className="p-5 text-justify text-lg">{description}</div>
-								*/}
+                <MarkdownEditor
+                  pageContent={description}
+                  editable={false}
+                  theme={{
+                    color: {
+                      outline: '#09090B',
+                      text: 'white',
+                    },
+                  }}>
+                  <MarkdownChild data={description} />
+                </MarkdownEditor>
               </div>
               <div className="md:w-4/12 w-full">
                 <div className="flex flex-col gap-y-4 p-8 items-center w-full">

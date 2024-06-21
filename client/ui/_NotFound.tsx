@@ -74,7 +74,7 @@ const NotFoundPage = () => {
         Page Not Found
       </div>
       <div className="w-[10rem] border-b-[1px] border-white/80" />
-      <Link to="/" className="no-underline">
+      <Link to="/home" className="no-underline">
         <div className="text-lg tracking-wide font-normal text-white/80">
           Go Home?
         </div>

@@ -6,7 +6,6 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { createBrowserHistory } from '@/lib/history';
 import NotFoundPage from '@/ui/_NotFound';
 import { routeTree } from '@/ui/routeTree.gen';
-import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -60,7 +59,6 @@ const RouteComponent = () => {
       }}
       client={queryClient}>
       <RouterProvider router={router} />
-      <TanStackRouterDevtools router={router} />
     </PersistQueryClientProvider>
   );
 };

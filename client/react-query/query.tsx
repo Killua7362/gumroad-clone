@@ -154,7 +154,9 @@ export const singleProductFetcher = ({
 }) => {
   const { data, isSuccess, isPending } = useQuery({
     ...singleProductFetcherProps({ productId }),
-    meta: { persist: true },
+    meta: {
+      persist: false,
+    },
     enabled: !!productId,
     initialData,
   });

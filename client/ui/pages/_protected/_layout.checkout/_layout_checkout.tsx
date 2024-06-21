@@ -27,49 +27,49 @@ const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
   });
 
   return (
-    <div className="h-full w-full">
-      <div className="h-full px-3 sm:mx-10">
-        <div className="flex flex-col text-white/90 pb-5 pt-3 sm:pb-0 sm:pt-6 mb-0 gap-y-10">
-          <div className="text-2xl sm:text-3xl md:text-4xl uppercase tracking-wide">
-            Checkout
-          </div>
-          <div className="border-b-[1px] h-3 border-white/30 flex gap-x-4 z-20">
-            <Link
-              to="/checkout/form"
-              style={{
-                textDecoration: 'none',
-              }}
-              activeProps={{
-                className: 'cursor-default pointer-events-none',
-              }}>
-              {({ isActive }) => (
-                <Button
-                  buttonName="Form"
-                  isActive={isActive}
-                  extraClasses={[`!text-base !rounded-2xl`]}
-                />
-              )}
-            </Link>
-            <Link
-              to="/checkout/suggestions"
-              style={{
-                textDecoration: 'none',
-              }}
-              activeProps={{
-                className: 'cursor-default pointer-events-none',
-              }}>
-              {({ isActive }) => (
-                <Button
-                  buttonName="Suggest"
-                  isActive={isActive}
-                  extraClasses={[`!text-base !rounded-2xl`]}
-                />
-              )}
-            </Link>
-          </div>
+    <>
+      <div className="flex flex-col text-white/90 pb-5 pt-3 sm:pt-10 mr-4 gap-y-6">
+        <div className="text-3xl sm:text-4xl uppercase tracking-wide ml-4">
+          Checkout
         </div>
-        <div className="w-full flex flex-col gap-6">{children}</div>
+        <div className="border-b-[1px] h-5 border-white/30 flex gap-x-4 w-full">
+          <Link
+            to="/checkout/form"
+            style={{
+              textDecoration: 'none',
+            }}
+            activeProps={{
+              className: 'cursor-default pointer-events-none',
+            }}>
+            {({ isActive }) => (
+              <Button
+                buttonName="Form"
+                isActive={isActive}
+                extraClasses={[`!text-base !rounded-2xl`]}
+              />
+            )}
+          </Link>
+          <Link
+            to="/checkout/suggestions"
+            style={{
+              textDecoration: 'none',
+            }}
+            activeProps={{
+              className: 'cursor-default pointer-events-none',
+            }}>
+            {({ isActive }) => (
+              <Button
+                buttonName="Suggest"
+                isActive={isActive}
+                extraClasses={[`!text-base !rounded-2xl`]}
+              />
+            )}
+          </Link>
+        </div>
       </div>
-    </div>
+      <div className="text-xl flex flex-col lg:flex-row gap-4 relative left-0 top-4">
+        {children}
+      </div>
+    </>
   );
 };

@@ -56,9 +56,11 @@ import {
   CustomUploadExtension,
 } from '@/ui/misc/markdown-editor/components';
 import { productEditContext } from '@/ui/pages/_protected/_layout.products.edit.$id/_layout_edit';
+import { css, cx } from '@emotion/css';
 import type { RemirrorProps, UseThemeProps } from '@remirror/react';
 import type { CreateEditorStateProps, RemirrorJSON } from 'remirror';
 import FileCard from './file-card';
+import { DataUrlFileUploader } from './file-upload';
 
 interface ReactEditorProps
   extends Pick<CreateEditorStateProps, 'stringHandler'>,
@@ -70,16 +72,91 @@ interface ReactEditorProps
 export interface MarkdownEditorProps
   extends Partial<Omit<ReactEditorProps, 'stringHandler'>> {
   pageContent: string;
-  setContent: (data: RemirrorJSON) => void;
+  setContent?: (data: RemirrorJSON) => void;
+  editable?: boolean;
 }
 
-/**
+const markdownStyles = css`
+  img {
+    max-width: 80%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  .ProseMirror-selectednode {
+    outline: 0 !important;
+    position: relative;
+    height: fit-content;
+
+    img {
+      outline: 0 !important;
+    }
+  }
+  .remirror-theme {
+    @media (min-width: 640px) {
+      width: 97% !important;
+    }
+
+    width: 100% !important;
+
+    .ProseMirror {
+      padding: 0 !important;
+      min-height: 55vh !important;
+      overflow: hidden !important;
+      box-shadow: none !important;
+      .file-node-view-wrapper {
+        outline: 0;
+        margin: 1rem 0;
+      }
+    }
+
+    .ProseMirror:focus {
+      box-shadow: none;
+      overflow: hidden !important;
+    }
+
+    .MuiStack-root {
+      background-color: #09090b;
+      border: rgba(255, 255, 255, 0.6) 0.3px solid;
+      padding: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      @media (min-width: 768px) {
+        width: fit-content;
+      }
+      width: 100%;
+      .MuiBox-root {
+        display: flex;
+        gap: 5px;
+        background-color: #09090b;
+        margin: 0;
+        .MuiButtonBase-root {
+          background-color: #09090b;
+          svg {
+            color: white;
+            height: 1rem;
+            width: 1rem;
+          }
+        }
+        .Mui-selected {
+          background-color: white;
+          svg {
+            color: black;
+            height: 1rem;
+            width: 1rem;
+          }
+        }
+      }
+    }
+  }
+`; /**
  * The editor which is used to create the annotation. Supports formatting.
  */
 export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
   pageContent,
-  placeholder,
+  placeholder = '',
   setContent,
+  editable = true,
   children,
   theme,
   ...rest
@@ -113,6 +190,9 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
         render: (props) => {
           return <FileCard {...props} />;
         },
+        uploadFileHandler: () => {
+          return new DataUrlFileUploader();
+        },
       }),
       new DropCursorExtension({ color: 'white' }),
       new CustomImageExtension({}),
@@ -137,40 +217,50 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
   });
 
   return (
-    <AllStyledComponent>
-      <ThemeProvider theme={theme}>
-        <Remirror
-          initialContent={initContent}
-          manager={manager}
-          autoFocus
-          {...rest}>
-          <Toolbar>
-            <CommandButtonGroup>
-              <ToggleBoldButton />
-              <ToggleItalicButton />
-              <ToggleStrikeButton />
-              <ToggleCodeButton />
-            </CommandButtonGroup>
-            <HeadingLevelButtonGroup showAll />
-            <CommandButtonGroup>
-              <ToggleBlockquoteButton />
-              <ToggleCodeBlockButton />
-            </CommandButtonGroup>
-            <ListButtonGroup>
-              <CreateTableButton />
-            </ListButtonGroup>
-            <HistoryButtonGroup />
-          </Toolbar>
-          <EditorComponent />
-          <TableComponents />
-          {children}
-          <OnChangeJSON
-            onChange={(data) => {
-              setContent(data);
-            }}
-          />
-        </Remirror>
-      </ThemeProvider>
-    </AllStyledComponent>
+    <div
+      className={cx(
+        markdownStyles,
+        'w-full overflow-auto p-4 scrollbar-thin scrollbar-thumb-white scrollbar-track-background'
+      )}>
+      <AllStyledComponent>
+        <ThemeProvider theme={theme}>
+          <Remirror
+            initialContent={initContent}
+            manager={manager}
+            editable={editable}
+            {...rest}>
+            {editable && (
+              <>
+                <Toolbar>
+                  <CommandButtonGroup>
+                    <ToggleBoldButton />
+                    <ToggleItalicButton />
+                    <ToggleStrikeButton />
+                    <ToggleCodeButton />
+                  </CommandButtonGroup>
+                  <HeadingLevelButtonGroup showAll />
+                  <CommandButtonGroup>
+                    <ToggleBlockquoteButton />
+                    <ToggleCodeBlockButton />
+                  </CommandButtonGroup>
+                  <ListButtonGroup>
+                    <CreateTableButton />
+                  </ListButtonGroup>
+                  <HistoryButtonGroup />
+                </Toolbar>
+                <TableComponents />
+              </>
+            )}
+            <EditorComponent />
+            {children}
+            <OnChangeJSON
+              onChange={(data) => {
+                setContent && setContent(data);
+              }}
+            />
+          </Remirror>
+        </ThemeProvider>
+      </AllStyledComponent>
+    </div>
   );
 };

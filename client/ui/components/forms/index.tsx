@@ -25,7 +25,7 @@ export const FormInput = <T extends FieldValues>({
       className={`${errors[name] ? 'border-red-400' : 'border-white/30 focus-within:border-white'} border-[0.1px] w-full rounded-md p-2 ${children && 'flex flex-row-reverse'}`}>
       <input
         type={type}
-        className="bg-background text-white outline-none text-lg w-full mx-2 my-1"
+        className="outline-none bg-background text-white w-full text-lg"
         placeholder={`Type your ${placeholder} here...`}
         {...register(name)}
       />
