@@ -163,76 +163,79 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
             {...(browserHistory.getURL('/checkout/form') as LinkProps)}
           />
         </div>
-        <motion.div
-          initial={{
-            height: '5rem',
-          }}
-          animate={{
-            height: isAccountOpen ? '16.1rem' : '5rem',
-            transition: {
-              duration: 0.2,
-            },
-          }}
-          exit={{
-            height: '0',
-            opacity: 0,
-          }}
-          className={`${isAccountOpen && 'border-[0.1px]'} overflow-hidden relative border-white/30 rounded-xl p-2 flex flex-col overflow-y-scroll scrollbar-thin scrollbar-thumb-white scrollbar-track-[#2c2c31]`}
-          style={{
-            direction: 'rtl',
-          }}>
-          {isAccountOpen && (
-            <>
-              <SideBarCard
-                title="Settings"
-                sideBarProps={sideBarProps}
-                icon={<IoSettingsSharp />}
-                isOpen={isOpen}
-                disableLink={true}
-                windowWidth={windowWidth}
-                params={{ id: loginStatus.user_id! }}
-                target="_blank"
-                to="/"
-              />
-              <SideBarCard
-                title="Profile"
-                sideBarProps={sideBarProps}
-                icon={<SiAboutdotme />}
-                isOpen={isOpen}
-                windowWidth={windowWidth}
-                params={{ id: loginStatus.user_id! }}
-                target="_blank"
-                to="/profile/$id"
-              />
-              <SideBarCard
-                title="Logout"
-                onClickHandler={() => {
-                  loginStatusSetter();
-                }}
-                disableLink={true}
-                sideBarProps={sideBarProps}
-                icon={<CgLogOut />}
-                isOpen={isOpen}
-                windowWidth={windowWidth}
-                to="/"
-              />
-            </>
-          )}
-          <SideBarCard
-            title="Account"
-            onClickHandler={() => {
-              setIsAccountOpen(!isAccountOpen);
+        <div className="flex flex-col gap-y-2">
+          <div className="border-white/30 border-[0.1px] min-h-[7rem] w-full px-6"></div>
+          <motion.div
+            initial={{
+              height: '5rem',
             }}
-            closeSideBar={false}
-            disableLink={true}
-            extraClasses={`${!isAccountOpen && 'border-[1px]'} rounded-xl`}
-            sideBarProps={sideBarProps}
-            icon={<MdAccountCircle />}
-            isOpen={isOpen}
-            windowWidth={windowWidth}
-            to="/"
-          />
-        </motion.div>
+            animate={{
+              height: isAccountOpen ? '16.1rem' : '5rem',
+              transition: {
+                duration: 0.2,
+              },
+            }}
+            exit={{
+              height: '0',
+              opacity: 0,
+            }}
+            className={`${isAccountOpen && 'border-[0.1px]'} overflow-hidden relative border-white/30 rounded-xl p-2 flex flex-col overflow-y-scroll scrollbar-thin scrollbar-thumb-white scrollbar-track-[#2c2c31]`}
+            style={{
+              direction: 'rtl',
+            }}>
+            {isAccountOpen && (
+              <>
+                <SideBarCard
+                  title="Settings"
+                  sideBarProps={sideBarProps}
+                  icon={<IoSettingsSharp />}
+                  isOpen={isOpen}
+                  disableLink={true}
+                  windowWidth={windowWidth}
+                  params={{ id: loginStatus.user_id! }}
+                  target="_blank"
+                  to="/"
+                />
+                <SideBarCard
+                  title="Profile"
+                  sideBarProps={sideBarProps}
+                  icon={<SiAboutdotme />}
+                  isOpen={isOpen}
+                  windowWidth={windowWidth}
+                  params={{ id: loginStatus.user_id! }}
+                  target="_blank"
+                  to="/profile/$id"
+                />
+                <SideBarCard
+                  title="Logout"
+                  onClickHandler={() => {
+                    loginStatusSetter();
+                  }}
+                  disableLink={true}
+                  sideBarProps={sideBarProps}
+                  icon={<CgLogOut />}
+                  isOpen={isOpen}
+                  windowWidth={windowWidth}
+                  to="/"
+                />
+              </>
+            )}
+            <SideBarCard
+              title="Account"
+              onClickHandler={() => {
+                setIsAccountOpen(!isAccountOpen);
+              }}
+              closeSideBar={false}
+              disableLink={true}
+              extraClasses={`${!isAccountOpen && 'border-[1px]'} rounded-xl`}
+              sideBarProps={sideBarProps}
+              icon={<MdAccountCircle />}
+              isOpen={isOpen}
+              windowWidth={windowWidth}
+              to="/"
+            />
+          </motion.div>
+        </div>
       </motion.div>
     )
   );

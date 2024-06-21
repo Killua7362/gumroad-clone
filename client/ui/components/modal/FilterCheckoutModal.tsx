@@ -206,7 +206,7 @@ const FilterCheckoutModal = ({
           </div>
         </div>
       </Modal.Base>
-      <Modal.Open>
+      <Modal.Open className="h-full w-full">
         <Button buttonName="Filter" extraClasses={[`!w-full`]} />
       </Modal.Open>
     </Modal.Root>

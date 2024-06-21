@@ -454,9 +454,6 @@ const ProductEditHomePage = () => {
             </div>
           </div>
         </div>
-        <div className="flex gap-x-4 w-full justify-end">
-          <Button buttonName="Save" type="submit" extraClasses={['!hidden']} />
-        </div>
       </div>
       <div
         className={`w-6/12 h-[50rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}>

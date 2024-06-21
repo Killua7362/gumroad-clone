@@ -11,6 +11,7 @@ import { createLazyFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { IoTrashBin } from 'react-icons/io5';
 import { RiDeleteBin2Fill } from 'react-icons/ri';
 import { Runner } from 'react-runner';
 
@@ -136,7 +137,6 @@ const CheckoutForm = () => {
                             i={i}
                             resetField={resetField}
                           />
-
                           <Button
                             buttonName=""
                             extraClasses={[`!w-full`]}
@@ -193,6 +193,42 @@ const CheckoutForm = () => {
                     onClickHandler={() => {
                       append({ name: '', hidden: true, url: '' });
                     }}
+                    extraClasses={['w-full py-4']}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-y-4">
+              <div className="text-xl">Footer</div>
+              <div className="flex flex-col gap-y-4">
+                <div className="flex gap-x-4 items-center">
+                  <span>1</span>
+                  <FormInput<CheckoutFormSchemaType>
+                    type="text"
+                    name={`bio`}
+                    errors={errors}
+                    register={register}
+                    placeholder="Item Title"
+                  />
+                  <FormInput<CheckoutFormSchemaType>
+                    type="text"
+                    name={`bio`}
+                    errors={errors}
+                    register={register}
+                    placeholder="Item Link"
+                  />
+                  <Button
+                    buttonName=""
+                    variant="destructive"
+                    extraClasses={[`!p-3 !text-xl`]}>
+                    <IoTrashBin />
+                  </Button>
+                </div>
+                <div className="gap-x-4 items-center flex w-full justify-end">
+                  <Button
+                    buttonName="Add Footer Item"
+                    onClickHandler={() => {}}
                     extraClasses={['w-full py-4']}
                   />
                 </div>

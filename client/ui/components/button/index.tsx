@@ -38,7 +38,7 @@ const Button = ({
     <motion.button
       title={title || ''}
       form={form}
-      onClick={async () => {
+      onClick={async (e) => {
         if (onClickHandler) {
           await onClickHandler();
         }

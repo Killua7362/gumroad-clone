@@ -4,7 +4,7 @@ import { allProductsFetcher, collabsProductFetcher } from '@/react-query/query';
 import Button from '@/ui/components/button';
 import CollabCard from '@/ui/components/cards/CollabCard';
 import Loader from '@/ui/components/loader';
-import { createLazyFileRoute } from '@tanstack/react-router';
+import { Link, createLazyFileRoute } from '@tanstack/react-router';
 import { Fragment } from 'react/jsx-runtime';
 
 export const Route = createLazyFileRoute(
@@ -69,26 +69,40 @@ const CollaboratorsPage = () => {
     productIsSuccess && (
       <Fragment>
         <div className="flex gap-x-3 items-center">
-          <Button
-            buttonName="Outgoing"
-            extraClasses={['rounded-xl']}
-            isActive={params.type === 'outgoing'}
-            onClickHandler={() => {
-              navigate({
-                search: () => ({ type: 'outgoing' }),
-              });
+          <Link
+            to="/products/collaborators"
+            search={() => ({
+              type: 'outgoing',
+            })}
+            style={{
+              textDecoration: 'none',
             }}
-          />
-          <Button
-            buttonName="Incoming"
-            extraClasses={['rounded-xl']}
-            isActive={!params.type || params.type === 'incoming'}
-            onClickHandler={() => {
-              navigate({
-                search: () => ({ type: 'incoming' }),
-              });
+            activeProps={{
+              className: 'cursor-default pointer-events-none',
+            }}>
+            <Button
+              buttonName="Outgoing"
+              extraClasses={['rounded-xl']}
+              isActive={params.type === 'outgoing'}
+            />
+          </Link>
+          <Link
+            to="/products/collaborators"
+            search={() => ({
+              type: 'incoming',
+            })}
+            style={{
+              textDecoration: 'none',
             }}
-          />
+            activeProps={{
+              className: 'cursor-default pointer-events-none',
+            }}>
+            <Button
+              buttonName="Incoming"
+              extraClasses={['rounded-xl']}
+              isActive={params.type === 'incoming'}
+            />
+          </Link>
         </div>
         <div className="w-full mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
           {Object.keys(productsCollection()!).map((key, i) => {

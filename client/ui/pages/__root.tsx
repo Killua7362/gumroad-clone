@@ -1,6 +1,5 @@
 import { queryClient } from '@/app/RouteComponent';
 import { loginStatusFetcherProps } from '@/react-query/query';
-import Footer from '@/ui/components/Footer';
 import SideBar from '@/ui/components/sidebar';
 import Toast from '@/ui/components/toast';
 import {
@@ -78,7 +77,6 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
               : 0,
         }}>
         <div className="mb-14 relative">{children}</div>
-        <Footer />
       </motion.div>
     </div>
   );
