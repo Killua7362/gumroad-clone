@@ -144,7 +144,7 @@ export class CustomImageExtension extends ImageExtension {
             value={node.attrs.description}
             onChange={(e) => {
               e.preventDefault();
-              setImageCaption({ description: e.currentTarget.value });
+              setImageCaption({ description: e.target.value });
             }}
           />
         )}

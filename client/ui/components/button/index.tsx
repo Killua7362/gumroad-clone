@@ -12,7 +12,6 @@ interface ButtonSchema {
   children?: React.ReactNode;
   isActive?: boolean;
   isLoading?: boolean;
-  form?: string;
   variant?: 'normal' | 'destructive';
   title?: string;
 }
@@ -25,7 +24,6 @@ const Button = ({
   children,
   isActive = false,
   isLoading = false,
-  form = '',
   variant = 'normal',
   title,
 }: ButtonSchema) => {
@@ -35,9 +33,8 @@ const Button = ({
   };
 
   return (
-    <motion.button
+    <motion.a
       title={title || ''}
-      form={form}
       onClick={async (e) => {
         if (onClickHandler) {
           await onClickHandler();
@@ -74,7 +71,7 @@ const Button = ({
         <span className={`${isLoading && 'invisible'} `}>{buttonName}</span>
       )}
       {children}
-    </motion.button>
+    </motion.a>
   );
 };
 

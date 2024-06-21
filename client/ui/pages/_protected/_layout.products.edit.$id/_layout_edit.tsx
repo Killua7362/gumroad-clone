@@ -144,7 +144,6 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
                           buttonName="Save"
                           isLoading={productIsLoading}
                           extraClasses={['!text-lg !rounded-xl']}
-                          form={'edit_product_form'}
                           onClickHandler={async () => {
                             const result = await trigger();
                             if (!result) {

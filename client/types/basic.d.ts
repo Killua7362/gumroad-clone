@@ -96,3 +96,10 @@ interface Review {
   reviewDescription: string;
   tempReviewDescription: string;
 }
+
+interface linkShortcutsSchema {
+  name: string;
+  link: string;
+  absolute: boolean;
+  newTab: boolean;
+}

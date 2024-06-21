@@ -17,6 +17,7 @@ import { IoBagRemove, IoSettingsSharp } from 'react-icons/io5';
 import { MdAccountCircle, MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import { SiAboutdotme } from 'react-icons/si';
 import SideBarCard from './card';
+import LinkShortCuts from './link_shortcuts';
 
 const route = getRouteApi(rootRouteId);
 
@@ -163,8 +164,8 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
             {...(browserHistory.getURL('/checkout/form') as LinkProps)}
           />
         </div>
-        <div className="flex flex-col gap-y-2">
-          <div className="border-white/30 border-[0.1px] min-h-[7rem] w-full px-6"></div>
+        <div className="flex flex-col gap-y-2 relative">
+          <LinkShortCuts isOpen={isOpen} />
           <motion.div
             initial={{
               height: '5rem',

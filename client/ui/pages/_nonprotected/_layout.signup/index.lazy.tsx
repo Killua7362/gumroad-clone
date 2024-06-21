@@ -104,7 +104,6 @@ const SignUpPage = () => {
               type="submit"
               extraClasses={[`!w-full !py-4`]}
               isLoading={isSignUpSetting}
-              form="sign_up_form"
             />
           </div>
         </form>

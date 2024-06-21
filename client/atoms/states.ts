@@ -7,3 +7,8 @@ export const hideToastState = atom({
     message: '',
   },
 });
+
+export const sidebarShortcutLinks = atom({
+  key: 'sidebarShortcutLinks',
+  default: [] as linkShortcutsSchema[],
+});

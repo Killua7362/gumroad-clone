@@ -79,7 +79,6 @@ const SignInPage = () => {
           )}
           <Button
             buttonName="Sign In"
-            form="sign_in_form"
             type="submit"
             extraClasses={[`!w-full !py-4`]}
             isLoading={isLoginSetting}

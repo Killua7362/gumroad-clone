@@ -103,7 +103,6 @@ const NewProductModal = () => {
                 buttonName="Save"
                 type="submit"
                 isLoading={productIsSetting}
-                form="new_product_form"
                 onClickHandler={async () => {
                   const form_status = await trigger();
                   if (form_status) {

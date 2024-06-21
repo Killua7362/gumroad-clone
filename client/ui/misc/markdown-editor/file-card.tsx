@@ -77,7 +77,7 @@ const FileCard = ({ ...props }: any) => {
                 value={renameValue}
                 onChange={(e) => {
                   e.preventDefault();
-                  setRenameValue(e.currentTarget.value);
+                  setRenameValue(e.target.value);
                 }}
                 disabled={!editFields}
               />
@@ -93,7 +93,7 @@ const FileCard = ({ ...props }: any) => {
               value={descriptionValue}
               onChange={(e) => {
                 e.preventDefault();
-                setDescriptionValue(e.currentTarget.value);
+                setDescriptionValue(e.target.value);
               }}
               disabled={!editFields}
             />
