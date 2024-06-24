@@ -76,7 +76,7 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
                 : '5rem'
               : 0,
         }}>
-        <div className="mb-14 relative">{children}</div>
+        <div className="h-full relative">{children}</div>
       </motion.div>
     </div>
   );

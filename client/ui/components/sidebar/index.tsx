@@ -6,6 +6,7 @@ import {
   getRouteApi,
   rootRouteId,
   useLocation,
+  useNavigate,
 } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
 import _ from 'lodash';
@@ -40,9 +41,6 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
     animate: {
       width: isOpen ? '18rem' : '5rem',
       height: '100%',
-      transition: {
-        duration: 0.2,
-      },
     },
   };
 
@@ -54,12 +52,9 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
     animate: {
       width: '100%',
       height: isOpen ? '100%' : '4rem',
-      transition: {
-        duration: 0.2,
-      },
     },
   };
-
+  const navigate = useNavigate({ from: location.pathname.split('?')[0] });
   useEffect(() => {
     const width = window.innerWidth;
     const onResize = () => {
@@ -118,12 +113,9 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
               setIsOpen(!isOpen);
             }}>
             <motion.div
+              initial={false}
               animate={{
                 rotate: isOpen ? 0 : 180,
-                transition: {
-                  duration: 0.1,
-                  delay: 0.1,
-                },
               }}>
               <div className="rotate-[90deg] sm:rotate-0">
                 <MdOutlineKeyboardArrowLeft />
@@ -172,9 +164,6 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
             }}
             animate={{
               height: isAccountOpen ? '16.1rem' : '5rem',
-              transition: {
-                duration: 0.2,
-              },
             }}
             exit={{
               height: '0',

@@ -103,3 +103,24 @@ interface linkShortcutsSchema {
   absolute: boolean;
   newTab: boolean;
 }
+
+interface TileSchema {
+  primary?: TileSchema | string;
+  secondary?: TileSchema | string;
+  tile: 'row' | 'col';
+  split: number;
+}
+
+interface TileRender {
+  [id: string]: React.ReactNode;
+}
+
+interface TileInitialStyle {
+  width: string;
+  height: string;
+}
+
+interface TileRootProps {
+  render: TileRender;
+  schema: TileSchema;
+}
