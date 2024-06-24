@@ -1,22 +1,27 @@
 import { motion, useAnimationControls } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
+import { getActiveBoxId } from './bounding_box';
 import RecurseTile from './recurse_tile';
 
 const TilingRoot = ({
-  initialTilingProp,
+  initialRender,
+  initialSchema,
 }: {
-  initialTilingProp?: TileRootProps;
+  initialSchema?: TileSchema;
+  initialRender?: TileRender;
 }) => {
   const [widgetPanelOpen, setWidgetPanelOpen] = useState(false);
-  const [inZone, setInZone] = useState(false);
 
   const animateControls = useAnimationControls();
 
   const widgetRootRef = useRef<HTMLDivElement | null>(null);
 
   const [tileRootProps, setTileRootProps] = useState<TileRootProps | undefined>(
-    initialTilingProp
+    {
+      render: initialRender,
+      schema: initialSchema,
+    }
   );
 
   return (
@@ -57,11 +62,7 @@ const TilingRoot = ({
               });
             }}
             onDragEnd={(_, info) => {
-              if (inZone) {
-                //started dropping divs here
-
-                setInZone(false);
-              }
+              //started dropping divs here
             }}
             onDrag={(_, info) => {
               if (widgetRootRef.current) {
@@ -73,9 +74,17 @@ const TilingRoot = ({
                   left <= info.point.x &&
                   info.point.x <= right
                 ) {
-                  setInZone(true);
-                } else {
-                  setInZone(false);
+                  //in zone
+                  console.log(
+                    getActiveBoxId({
+                      schema: tileRootProps?.schema!,
+                      point: info.point,
+                      top,
+                      left,
+                      right,
+                      bottom,
+                    })
+                  );
                 }
               }
             }}

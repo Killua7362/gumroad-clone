@@ -14,6 +14,7 @@ interface ButtonSchema {
   isLoading?: boolean;
   variant?: 'normal' | 'destructive';
   title?: string;
+  formID?: string;
 }
 
 const Button = ({
@@ -26,6 +27,7 @@ const Button = ({
   isLoading = false,
   variant = 'normal',
   title,
+  formID = '',
 }: ButtonSchema) => {
   const variants = {
     normal: 'border-white/30 text-white',
@@ -33,14 +35,13 @@ const Button = ({
   };
 
   return (
-    <motion.a
+    <motion.button
       title={title || ''}
       onClick={async (e) => {
         if (onClickHandler) {
           await onClickHandler();
         }
       }}
-      type={type}
       whileHover={{
         ...(!isActive && {
           transform: 'translate(-4px,-4px)',
@@ -71,7 +72,14 @@ const Button = ({
         <span className={`${isLoading && 'invisible'} `}>{buttonName}</span>
       )}
       {children}
-    </motion.a>
+      {formID !== '' && type === 'submit' && (
+        <input
+          type={type}
+          form={formID}
+          className="h-full w-full absolute opacity-0 cursor-pointer"
+        />
+      )}
+    </motion.button>
   );
 };
 

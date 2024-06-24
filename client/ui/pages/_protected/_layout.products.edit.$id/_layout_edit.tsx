@@ -86,7 +86,6 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
     const routerState = useRouterState();
 
     const [rendered, setRendered] = useState(false);
-
     useEffect(() => {
       if (routerState.location.state) {
         const stateData: ProductType = {
@@ -132,7 +131,6 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
                     <div className="flex flex-col gap-y-4 items-center">
                       <span className="flex gap-x-4">
                         <Button
-                          type="button"
                           buttonName="Revert"
                           extraClasses={['!text-lg !rounded-xl']}
                           onClickHandler={() => {
@@ -140,10 +138,11 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
                           }}
                         />
                         <Button
-                          type="submit"
                           buttonName="Save"
                           isLoading={productIsLoading}
                           extraClasses={['!text-lg !rounded-xl']}
+                          type="submit"
+                          formID="edit_product_form"
                           onClickHandler={async () => {
                             const result = await trigger();
                             if (!result) {

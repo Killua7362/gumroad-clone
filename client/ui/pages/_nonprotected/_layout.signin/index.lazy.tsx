@@ -32,8 +32,8 @@ const SignInPage = () => {
         height: 'calc(100vh - 5rem)',
       }}>
       <form
-        id="sign_in_form"
         className="flex gap-x-4 border-white/30 border-[0.1px] flex-col lg:flex-row rounded-md p-6 w-10/12 sm:w-8/12 md:w-6/12 lg:w-8/12 xl:w-6/12 2xl:w-5/12 divide-y-[0.1px] lg:divide-y-0 lg:divide-x-[0.1px] divide-white/30"
+        id="sign_in_form"
         onSubmit={handleSubmit((data) => {
           loginStatusSetter({ ...data });
         })}>
@@ -80,6 +80,7 @@ const SignInPage = () => {
           <Button
             buttonName="Sign In"
             type="submit"
+            formID="sign_in_form"
             extraClasses={[`!w-full !py-4`]}
             isLoading={isLoginSetting}
           />

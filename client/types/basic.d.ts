@@ -107,8 +107,8 @@ interface linkShortcutsSchema {
 interface TileSchema {
   primary?: TileSchema | string;
   secondary?: TileSchema | string;
-  tile: 'row' | 'col';
-  split: number;
+  tile?: 'row' | 'col';
+  split?: number;
 }
 
 interface TileRender {
@@ -121,6 +121,6 @@ interface TileInitialStyle {
 }
 
 interface TileRootProps {
-  render: TileRender;
-  schema: TileSchema;
+  render: TileRender | undefined;
+  schema: TileSchema | undefined;
 }

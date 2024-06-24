@@ -85,8 +85,8 @@ const CheckoutForm = () => {
     profileIsSuccess && (
       <div className="flex flex-col items-center justify-end lg:justify-start xl:justify-center lg:flex-row w-full">
         <form
-          className="flex flex-col gap-y-4 w-11/12 xl:w-6/12 xl:h-[50rem] px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background justify-between gap-y-4"
           id="checkout_form"
+          className="flex flex-col gap-y-4 w-11/12 xl:w-6/12 xl:h-[50rem] px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background justify-between gap-y-4"
           onSubmit={handleSubmit((data) => {
             if (isDirty) {
               profileStatusSetter({ ...data });
@@ -245,6 +245,7 @@ const CheckoutForm = () => {
             <Button
               buttonName="Save"
               type="submit"
+              formID="checkout_form"
               isLoading={profileIsLoading}
             />
           </div>

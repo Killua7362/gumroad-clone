@@ -102,6 +102,7 @@ const SignUpPage = () => {
             <Button
               buttonName="Sign Up"
               type="submit"
+              formID="sign_up_form"
               extraClasses={[`!w-full !py-4`]}
               isLoading={isSignUpSetting}
             />

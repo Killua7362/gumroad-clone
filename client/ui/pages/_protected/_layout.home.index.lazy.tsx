@@ -8,28 +8,33 @@ export const Route = createLazyFileRoute('/_protected/_layout/home/')({
 });
 
 const Home = () => {
-  const initialTilingProps: TileRootProps = {
-    render: {
-      A: <div className="h-full w-full"></div>,
-      B: <div className="h-full w-full"></div>,
-      C: <div className="h-full w-full"></div>,
-    },
-    schema: {
-      split: 60,
-      tile: 'col',
+  const initialRender: TileRender = {
+    A: <div className="h-full w-full bg-white"></div>,
+    B: <div className="h-full w-full bg-white"></div>,
+    C: <div className="h-full w-full bg-white"></div>,
+    D: <div className="h-full w-full bg-white"></div>,
+  };
+
+  const initialSchema: TileSchema = {
+    split: 60,
+    tile: 'col',
+    primary: {
+      split: 40,
+      tile: 'row',
       primary: 'A',
-      secondary: {
-        split: 50,
-        tile: 'row',
-        primary: 'C',
-        secondary: 'D',
-      },
+      secondary: 'B',
+    },
+    secondary: {
+      split: 70,
+      tile: 'col',
+      primary: 'C',
+      secondary: 'D',
     },
   };
 
   return (
     <div className="h-[100vh] w-full relative flex items-center overflow-hidden">
-      <TilingRoot initialTilingProp={initialTilingProps} />
+      <TilingRoot initialRender={initialRender} initialSchema={initialSchema} />
     </div>
   );
 };

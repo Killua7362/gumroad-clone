@@ -23,7 +23,6 @@ const NavigationBlocker = ({
             <Modal.Close>
               <Button
                 buttonName="Stay"
-                type="button"
                 onClickHandler={async () => {
                   await reset();
                 }}
@@ -32,7 +31,6 @@ const NavigationBlocker = ({
             <Modal.Close>
               <Button
                 buttonName="Proceed"
-                type="button"
                 onClickHandler={async () => {
                   await proceed();
                 }}

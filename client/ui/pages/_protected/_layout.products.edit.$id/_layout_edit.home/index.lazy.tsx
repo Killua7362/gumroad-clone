@@ -187,7 +187,7 @@ const ProductEditHomePage = () => {
               />
             )}
             <div className="flex gap-x-4">
-              <Button buttonName="" type="button" extraClasses={['!p-0']}>
+              <Button buttonName="" extraClasses={['!p-0']}>
                 <label
                   htmlFor="thumbimage"
                   className="px-4 py-2 cursor-pointer overflow-none">
@@ -253,7 +253,7 @@ const ProductEditHomePage = () => {
               />
             )}
             <div className="flex gap-x-4">
-              <Button buttonName="" type="button" extraClasses={['!p-0']}>
+              <Button buttonName="" extraClasses={['!p-0']}>
                 <label
                   htmlFor="coverImage"
                   className="px-4 py-2 cursor-pointer overflow-none">

@@ -16,17 +16,19 @@ const RecurseTile = ({
       schema?.secondary && schema?.tile === 'row'
         ? `${schema?.split}%`
         : '100%',
+    border: '0.1px solid rgba(255,255,255,0.3)',
   };
 
   const secondaryStyle = {
     width:
       schema?.secondary && schema?.tile === 'col'
-        ? `${schema?.split}%`
+        ? `${100 - (schema?.split || 0)}%`
         : '100%',
     height:
       schema?.secondary && schema?.tile === 'row'
-        ? `${schema?.split}%`
+        ? `${100 - (schema?.split || 0)}%`
         : '100%',
+    border: '0.1px solid rgba(255,255,255,0.3)',
   };
 
   return (
@@ -68,9 +70,13 @@ const RecurseTile = ({
               render={render}
               initialStyle={{
                 width:
-                  schema?.tile === 'col' ? `${100 - schema?.split}%` : '100%',
+                  schema?.tile === 'col'
+                    ? `${100 - (schema?.split || 0)}%`
+                    : '100%',
                 height:
-                  schema?.tile === 'row' ? `${100 - schema?.split}%` : '100%',
+                  schema?.tile === 'row'
+                    ? `${100 - (schema?.split || 0)}%`
+                    : '100%',
               }}
             />
           ) : null}

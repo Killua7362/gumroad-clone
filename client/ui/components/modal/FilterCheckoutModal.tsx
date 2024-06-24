@@ -82,7 +82,6 @@ const FilterCheckoutModal = ({
               )}
               <Button
                 buttonName="All"
-                type="button"
                 isActive={urlparams.get('product_all') === true.toString()}
                 onClickHandler={() => {
                   urlparams.set(
@@ -100,7 +99,6 @@ const FilterCheckoutModal = ({
             <div className="flex gap-x-4">
               <Button
                 buttonName=""
-                type="button"
                 isActive={urlparams.get('reverse') === true.toString()}
                 onClickHandler={() => {
                   urlparams.set(
@@ -115,21 +113,18 @@ const FilterCheckoutModal = ({
               </Button>
               <Button
                 buttonName="Clear All"
-                type="button"
                 onClickHandler={() => {
                   setTempURL('');
                 }}
               />
               <Button
                 buttonName="Revert"
-                type="button"
                 onClickHandler={() => {
                   setTempURL(watch(`category.${i}.url`));
                 }}
               />
               <Button
                 buttonName="Default"
-                type="button"
                 onClickHandler={() => {
                   setTempURL(
                     'reverse=false&sort_by=title&edit_url=false&product_all=true&product_count=2'
@@ -189,12 +184,11 @@ const FilterCheckoutModal = ({
             </div>
             <div className="flex gap-x-4 w-full justify-end">
               <Modal.Close>
-                <Button buttonName="Cancel" type="button" />
+                <Button buttonName="Cancel" />
               </Modal.Close>
               <Modal.Close>
                 <Button
                   buttonName="Save"
-                  type="button"
                   onClickHandler={() => {
                     setValue(`category.${i}.url`, tempURL, {
                       shouldDirty: true,

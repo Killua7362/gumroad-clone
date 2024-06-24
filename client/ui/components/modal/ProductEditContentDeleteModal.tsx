@@ -30,12 +30,11 @@ const ProductEditContentDeleteModal = ({
           <div className="text-xl">Confirm Delete?</div>
           <div className="flex gap-x-4">
             <Modal.Close>
-              <Button buttonName="Cancel" type="button" />
+              <Button buttonName="Cancel" />
             </Modal.Close>
             <Modal.Close>
               <Button
                 buttonName="Confirm"
-                type="button"
                 onClickHandler={() => {
                   remove(i);
                   if (params.page === pagesLength) {
