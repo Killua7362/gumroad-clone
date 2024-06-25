@@ -1,32 +1,6 @@
 declare module '*.css';
 declare module 'nprogress';
 
-interface pupilPos {
-  left: string;
-  top: string;
-}
-
-interface sortConfig {
-  active: boolean;
-  byType: string;
-  reverse: boolean;
-}
-
-interface searchConfig {
-  active: boolean;
-  startsWith: string;
-}
-
-interface toastMessage {
-  active: boolean;
-  message?: string;
-}
-
-interface ProductsCardContextMenu {
-  active: boolean;
-  activeIdx: number;
-}
-
 interface IndividualCollab {
   email: string;
   share: number;
@@ -68,11 +42,6 @@ type Entries<T> = {
   [K in keyof T]: [key: K, value: T[K]];
 }[keyof T][];
 
-interface PageSchema {
-  name: string;
-  content: string;
-}
-
 interface ReactFormProps<T extends import('react-hook-form').FieldValues> {
   handleSubmit: import('react-hook-form').UseFormHandleSubmit<T>;
   errors: import('react-hook-form').FieldErrors<T>;
@@ -86,22 +55,6 @@ interface ReactFormProps<T extends import('react-hook-form').FieldValues> {
   resetField: import('react-hook-form').UseFormResetField<T>;
   isDirty: boolean;
   getValues: import('react-hook-form').UseFormGetValues;
-}
-
-interface Review {
-  reviewEdit: boolean;
-  reviewScore: number;
-  tempReviewScore: number;
-  tempSelectReviewScore: number;
-  reviewDescription: string;
-  tempReviewDescription: string;
-}
-
-interface linkShortcutsSchema {
-  name: string;
-  link: string;
-  absolute: boolean;
-  newTab: boolean;
 }
 
 interface TileSchema {

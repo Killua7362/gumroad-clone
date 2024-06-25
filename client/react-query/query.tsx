@@ -1,5 +1,6 @@
 import { queryClient } from '@/app/RouteComponent';
 import { useQuery } from '@tanstack/react-query';
+import { CheckoutFormSchemaType } from './mutations';
 
 export const loginStatusFetcherProps = {
   queryKey: ['loginStatus'],

@@ -1,7 +1,10 @@
 import { queryClient } from '@/app/RouteComponent';
 import { hideToastState } from '@/atoms/states';
 import { getEditProductFormProps } from '@/forms';
-import { getProductEditor } from '@/react-query/mutations';
+import {
+  EditProductSchemaType,
+  getProductEditor,
+} from '@/react-query/mutations';
 import {
   singleProductFetcher,
   singleProductFetcherProps,

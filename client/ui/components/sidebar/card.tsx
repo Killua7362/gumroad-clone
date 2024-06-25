@@ -1,7 +1,20 @@
 import browserHistory from '@/lib/browser_history';
+import { SideBarProps } from '@/ui/pages/__root';
 import { cx } from '@emotion/css';
 import { Link, LinkProps } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'framer-motion';
+
+interface SideBarCardProps {
+  title: string;
+  sideBarProps: SideBarProps;
+  icon: React.ReactNode;
+  isOpen: boolean;
+  extraClasses?: string;
+  closeSideBar?: boolean;
+  onClickHandler?: () => void;
+  windowWidth: number;
+  disableLink?: boolean;
+}
 
 const SideBarCard = ({
   title,

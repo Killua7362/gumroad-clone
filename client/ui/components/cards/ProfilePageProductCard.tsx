@@ -2,6 +2,12 @@ import { processProducts } from '@/lib/products_process';
 import { Link } from '@tanstack/react-router';
 import { Fragment } from 'react/jsx-runtime';
 
+interface ProfilePageCardProps {
+  name: string;
+  url: string;
+  profileProducts: Entries<ProductTypePayload>;
+}
+
 const ProfilePageProductCard = ({
   name,
   url,

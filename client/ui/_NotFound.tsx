@@ -2,6 +2,11 @@ import '@/ui/styles/404.css';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 
+interface pupilPos {
+  left: string;
+  top: string;
+}
+
 const NotFoundPage = () => {
   const [pupilPos, setPupilPos] = useState<pupilPos>({
     left: '0',

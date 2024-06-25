@@ -1,6 +1,9 @@
 import { queryClient } from '@/app/RouteComponent';
 import { getCheckoutFormProps } from '@/forms';
-import { getProfileStatusSetter } from '@/react-query/mutations';
+import {
+  CheckoutFormSchemaType,
+  getProfileStatusSetter,
+} from '@/react-query/mutations';
 import { getProfileStatus } from '@/react-query/query';
 import Button from '@/ui/components/button';
 import { FormInput } from '@/ui/components/forms';

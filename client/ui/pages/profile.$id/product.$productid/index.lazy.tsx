@@ -1,3 +1,4 @@
+import { EditProductSchemaType } from '@/react-query/mutations';
 import { getSingleProfileProductFetcher } from '@/react-query/query';
 import Loader from '@/ui/components/loader';
 import ProductsDetailsPageLayout from '@/ui/layouts/ProductsDetailsPageLayout';

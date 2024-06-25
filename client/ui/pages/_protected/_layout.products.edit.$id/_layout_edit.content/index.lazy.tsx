@@ -36,6 +36,15 @@ export const Route = createLazyFileRoute(
   },
 });
 
+interface Review {
+  reviewEdit: boolean;
+  reviewScore: number;
+  tempReviewScore: number;
+  tempSelectReviewScore: number;
+  reviewDescription: string;
+  tempReviewDescription: string;
+}
+
 const ProductEditContentPage = () => {
   const localProductEditContext = useContext(productEditContext);
   const { control, watch, setValue, getValues } = localProductEditContext!;

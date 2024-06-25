@@ -1,3 +1,4 @@
+import { CheckoutFormSchemaType } from '@/react-query/mutations';
 import {
   getProfileProductsFetcher,
   getProfileStatus,

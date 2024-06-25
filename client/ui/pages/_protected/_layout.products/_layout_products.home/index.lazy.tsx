@@ -28,6 +28,11 @@ export const Route = createLazyFileRoute(
   },
 });
 
+export interface ProductsCardContextMenu {
+  active: boolean;
+  activeIdx: number;
+}
+
 const ProductsHomePage = () => {
   const initialData = Route.useLoaderData();
 

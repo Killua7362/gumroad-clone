@@ -11,6 +11,26 @@ import {
 } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 
+export type signInSchemaType = import('zod').z.infer<
+  typeof import('@/forms/schema/auth_schema').signInSchema
+>;
+
+export type signUpSchemaType = import('zod').z.infer<
+  typeof import('@/forms/schema/auth_schema').signUpSchema
+>;
+
+export type EditProductSchemaType = import('zod').z.infer<
+  typeof import('@/forms/schema/edit_product_schema').EditProductSchema
+>;
+
+export type NewProductSchemaType = import('zod').z.infer<
+  typeof import('@/forms/schema/new_product_schema').NewProductSchema
+>;
+
+export type CheckoutFormSchemaType = import('zod').z.infer<
+  typeof import('@/forms/schema/checkout_schema').CheckoutFormSchema
+>;
+
 // adding id to all delete function and modal
 export const getProductDeleter = () => {
   const { mutate, isPending } = useMutation({

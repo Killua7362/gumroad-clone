@@ -1,6 +1,9 @@
 import { currencyTypeOptions } from '@/forms/schema/misc_schema';
 import { NewProductSchema } from '@/forms/schema/new_product_schema';
-import { getProductCreater } from '@/react-query/mutations';
+import {
+  getProductCreater,
+  NewProductSchemaType,
+} from '@/react-query/mutations';
 import Button from '@/ui/components/button';
 import { FormInput } from '@/ui/components/forms';
 import * as Modal from '@/ui/components/modal';

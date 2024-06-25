@@ -1,5 +1,6 @@
 import browserHistory from '@/lib/browser_history';
 import { setLogOut } from '@/react-query/mutations';
+import { SideBarProps } from '@/ui/pages/__root';
 import '@/ui/styles/sidebar.css';
 import {
   LinkProps,

@@ -15,6 +15,13 @@ interface panelProps {
   newTab: boolean;
 }
 
+export interface linkShortcutsSchema {
+  name: string;
+  link: string;
+  absolute: boolean;
+  newTab: boolean;
+}
+
 const getLink = (panelProps: linkShortcutsSchema): string => {
   return `${(panelProps.absolute ? '//' : '') + panelProps.link}`;
 };

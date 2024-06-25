@@ -1,3 +1,4 @@
+import { linkShortcutsSchema } from '@/ui/components/sidebar/link_shortcuts';
 import { atom } from 'recoil';
 
 export const hideToastState = atom({

@@ -1,8 +1,8 @@
 import { signUpSchema } from '@/forms/schema/auth_schema';
-import { setSignUp } from '@/react-query/mutations';
+import { setSignUp, signUpSchemaType } from '@/react-query/mutations';
 import Button from '@/ui/components/button';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createLazyFileRoute, Link } from '@tanstack/react-router';
+import { Link, createLazyFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 

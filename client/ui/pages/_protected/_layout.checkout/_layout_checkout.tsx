@@ -1,6 +1,5 @@
 import Button from '@/ui/components/button';
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
 
 export const Route = createFileRoute(
   '/_protected/_layout/checkout/_layout_checkout'
@@ -15,17 +14,6 @@ export const Route = createFileRoute(
 });
 
 const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
-  const [sortConfig, setSortConfig] = useState<sortConfig>({
-    active: false,
-    byType: 'date',
-    reverse: true,
-  });
-
-  const [searchConfig, setSearchConfig] = useState<searchConfig>({
-    active: false,
-    startsWith: '',
-  });
-
   return (
     <>
       <div className="flex flex-col text-white/90 pb-5 pt-3 sm:pt-10 mr-4 gap-y-6">

@@ -12,6 +12,17 @@ import { useState } from 'react';
 import Bar from '../components/loader/Bar';
 import SharedStore from '../misc/shared-storage';
 
+interface RootContextProps {
+  sidebaractive: boolean;
+}
+
+export interface SideBarProps {
+  sideBarOpen: boolean;
+  windowWidth: number;
+  setSideBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setWindowWidth: React.Dispatch<React.SetStateAction<number>>;
+}
+
 const getSideBarProps = () => {
   const [sideBarOpen, setSideBarOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState<number>(700);

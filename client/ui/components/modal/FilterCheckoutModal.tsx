@@ -1,5 +1,6 @@
 import { hideToastState } from '@/atoms/states';
 import { filterTypeOptions } from '@/forms/schema/misc_schema';
+import { CheckoutFormSchemaType } from '@/react-query/mutations';
 import * as Modal from '@/ui/components/modal';
 import { useState } from 'react';
 import {

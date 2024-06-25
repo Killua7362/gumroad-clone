@@ -1,6 +1,7 @@
 import { getProductDeleter } from '@/react-query/mutations';
 import Button from '@/ui/components/button';
 import * as Modal from '@/ui/components/modal';
+import { ProductsCardContextMenu } from '@/ui/pages/_protected/_layout.products/_layout_products.home/index.lazy';
 
 const DeleteProductModal = ({
   idx,
