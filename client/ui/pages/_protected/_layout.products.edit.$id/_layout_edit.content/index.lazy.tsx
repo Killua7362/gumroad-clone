@@ -58,13 +58,6 @@ const ProductEditContentPage = () => {
 
   const { dirtyFields } = useFormState({ control });
 
-  useEffect(() => {
-    const temp = pages[0]!.content;
-    if (temp !== '') {
-      console.log(JSON.parse(temp));
-    }
-  }, [pages[0]!.content]);
-
   const [reviewOptions, setReviewOptions] = useState<Review>({
     reviewEdit: false,
     reviewScore: 1,

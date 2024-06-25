@@ -71,7 +71,7 @@
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "^5.4.5",
     "use-dynamic-refs": "^1.0.0",
-    "uuid": "^9.0.1",
+    "uuid": "^10.0.0",
     "webpack": "5",
     "webpack-assets-manifest": "5",
     "webpack-cli": "4",

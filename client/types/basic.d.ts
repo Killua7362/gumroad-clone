@@ -62,6 +62,7 @@ interface TileSchema {
   secondary?: TileSchema | string;
   tile?: 'row' | 'col';
   split?: number;
+  id?: string;
 }
 
 interface TileRender {

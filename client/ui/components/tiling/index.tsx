@@ -1,7 +1,7 @@
 import { motion, useAnimationControls } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
-import { getActiveBoxId } from './bounding_box';
+import { addID, getActiveBoxId } from './bounding_box';
 import RecurseTile from './recurse_tile';
 
 const TilingRoot = ({
@@ -17,12 +17,10 @@ const TilingRoot = ({
 
   const widgetRootRef = useRef<HTMLDivElement | null>(null);
 
-  const [tileRootProps, setTileRootProps] = useState<TileRootProps | undefined>(
-    {
-      render: initialRender,
-      schema: initialSchema,
-    }
-  );
+  const [tileRootProps, setTileRootProps] = useState<TileRootProps>({
+    render: initialRender,
+    schema: initialSchema ? addID({ schema: initialSchema }) : initialSchema,
+  });
 
   return (
     <>
@@ -34,9 +32,9 @@ const TilingRoot = ({
           width: widgetPanelOpen ? 'calc(100% - 16rem)' : 'calc(100% - 3rem)',
         }}>
         <RecurseTile
-          render={tileRootProps?.render}
-          schema={tileRootProps?.schema}
+          tileRootProps={tileRootProps}
           initialStyle={{ width: '100%', height: '100%' }}
+          setTileRootProps={setTileRootProps}
         />
       </motion.div>
       <motion.div

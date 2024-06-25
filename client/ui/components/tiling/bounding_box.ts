@@ -1,4 +1,5 @@
 import { Point } from 'framer-motion';
+import { v4 as uuid } from 'uuid';
 
 interface activeBoxId {
   schema: TileSchema;
@@ -96,4 +97,45 @@ export const getActiveBoxId = ({
       }
     }
   }
+};
+
+export const addID = ({ schema }: { schema: TileSchema }): TileSchema => {
+  let newSchema = { ...schema };
+
+  newSchema.id = uuid();
+
+  if (newSchema.primary && typeof newSchema.primary === 'object') {
+    newSchema.primary = addID({ schema: newSchema.primary });
+  }
+
+  if (newSchema.secondary && typeof newSchema.secondary === 'object') {
+    newSchema.secondary = addID({ schema: newSchema.secondary });
+  }
+
+  return newSchema;
+};
+
+export const changeSplit = ({
+  schema,
+  id,
+  split,
+}: {
+  schema: TileSchema;
+  id: string;
+  split: number;
+}): TileSchema => {
+  if (schema.id === id) {
+    schema.split = split;
+    return schema;
+  }
+
+  if (schema.primary && typeof schema.primary === 'object') {
+    schema.primary = changeSplit({ schema: schema.primary, id, split });
+  }
+
+  if (schema.secondary && typeof schema.secondary === 'object') {
+    schema.secondary = changeSplit({ schema: schema.secondary, id, split });
+  }
+
+  return schema;
 };

@@ -13,6 +13,7 @@ const Home = () => {
     B: <div className="h-full w-full bg-white"></div>,
     C: <div className="h-full w-full bg-white"></div>,
     D: <div className="h-full w-full bg-white"></div>,
+    E: <div className="h-full w-full bg-white"></div>,
   };
 
   const initialSchema: TileSchema = {
@@ -21,7 +22,12 @@ const Home = () => {
     primary: {
       split: 40,
       tile: 'row',
-      primary: 'A',
+      primary: {
+        split: 50,
+        tile: 'col',
+        primary: 'A',
+        secondary: 'E',
+      },
       secondary: 'B',
     },
     secondary: {
