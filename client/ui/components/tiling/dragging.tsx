@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { changeSplit } from './bounding_box';
+import { changeSchemaValue } from './bounding_box';
 
 interface isHolding {
   holding: boolean;
@@ -35,10 +35,11 @@ const TileDragging = ({
           setTileRootProps((prev: TileRootProps) => {
             return {
               ...prev,
-              schema: changeSplit({
+              schema: changeSchemaValue({
                 schema: { ...prev.schema },
                 id: schema.id!,
-                split: changeInYSplit,
+                key: 'split',
+                newValue: changeInYSplit,
               }),
             };
           });
@@ -52,10 +53,11 @@ const TileDragging = ({
           setTileRootProps((prev: TileRootProps) => {
             return {
               ...prev,
-              schema: changeSplit({
+              schema: changeSchemaValue({
                 schema: { ...prev.schema },
                 id: schema.id!,
-                split: changeInXSplit,
+                key: 'split',
+                newValue: changeInXSplit,
               }),
             };
           });
@@ -81,7 +83,7 @@ const TileDragging = ({
 
   return (
     <div
-      className={`${schema?.tile === 'row' ? 'h-[0.2rem] w-full cursor-row-resize' : 'h-full w-[0.2rem] cursor-col-resize'} hover:bg-blue-400`}
+      className={`${schema?.tile === 'row' ? 'h-[0.3rem] w-full cursor-row-resize' : 'h-full w-[0.3rem] cursor-col-resize'} hover:bg-blue-400`}
       onMouseDown={(event) => {
         setIsHolding({
           holding: true,

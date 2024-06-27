@@ -9,11 +9,11 @@ export const Route = createLazyFileRoute('/_protected/_layout/home/')({
 
 const Home = () => {
   const initialRender: TileRender = {
-    A: <div className="h-full w-full bg-white"></div>,
-    B: <div className="h-full w-full bg-white"></div>,
-    C: <div className="h-full w-full bg-white"></div>,
-    D: <div className="h-full w-full bg-white"></div>,
-    E: <div className="h-full w-full bg-white"></div>,
+    A: <div className="h-full w-full"></div>,
+    B: <div className="h-full w-full"></div>,
+    C: <div className="h-full w-full"></div>,
+    D: <div className="h-full w-full"></div>,
+    E: <div className="h-full w-full"></div>,
   };
 
   const initialSchema: TileSchema = {

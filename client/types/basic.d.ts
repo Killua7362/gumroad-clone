@@ -59,7 +59,9 @@ interface ReactFormProps<T extends import('react-hook-form').FieldValues> {
 
 interface TileSchema {
   primary?: TileSchema | string;
+  primaryDragging?: boolean;
   secondary?: TileSchema | string;
+  secondaryDraggig?: boolean;
   tile?: 'row' | 'col';
   split?: number;
   id?: string;

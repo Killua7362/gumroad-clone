@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import TileDragging from './dragging';
+import TileCard from './tile_card';
 
 const RecurseTile = ({
   tileRootProps,
@@ -12,28 +13,47 @@ const RecurseTile = ({
 }) => {
   let { render, schema } = { ...tileRootProps };
 
+  const [primaryDragging, setPrimaryDragging] = useState(false);
+  const [secondaryDragging, setSecondaryDragging] = useState(false);
+
   const primaryStyle = {
     width:
-      schema?.secondary && schema?.tile === 'col'
-        ? schema?.split + '%'
-        : '100%',
+      schema?.secondary && !secondaryDragging && schema?.tile === 'col'
+        ? schema?.primary && !primaryDragging
+          ? schema?.split + '%'
+          : '0'
+        : schema?.primary
+          ? '100%'
+          : '0',
     height:
-      schema?.secondary && schema?.tile === 'row'
-        ? schema?.split + '%'
-        : '100%',
-    border: '0.1px solid rgba(255,255,255,0.3)',
+      schema?.secondary && !secondaryDragging && schema?.tile === 'row'
+        ? schema?.primary && !primaryDragging
+          ? schema?.split + '%'
+          : '0'
+        : schema?.primary
+          ? '100%'
+          : '0',
+    border: '1px solid white',
   };
 
   const secondaryStyle = {
     width:
-      schema?.secondary && schema?.tile === 'col'
-        ? 100 - (schema?.split || 0) + '%'
-        : '100%',
+      schema?.primary && !primaryDragging && schema?.tile === 'col'
+        ? schema.secondary && !secondaryDragging
+          ? 100 - (schema?.split || 0) + '%'
+          : '0'
+        : schema?.secondary
+          ? '100%'
+          : '0',
     height:
-      schema?.secondary && schema?.tile === 'row'
-        ? 100 - (schema?.split || 0) + '%'
-        : '100%',
-    border: '0.1px solid rgba(255,255,255,0.3)',
+      schema?.primary && !primaryDragging && schema?.tile === 'row'
+        ? schema.secondary && !secondaryDragging
+          ? 100 - (schema?.split || 0) + '%'
+          : '0'
+        : schema?.secondary
+          ? '100%'
+          : '0',
+    border: '1px solid white',
   };
 
   const [recurseTileRef, setRecurseTileRef] = useState<HTMLDivElement>();
@@ -49,7 +69,12 @@ const RecurseTile = ({
         newRef && setRecurseTileRef(newRef);
       }}>
       {typeof schema?.primary === 'string' ? (
-        <div style={primaryStyle}>{render![schema.primary]}</div>
+        <TileCard
+          primaryStyle={primaryStyle}
+          renderChild={render![schema.primary]}
+          name={schema.primary}
+          setDragging={setPrimaryDragging}
+        />
       ) : (
         <>
           {typeof schema?.primary === 'object' ? (
@@ -69,7 +94,12 @@ const RecurseTile = ({
         />
       )}
       {typeof schema?.secondary === 'string' ? (
-        <div style={secondaryStyle}>{render![schema.secondary]}</div>
+        <TileCard
+          primaryStyle={secondaryStyle}
+          renderChild={render![schema.secondary]}
+          name={schema.secondary}
+          setDragging={setSecondaryDragging}
+        />
       ) : (
         <>
           {typeof schema?.secondary === 'object' ? (

@@ -103,6 +103,8 @@ export const addID = ({ schema }: { schema: TileSchema }): TileSchema => {
   let newSchema = { ...schema };
 
   newSchema.id = uuid();
+  newSchema.primaryDragging = false;
+  newSchema.secondaryDraggig = false;
 
   if (newSchema.primary && typeof newSchema.primary === 'object') {
     newSchema.primary = addID({ schema: newSchema.primary });
@@ -115,26 +117,38 @@ export const addID = ({ schema }: { schema: TileSchema }): TileSchema => {
   return newSchema;
 };
 
-export const changeSplit = ({
+export const changeSchemaValue = ({
   schema,
   id,
-  split,
+  newValue,
+  key,
 }: {
   schema: TileSchema;
   id: string;
-  split: number;
+  newValue: any;
+  key: string;
 }): TileSchema => {
   if (schema.id === id) {
-    schema.split = split;
+    (schema as any)[key] = newValue;
     return schema;
   }
 
   if (schema.primary && typeof schema.primary === 'object') {
-    schema.primary = changeSplit({ schema: schema.primary, id, split });
+    schema.primary = changeSchemaValue({
+      schema: schema.primary,
+      id,
+      newValue,
+      key,
+    });
   }
 
   if (schema.secondary && typeof schema.secondary === 'object') {
-    schema.secondary = changeSplit({ schema: schema.secondary, id, split });
+    schema.secondary = changeSchemaValue({
+      schema: schema.secondary,
+      id,
+      newValue,
+      key,
+    });
   }
 
   return schema;

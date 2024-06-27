@@ -1,5 +1,7 @@
 import { motion, useAnimationControls } from 'framer-motion';
 import { useRef, useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { IoArrowBack } from 'react-icons/io5';
 import { addID, getActiveBoxId } from './bounding_box';
 import RecurseTile from './recurse_tile';
@@ -31,11 +33,13 @@ const TilingRoot = ({
           height: 'calc(100% - 2rem)',
           width: widgetPanelOpen ? 'calc(100% - 16rem)' : 'calc(100% - 3rem)',
         }}>
-        <RecurseTile
-          tileRootProps={tileRootProps}
-          initialStyle={{ width: '100%', height: '100%' }}
-          setTileRootProps={setTileRootProps}
-        />
+        <DndProvider backend={HTML5Backend}>
+          <RecurseTile
+            tileRootProps={tileRootProps}
+            initialStyle={{ width: '100%', height: '100%' }}
+            setTileRootProps={setTileRootProps}
+          />
+        </DndProvider>
       </motion.div>
       <motion.div
         layout
@@ -90,6 +94,9 @@ const TilingRoot = ({
             className="h-[3rem] border-white/30 border-[0.1px] bg-background">
             testing
           </motion.div>
+          <div className="h-[3rem] border-white/30 border-[0.1px] bg-background">
+            testing
+          </div>
         </div>
       </motion.div>
     </>
