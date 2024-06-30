@@ -1,104 +1,56 @@
-import { motion, useAnimationControls } from 'framer-motion';
-import { useRef, useState } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { IoArrowBack } from 'react-icons/io5';
-import { addID, getActiveBoxId } from './bounding_box';
+import { tileRootSchema, tileRootSchemaPopulator } from '@/atoms/states';
+import { motion } from 'framer-motion';
+import { useDrop } from 'react-dnd';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { v4 as uuid } from 'uuid';
 import RecurseTile from './recurse_tile';
+import WidgetBar from './widget';
 
-const TilingRoot = ({
-  initialRender,
-  initialSchema,
-}: {
-  initialSchema?: TileSchema;
-  initialRender?: TileRender;
-}) => {
-  const [widgetPanelOpen, setWidgetPanelOpen] = useState(false);
+const TilingRoot = () => {
+  const tileSchema = useRecoilValue(tileRootSchema);
 
-  const animateControls = useAnimationControls();
+  const setTileSchema = useSetRecoilState(tileRootSchemaPopulator);
 
-  const widgetRootRef = useRef<HTMLDivElement | null>(null);
-
-  const [tileRootProps, setTileRootProps] = useState<TileRootProps>({
-    render: initialRender,
-    schema: initialSchema ? addID({ schema: initialSchema }) : initialSchema,
+  const [{ isOver }, drop] = useDrop({
+    accept: 'card',
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+    drop(item: { name: string; schemaID?: string }, monitor) {
+      const didDrop = monitor.didDrop();
+      const draggedName = item.name;
+      if (
+        !(
+          tileSchema.hasOwnProperty('primary') ||
+          tileSchema.hasOwnProperty('secondary')
+        )
+      ) {
+        setTileSchema({
+          primary: draggedName,
+          tile: 'row',
+          split: 100,
+          id: uuid(),
+        });
+      }
+    },
   });
 
   return (
     <>
       <motion.div
         layout
-        ref={widgetRootRef}
+        ref={drop}
+        className={`${isOver && !(!!tileSchema?.primary || !!tileSchema?.secondary) && 'bg-sky-400/30 border-2 border-sky-400'} `}
         style={{
           height: 'calc(100% - 2rem)',
-          width: widgetPanelOpen ? 'calc(100% - 16rem)' : 'calc(100% - 3rem)',
+          width: 'calc(100% - 7rem)',
         }}>
-        <DndProvider backend={HTML5Backend}>
-          <RecurseTile
-            tileRootProps={tileRootProps}
-            initialStyle={{ width: '100%', height: '100%' }}
-            setTileRootProps={setTileRootProps}
-          />
-        </DndProvider>
+        <RecurseTile
+          schema={tileSchema}
+          initialStyle={{ width: '100%', height: '100%' }}
+        />
       </motion.div>
-      <motion.div
-        layout
-        className="absolute h-full flex z-50"
-        style={{
-          right: widgetPanelOpen ? '0' : '-15rem',
-        }}>
-        <div
-          className={`border-white/30 border-[0.1px] ${widgetPanelOpen ? 'border-l-0 rotate-180' : 'border-r-0'} h-fit bg-background mt-10 cursor-pointer`}
-          onClick={() => {
-            setWidgetPanelOpen(!widgetPanelOpen);
-          }}>
-          <IoArrowBack className="m-3" />
-        </div>
-        <div className="border-white/30 border-[0.1px] w-[15rem] h-full bg-background p-2">
-          <motion.div
-            drag
-            onPointerUp={() => {
-              animateControls.set({
-                x: 0,
-                y: 0,
-              });
-            }}
-            onDragEnd={(_, info) => {
-              //started dropping divs here
-            }}
-            onDrag={(_, info) => {
-              if (widgetRootRef.current) {
-                const { top, bottom, left, right } =
-                  widgetRootRef.current.getBoundingClientRect();
-                if (
-                  top <= info.point.y &&
-                  info.point.y <= bottom &&
-                  left <= info.point.x &&
-                  info.point.x <= right
-                ) {
-                  //in zone
-                  console.log(
-                    getActiveBoxId({
-                      schema: tileRootProps?.schema!,
-                      point: info.point,
-                      top,
-                      left,
-                      right,
-                      bottom,
-                    })
-                  );
-                }
-              }
-            }}
-            animate={animateControls}
-            className="h-[3rem] border-white/30 border-[0.1px] bg-background">
-            testing
-          </motion.div>
-          <div className="h-[3rem] border-white/30 border-[0.1px] bg-background">
-            testing
-          </div>
-        </div>
-      </motion.div>
+      <WidgetBar />
     </>
   );
 };

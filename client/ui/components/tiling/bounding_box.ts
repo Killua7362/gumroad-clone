@@ -1,103 +1,4 @@
-import { Point } from 'framer-motion';
 import { v4 as uuid } from 'uuid';
-
-interface activeBoxId {
-  schema: TileSchema;
-  point: Point;
-  left: number;
-  right: number;
-  bottom: number;
-  top: number;
-}
-
-export const getActiveBoxId = ({
-  schema,
-  point,
-  left,
-  right,
-  top,
-  bottom,
-}: activeBoxId): string => {
-  const width = right - left;
-  const height = bottom - top;
-
-  const leftContainerWidth = width * (schema.split! / 100);
-  const rightContainerWidth = width - leftContainerWidth;
-  const leftContainerHeight = height * (schema.split! / 100);
-  const rightContainerHeight = height - leftContainerHeight;
-
-  const resolveSubSchema = (subSchema: TileSchema | string): string =>
-    typeof subSchema === 'string'
-      ? subSchema
-      : getActiveBoxId({ schema: subSchema, point, left, right, top, bottom });
-
-  if (
-    typeof schema.secondary === 'undefined' ||
-    typeof schema.primary === 'undefined'
-  ) {
-    return typeof schema.secondary === 'undefined'
-      ? resolveSubSchema(schema.primary!)
-      : resolveSubSchema(schema.secondary);
-  } else {
-    if (schema.tile === 'row') {
-      if (point.y < top + leftContainerHeight) {
-        if (typeof schema.primary === 'string') {
-          return schema.primary;
-        } else {
-          return getActiveBoxId({
-            schema: schema.primary,
-            point,
-            left,
-            right,
-            top,
-            bottom: top + leftContainerHeight,
-          });
-        }
-      } else {
-        if (typeof schema.secondary === 'string') {
-          return schema.secondary;
-        } else {
-          return getActiveBoxId({
-            schema: schema.secondary,
-            point,
-            left,
-            right,
-            top: top + leftContainerHeight,
-            bottom,
-          });
-        }
-      }
-    } else {
-      if (point.x < left + leftContainerWidth) {
-        if (typeof schema.primary === 'string') {
-          return schema.primary;
-        } else {
-          return getActiveBoxId({
-            schema: schema.primary,
-            point,
-            left,
-            right: left + leftContainerWidth,
-            top,
-            bottom,
-          });
-        }
-      } else {
-        if (typeof schema.secondary === 'string') {
-          return schema.secondary;
-        } else {
-          return getActiveBoxId({
-            schema: schema.secondary,
-            point,
-            left: left + leftContainerWidth,
-            right,
-            top,
-            bottom,
-          });
-        }
-      }
-    }
-  }
-};
 
 export const addID = ({ schema }: { schema: TileSchema }): TileSchema => {
   let newSchema = { ...schema };
@@ -135,7 +36,7 @@ export const changeSchemaValue = ({
 
   if (schema.primary && typeof schema.primary === 'object') {
     schema.primary = changeSchemaValue({
-      schema: schema.primary,
+      schema: { ...schema.primary },
       id,
       newValue,
       key,
@@ -144,7 +45,7 @@ export const changeSchemaValue = ({
 
   if (schema.secondary && typeof schema.secondary === 'object') {
     schema.secondary = changeSchemaValue({
-      schema: schema.secondary,
+      schema: { ...schema.secondary },
       id,
       newValue,
       key,
@@ -158,14 +59,20 @@ interface deleteSchema {
   schema: TileSchema;
   schemaID: string;
   name: string;
+  replace?: boolean;
 }
 
 export const deleteSchema = ({
   schema,
   schemaID,
   name,
+  replace = false,
 }: deleteSchema): TileSchema => {
-  if (typeof schema.primary === 'object' && schema.primary.id === schemaID) {
+  if (
+    typeof schema.primary === 'object' &&
+    schema.primary.id === schemaID &&
+    !replace
+  ) {
     if (!(!!schema.primary.primary && !!schema.primary.secondary)) {
       delete schema['primary'];
     } else {
@@ -185,7 +92,8 @@ export const deleteSchema = ({
 
   if (
     typeof schema.secondary === 'object' &&
-    schema.secondary.id === schemaID
+    schema.secondary.id === schemaID &&
+    !replace
   ) {
     if (!(!!schema.secondary.primary && !!schema.secondary.secondary)) {
       delete schema['secondary'];
@@ -208,24 +116,88 @@ export const deleteSchema = ({
   if (schema.id === schemaID) {
     if (schema.primary && schema.primary === name) {
       delete schema['primary'];
+      if (
+        schema.secondary &&
+        typeof schema.secondary === 'object' &&
+        !replace
+      ) {
+        return schema['secondary'];
+      }
     } else if (schema.secondary && schema.secondary === name) {
       delete schema['secondary'];
+      if (schema.primary && typeof schema.primary === 'object' && !replace) {
+        return schema['primary'];
+      }
     }
 
     return schema;
   }
 
   if (typeof schema.primary === 'object') {
-    schema.primary = deleteSchema({ schema: schema.primary, schemaID, name });
+    schema.primary = deleteSchema({
+      schema: { ...schema.primary },
+      schemaID,
+      name,
+      replace,
+    });
   }
   if (typeof schema.secondary === 'object') {
     schema.secondary = deleteSchema({
-      schema: schema.secondary,
+      schema: { ...schema.secondary },
       schemaID,
       name,
+      replace,
     });
   }
   return schema;
+};
+
+export const getSplit = ({
+  splitID,
+  draggedName,
+  droppedName,
+}: {
+  splitID: string;
+  draggedName: string;
+  droppedName: string;
+}): TileSchema => {
+  switch (splitID) {
+    case 'left':
+      return {
+        primary: draggedName,
+        secondary: droppedName,
+        tile: 'col',
+        split: 50,
+        id: uuid(),
+      };
+      break;
+    case 'right':
+      return {
+        primary: droppedName,
+        secondary: draggedName,
+        tile: 'col',
+        split: 50,
+        id: uuid(),
+      };
+      break;
+    case 'top':
+      return {
+        primary: draggedName,
+        secondary: droppedName,
+        tile: 'row',
+        split: 50,
+        id: uuid(),
+      };
+      break;
+    default:
+      return {
+        primary: droppedName,
+        secondary: draggedName,
+        tile: 'row',
+        split: 50,
+        id: uuid(),
+      };
+  }
 };
 
 interface createNewSplit {
@@ -234,78 +206,73 @@ interface createNewSplit {
   draggedName: string;
   droppedName: string;
   schemaID: string;
+  replace?: boolean;
 }
+
 export const createNewSplit = ({
   schema,
   splitID,
   draggedName,
   droppedName,
   schemaID,
+  replace = false,
 }: createNewSplit): TileSchema => {
   if (schema.id === schemaID) {
-    let tempSchema: TileSchema;
-    switch (splitID) {
-      case 'left':
-        tempSchema = {
-          primary: draggedName,
-          secondary: droppedName,
-          tile: 'col',
-          split: 50,
-          id: uuid(),
-        };
-        break;
-      case 'right':
-        tempSchema = {
-          primary: droppedName,
-          secondary: draggedName,
-          tile: 'col',
-          split: 50,
-          id: uuid(),
-        };
-        break;
-      case 'top':
-        tempSchema = {
-          primary: draggedName,
-          secondary: droppedName,
-          tile: 'row',
-          split: 50,
-          id: uuid(),
-        };
-        break;
-      default:
-        tempSchema = {
-          primary: droppedName,
-          secondary: draggedName,
-          tile: 'row',
-          split: 50,
-          id: uuid(),
-        };
-    }
     if (schema?.primary && schema?.primary === droppedName) {
-      schema.primary = tempSchema;
+      schema.primary = getSplit({ splitID, draggedName, droppedName });
     } else if (schema?.secondary && schema?.secondary === droppedName) {
-      schema.secondary = tempSchema;
+      schema.secondary = getSplit({ splitID, draggedName, droppedName });
     }
-    return schema;
   }
 
   if (typeof schema.primary === 'object') {
-    schema.primary = createNewSplit({
-      schema: schema.primary,
-      splitID,
-      draggedName,
-      droppedName,
-      schemaID,
-    });
+    if (schema.primary.id === schemaID && replace) {
+      schema.primary = getSplit({ splitID, draggedName, droppedName });
+    } else {
+      schema.primary = createNewSplit({
+        schema: { ...schema.primary },
+        splitID,
+        draggedName,
+        droppedName,
+        schemaID,
+        replace,
+      });
+    }
   }
   if (typeof schema.secondary === 'object') {
-    schema.secondary = createNewSplit({
-      schema: schema.secondary,
-      splitID,
-      draggedName,
-      droppedName,
-      schemaID,
-    });
+    if (schema.secondary.id === schemaID && replace) {
+      schema.secondary = getSplit({ splitID, draggedName, droppedName });
+    } else {
+      schema.secondary = createNewSplit({
+        schema: { ...schema.secondary },
+        splitID,
+        draggedName,
+        droppedName,
+        schemaID,
+        replace,
+      });
+    }
   }
   return schema;
+};
+
+export const getAllRenderID = ({
+  schema,
+  res = new Set<string>(),
+}: {
+  schema: TileSchema;
+  res?: Set<string>;
+}): Set<string> => {
+  if (typeof schema.primary === 'string') {
+    res.add(schema.primary);
+  } else if (!!schema.primary && typeof schema.primary === 'object') {
+    getAllRenderID({ schema: schema.primary, res });
+  }
+
+  if (typeof schema.secondary === 'string') {
+    res.add(schema.secondary);
+  } else if (!!schema.secondary && typeof schema.secondary === 'object') {
+    getAllRenderID({ schema: schema.secondary, res });
+  }
+  return res;
 };

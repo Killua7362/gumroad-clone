@@ -1,4 +1,6 @@
+import { tileRootSchema, tileRootSchemaPopulator } from '@/atoms/states';
 import { useEffect, useState } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { changeSchemaValue } from './bounding_box';
 
 interface isHolding {
@@ -10,17 +12,18 @@ interface isHolding {
 const TileDragging = ({
   schema,
   parentBoundingBox,
-  setTileRootProps,
 }: {
   schema: TileSchema;
   parentBoundingBox: DOMRect;
-  setTileRootProps: React.Dispatch<React.SetStateAction<TileRootProps>>;
 }) => {
   const [isHolding, setIsHolding] = useState<isHolding>({
     holding: false,
     originX: 0,
     originY: 0,
   });
+
+  const tileSchema = useRecoilValue(tileRootSchema);
+  const setTileSchema = useSetRecoilState(tileRootSchemaPopulator);
 
   useEffect(() => {
     const handleMouseMove = (event: any) => {
@@ -32,17 +35,14 @@ const TileDragging = ({
           const cursorY = isHolding.originY - event.clientY;
           const changeInYSplit =
             (100 * (topHeightSplit - cursorY)) / parentBoundingBox.height;
-          setTileRootProps((prev: TileRootProps) => {
-            return {
-              ...prev,
-              schema: changeSchemaValue({
-                schema: { ...prev.schema },
-                id: schema.id!,
-                key: 'split',
-                newValue: changeInYSplit,
-              }),
-            };
-          });
+          setTileSchema(
+            changeSchemaValue({
+              schema: { ...tileSchema },
+              id: schema.id!,
+              key: 'split',
+              newValue: changeInYSplit,
+            })
+          );
         } else {
           //change in x and width
           const leftWidthSplit =
@@ -50,17 +50,14 @@ const TileDragging = ({
           const cursorX = isHolding.originX - event.clientX;
           const changeInXSplit =
             (100 * (leftWidthSplit - cursorX)) / parentBoundingBox.width;
-          setTileRootProps((prev: TileRootProps) => {
-            return {
-              ...prev,
-              schema: changeSchemaValue({
-                schema: { ...prev.schema },
-                id: schema.id!,
-                key: 'split',
-                newValue: changeInXSplit,
-              }),
-            };
-          });
+          setTileSchema(
+            changeSchemaValue({
+              schema: { ...tileSchema },
+              id: schema.id!,
+              key: 'split',
+              newValue: changeInXSplit,
+            })
+          );
         }
       }
     };

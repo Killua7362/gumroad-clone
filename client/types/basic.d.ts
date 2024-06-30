@@ -64,17 +64,3 @@ interface TileSchema {
   split?: number;
   id?: string;
 }
-
-interface TileRender {
-  [id: string]: React.ReactNode;
-}
-
-interface TileInitialStyle {
-  width: string;
-  height: string;
-}
-
-interface TileRootProps {
-  render: TileRender | undefined;
-  schema: TileSchema | undefined;
-}

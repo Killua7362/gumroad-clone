@@ -1,64 +1,41 @@
-import { useEffect } from 'react';
+import { tileRootSchema, tileRootSchemaPopulator } from '@/atoms/states';
+import { renderNodeContext } from '@/ui/pages/_protected/_layout.home.index.lazy';
+import { useContext, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { deleteSchema } from './bounding_box';
+import * as portals from 'react-reverse-portal';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import DraggingArea from './dragging_area';
+import TileBar from './tile_bar';
 
 const TileCard = ({
   primaryStyle,
-  renderChild,
   setDragging,
   name,
   schemaID,
-  setTileRootProps,
 }: {
   primaryStyle: React.CSSProperties;
-  renderChild: React.ReactNode;
   name: string;
   setDragging: React.Dispatch<React.SetStateAction<boolean>>;
   schemaID: string;
-  setTileRootProps: React.Dispatch<React.SetStateAction<TileRootProps>>;
 }) => {
-  const [{ isDragging }, drag, preview] = useDrag(
-    () => ({
-      type: 'card',
-      item: { name },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
-      end: (item, monitor) => {
-        const didDrop = monitor.didDrop();
-        if (didDrop) {
-          setTileRootProps((prev: TileRootProps) => {
-            return {
-              ...prev,
-              schema: deleteSchema({
-                schema: { ...prev.schema },
-                schemaID,
-                name,
-              }),
-            };
-          });
-        }
-      },
-    }),
-    [name]
-  );
+  const renderNode = useContext(renderNodeContext);
+  const tileSchema = useRecoilValue(tileRootSchema);
+  const setTileSchema = useSetRecoilState(tileRootSchemaPopulator);
 
-  const [{ isOver }, drop] = useDrop(
-    () => ({
-      accept: 'card',
-      drop(item: unknown, monitor) {
-        const didDrop = monitor.didDrop();
-        if (didDrop) {
-          return;
-        }
-      },
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-      }),
+  const [{ isDragging }, drag, preview] = useDrag({
+    type: 'card',
+    item: { name, schemaID },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
     }),
-    []
-  );
+  });
+
+  const [{ isOver }, drop] = useDrop({
+    accept: 'card',
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  });
 
   useEffect(() => {
     setDragging(isDragging);
@@ -73,15 +50,9 @@ const TileCard = ({
         }}
         id={name}
         style={{ ...primaryStyle, overflow: 'hidden', position: 'relative' }}>
-        <div className="w-full h-[2.5rem] bg-white cursor-move" ref={drag} />
-        {renderChild}
-        {isOver && (
-          <DraggingArea
-            schemaID={schemaID}
-            name={name}
-            setTileRootProps={setTileRootProps}
-          />
-        )}
+        <TileBar ref={drag} name={name} schemaID={schemaID} />
+        <portals.OutPortal node={renderNode[name].portalNode} />
+        {isOver && <DraggingArea schemaID={schemaID} name={name} />}
       </div>
     )
   );

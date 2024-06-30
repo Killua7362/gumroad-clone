@@ -58,6 +58,7 @@
     "react-live": "^4.1.6",
     "react-live-runner": "^1.0.5",
     "react-on-rails": "13.4.0",
+    "react-reverse-portal": "^2.1.2",
     "react-runner": "^1.0.3",
     "react-select": "^5.8.0",
     "react-select-currency": "^1.0.7",

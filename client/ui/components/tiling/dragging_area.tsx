@@ -1,44 +1,65 @@
+import { tileRootSchema, tileRootSchemaPopulator } from '@/atoms/states';
 import { useDrop } from 'react-dnd';
-import { createNewSplit } from './bounding_box';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { createNewSplit, deleteSchema, getSplit } from './bounding_box';
 
 const DraggingTile = ({
   style,
   id,
   droppedID,
   droppedName,
-  setTileRootProps,
 }: {
   style: React.CSSProperties;
   id: string;
   droppedID: string;
   droppedName: string;
-  setTileRootProps: React.Dispatch<React.SetStateAction<TileRootProps>>;
 }) => {
-  const [{ isOver }, drop] = useDrop(
-    () => ({
-      accept: 'card',
-      drop(item: { name: string }, monitor) {
-        const didDrop = monitor.didDrop();
-        const draggedName = item.name;
-        setTileRootProps((prev: TileRootProps) => {
-          return {
-            ...prev,
-            schema: createNewSplit({
-              schema: { ...prev.schema },
-              splitID: id,
-              draggedName,
-              droppedName,
-              schemaID: droppedID,
-            }),
-          };
+  const tileSchema = useRecoilValue(tileRootSchema);
+  const setTileSchema = useSetRecoilState(tileRootSchemaPopulator);
+
+  const [{ isOver }, drop] = useDrop({
+    accept: 'card',
+    drop(item: { name: string; schemaID?: string }, monitor) {
+      const didDrop = monitor.didDrop();
+      const draggedName = item.name;
+      if (monitor.isOver()) {
+        let tempSchema: TileSchema = { ...tileSchema };
+        if (!!item?.schemaID) {
+          tempSchema = deleteSchema({
+            schema: { ...tempSchema },
+            schemaID: item.schemaID,
+            name: draggedName,
+            replace: droppedID === item.schemaID,
+          });
+        }
+
+        tempSchema = createNewSplit({
+          schema: { ...tempSchema },
+          splitID: id,
+          draggedName,
+          droppedName,
+          schemaID: droppedID,
+          replace: droppedID === item.schemaID,
         });
-      },
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-      }),
+
+        if (!(!!tempSchema?.primary && !!tempSchema?.secondary)) {
+          if (typeof tempSchema?.primary === 'object') {
+            tempSchema = tempSchema.primary;
+          } else if (typeof tempSchema?.secondary === 'object') {
+            tempSchema = tempSchema.secondary;
+          } else {
+            tempSchema = getSplit({ splitID: id, draggedName, droppedName });
+          }
+        }
+
+        setTileSchema(tempSchema);
+      }
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
     }),
-    []
-  );
+  });
+
   return (
     <div className={`absolute z-50 flex`} ref={drop} style={style}>
       <div
@@ -47,7 +68,8 @@ const DraggingTile = ({
           width: '200%',
           height: '200%',
           display: isOver ? 'block' : 'none',
-        }}></div>
+        }}
+      />
     </div>
   );
 };
@@ -55,11 +77,9 @@ const DraggingTile = ({
 const DraggingArea = ({
   schemaID,
   name,
-  setTileRootProps,
 }: {
   schemaID: string;
   name: string;
-  setTileRootProps: React.Dispatch<React.SetStateAction<TileRootProps>>;
 }) => {
   return (
     <>
@@ -74,28 +94,24 @@ const DraggingArea = ({
         }}
         droppedID={schemaID}
         droppedName={name}
-        setTileRootProps={setTileRootProps}
       />
       <DraggingTile
         id="left"
         style={{ height: '100%', width: '25%', bottom: 0 }}
         droppedID={schemaID}
         droppedName={name}
-        setTileRootProps={setTileRootProps}
       />
       <DraggingTile
         id="bottom"
         style={{ height: '25%', width: '100%', bottom: 0, alignItems: 'end' }}
         droppedID={schemaID}
         droppedName={name}
-        setTileRootProps={setTileRootProps}
       />
       <DraggingTile
         id="top"
         style={{ height: '25%', width: '100%', top: 0 }}
         droppedID={schemaID}
         droppedName={name}
-        setTileRootProps={setTileRootProps}
       />
     </>
   );

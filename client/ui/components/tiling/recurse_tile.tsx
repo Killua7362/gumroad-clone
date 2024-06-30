@@ -1,17 +1,21 @@
-import { useState } from 'react';
+import { renderNodeContext } from '@/ui/pages/_protected/_layout.home.index.lazy';
+import { useContext, useState } from 'react';
 import TileDragging from './dragging';
 import TileCard from './tile_card';
 
+interface TileInitialStyle {
+  width: string;
+  height: string;
+}
+
 const RecurseTile = ({
-  tileRootProps,
+  schema,
   initialStyle,
-  setTileRootProps,
 }: {
-  tileRootProps: TileRootProps;
+  schema: TileSchema;
   initialStyle: TileInitialStyle;
-  setTileRootProps: React.Dispatch<React.SetStateAction<TileRootProps>>;
 }) => {
-  let { render, schema } = { ...tileRootProps };
+  const renderNode = useContext(renderNodeContext);
 
   const [primaryDragging, setPrimaryDragging] = useState(false);
   const [secondaryDragging, setSecondaryDragging] = useState(false);
@@ -69,22 +73,20 @@ const RecurseTile = ({
         ref={(newRef) => {
           newRef && setRecurseTileRef(newRef);
         }}>
-        {typeof schema?.primary === 'string' ? (
+        {typeof schema?.primary === 'string' &&
+        schema?.primary in renderNode! ? (
           <TileCard
             primaryStyle={primaryStyle}
-            renderChild={render![schema.primary]}
             name={schema.primary}
             setDragging={setPrimaryDragging}
             schemaID={schema.id!}
-            setTileRootProps={setTileRootProps}
           />
         ) : (
           <>
             {typeof schema?.primary === 'object' ? (
               <RecurseTile
-                tileRootProps={{ render, schema: { ...schema.primary } }}
+                schema={schema.primary}
                 initialStyle={primaryStyle}
-                setTileRootProps={setTileRootProps}
               />
             ) : null}
           </>
@@ -92,26 +94,23 @@ const RecurseTile = ({
         {recurseTileRef && !!schema?.primary && !!schema?.secondary && (
           <TileDragging
             schema={schema!}
-            setTileRootProps={setTileRootProps}
             parentBoundingBox={recurseTileRef.getBoundingClientRect()}
           />
         )}
-        {typeof schema?.secondary === 'string' ? (
+        {typeof schema?.secondary === 'string' &&
+        schema?.secondary in renderNode! ? (
           <TileCard
             primaryStyle={secondaryStyle}
-            renderChild={render![schema.secondary]}
             name={schema.secondary}
             setDragging={setSecondaryDragging}
-            setTileRootProps={setTileRootProps}
             schemaID={schema.id!}
           />
         ) : (
           <>
             {typeof schema?.secondary === 'object' ? (
               <RecurseTile
-                tileRootProps={{ render, schema: { ...schema.secondary } }}
+                schema={schema.secondary}
                 initialStyle={secondaryStyle}
-                setTileRootProps={setTileRootProps}
               />
             ) : null}
           </>
