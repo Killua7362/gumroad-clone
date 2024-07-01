@@ -1,15 +1,15 @@
-import { tileRootSchema, tileRootSchemaPopulator } from '@/atoms/states';
+import { tileRootSchema, widgetBarItems } from '@/atoms/states';
 import { motion } from 'framer-motion';
 import { useDrop } from 'react-dnd';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { v4 as uuid } from 'uuid';
 import RecurseTile from './recurse_tile';
 import WidgetBar from './widget';
 
 const TilingRoot = () => {
-  const tileSchema = useRecoilValue(tileRootSchema);
-
-  const setTileSchema = useSetRecoilState(tileRootSchemaPopulator);
+  const [tileSchema, setTileSchema] = useRecoilState(tileRootSchema);
+  const [widgetItems, setWidgetItems] =
+    useRecoilState<string[]>(widgetBarItems);
 
   const [{ isOver }, drop] = useDrop({
     accept: 'card',
@@ -19,17 +19,22 @@ const TilingRoot = () => {
     drop(item: { name: string; schemaID?: string }, monitor) {
       const didDrop = monitor.didDrop();
       const draggedName = item.name;
+      setWidgetItems(() => {
+        return widgetItems.filter((e) => e !== draggedName);
+      });
       if (
         !(
           tileSchema.hasOwnProperty('primary') ||
           tileSchema.hasOwnProperty('secondary')
         )
       ) {
-        setTileSchema({
-          primary: draggedName,
-          tile: 'row',
-          split: 100,
-          id: uuid(),
+        setTileSchema(() => {
+          return {
+            primary: draggedName,
+            tile: 'row',
+            split: 100,
+            id: uuid(),
+          };
         });
       }
     },

@@ -1,9 +1,7 @@
-import { tileRootSchema, tileRootSchemaPopulator } from '@/atoms/states';
 import { renderNodeContext } from '@/ui/pages/_protected/_layout.home.index.lazy';
 import { useContext, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import * as portals from 'react-reverse-portal';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import DraggingArea from './dragging_area';
 import TileBar from './tile_bar';
 
@@ -19,8 +17,6 @@ const TileCard = ({
   schemaID: string;
 }) => {
   const renderNode = useContext(renderNodeContext);
-  const tileSchema = useRecoilValue(tileRootSchema);
-  const setTileSchema = useSetRecoilState(tileRootSchemaPopulator);
 
   const [{ isDragging }, drag, preview] = useDrag({
     type: 'card',

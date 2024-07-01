@@ -1,7 +1,7 @@
-import { tileRootSchema, tileRootSchemaPopulator } from '@/atoms/states';
+import { tileRootSchema } from '@/atoms/states';
 import { renderNodeContext } from '@/ui/pages/_protected/_layout.home.index.lazy';
 import React, { useContext } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { deleteSchema } from './bounding_box';
 
 interface TileBar {
@@ -12,8 +12,7 @@ const TileBar = React.forwardRef<HTMLDivElement, TileBar>((props, ref) => {
   const { name, schemaID } = props;
 
   const renderNode = useContext(renderNodeContext);
-  const tileSchema = useRecoilValue(tileRootSchema);
-  const setTileSchema = useSetRecoilState(tileRootSchemaPopulator);
+  const [tileSchema, setTileSchema] = useRecoilState(tileRootSchema);
 
   return (
     <div
@@ -24,14 +23,14 @@ const TileBar = React.forwardRef<HTMLDivElement, TileBar>((props, ref) => {
         className="rounded-full bg-black h-4 w-4 text-white p-1 text-sm cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
-          setTileSchema(
-            deleteSchema({
+          setTileSchema(() => {
+            return deleteSchema({
               schema: { ...tileSchema },
               schemaID,
               name,
               replace: false,
-            })
-          );
+            });
+          });
         }}></div>
     </div>
   );

@@ -1,6 +1,6 @@
-import { tileRootSchema, tileRootSchemaPopulator } from '@/atoms/states';
+import { tileRootSchema, widgetBarItems } from '@/atoms/states';
 import { useDrop } from 'react-dnd';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { createNewSplit, deleteSchema, getSplit } from './bounding_box';
 
 const DraggingTile = ({
@@ -14,8 +14,9 @@ const DraggingTile = ({
   droppedID: string;
   droppedName: string;
 }) => {
-  const tileSchema = useRecoilValue(tileRootSchema);
-  const setTileSchema = useSetRecoilState(tileRootSchemaPopulator);
+  const [tileSchema, setTileSchema] = useRecoilState(tileRootSchema);
+  const [widgetItems, setWidgetItems] =
+    useRecoilState<string[]>(widgetBarItems);
 
   const [{ isOver }, drop] = useDrop({
     accept: 'card',
@@ -30,6 +31,10 @@ const DraggingTile = ({
             schemaID: item.schemaID,
             name: draggedName,
             replace: droppedID === item.schemaID,
+          });
+        } else {
+          setWidgetItems(() => {
+            return widgetItems.filter((e) => e !== draggedName);
           });
         }
 
@@ -52,7 +57,9 @@ const DraggingTile = ({
           }
         }
 
-        setTileSchema(tempSchema);
+        setTileSchema(() => {
+          return tempSchema;
+        });
       }
     },
     collect: (monitor) => ({

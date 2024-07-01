@@ -1,5 +1,8 @@
 import { linkShortcutsSchema } from '@/ui/components/sidebar/link_shortcuts';
-import { atom, selector } from 'recoil';
+import { atom } from 'recoil';
+import { recoilPersist } from 'recoil-persist';
+
+const { persistAtom } = recoilPersist();
 
 export const hideToastState = atom({
   key: 'hideToastState',
@@ -14,27 +17,14 @@ export const sidebarShortcutLinks = atom({
   default: [] as linkShortcutsSchema[],
 });
 
-export const tileRootSchemaPopulator = selector({
-  key: 'tileRootSchemaPopulator',
-  get: ({ get }) => {
-    const defaultSchema: TileSchema = {};
-    const tilingSchema: TileSchema =
-      JSON.parse(localStorage.getItem('tiling_schema') || '{}') ??
-      defaultSchema;
-    return tilingSchema;
-  },
-  set: ({ get, set }, tilingSchema: TileSchema) => {
-    set(tileRootSchema, tilingSchema);
-    localStorage.setItem('tiling_schema', JSON.stringify(tilingSchema));
-  },
-});
-
 export const tileRootSchema = atom({
   key: 'TileRootSchema',
-  default: tileRootSchemaPopulator,
+  default: {} as TileSchema,
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const widgetBarItems = atom({
   key: 'widgetBarItems',
   default: [] as string[],
+  effects_UNSTABLE: [persistAtom],
 });

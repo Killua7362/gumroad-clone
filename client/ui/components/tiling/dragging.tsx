@@ -1,6 +1,6 @@
-import { tileRootSchema, tileRootSchemaPopulator } from '@/atoms/states';
+import { tileRootSchema } from '@/atoms/states';
 import { useEffect, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { changeSchemaValue } from './bounding_box';
 
 interface isHolding {
@@ -22,8 +22,7 @@ const TileDragging = ({
     originY: 0,
   });
 
-  const tileSchema = useRecoilValue(tileRootSchema);
-  const setTileSchema = useSetRecoilState(tileRootSchemaPopulator);
+  const [tileSchema, setTileSchema] = useRecoilState(tileRootSchema);
 
   useEffect(() => {
     const handleMouseMove = (event: any) => {
@@ -35,14 +34,14 @@ const TileDragging = ({
           const cursorY = isHolding.originY - event.clientY;
           const changeInYSplit =
             (100 * (topHeightSplit - cursorY)) / parentBoundingBox.height;
-          setTileSchema(
-            changeSchemaValue({
+          setTileSchema(() => {
+            return changeSchemaValue({
               schema: { ...tileSchema },
               id: schema.id!,
               key: 'split',
               newValue: changeInYSplit,
-            })
-          );
+            });
+          });
         } else {
           //change in x and width
           const leftWidthSplit =
@@ -50,14 +49,14 @@ const TileDragging = ({
           const cursorX = isHolding.originX - event.clientX;
           const changeInXSplit =
             (100 * (leftWidthSplit - cursorX)) / parentBoundingBox.width;
-          setTileSchema(
-            changeSchemaValue({
+          setTileSchema(() => {
+            return changeSchemaValue({
               schema: { ...tileSchema },
               id: schema.id!,
               key: 'split',
               newValue: changeInXSplit,
-            })
-          );
+            });
+          });
         }
       }
     };

@@ -63,6 +63,7 @@
     "react-select": "^5.8.0",
     "react-select-currency": "^1.0.7",
     "recoil": "^0.7.7",
+    "recoil-persist": "^5.1.0",
     "remirror": "^2.0.39",
     "rxjs": "^7.8.1",
     "shakapacker": "7.2.0",
