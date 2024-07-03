@@ -1,56 +1,72 @@
+import { widgetBarItems } from '@/atoms/states';
 import { renderNodeContext } from '@/ui/pages/_protected/_layout.home.index.lazy';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useContext, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import * as portals from 'react-reverse-portal';
+import { useRecoilState } from 'recoil';
 import DraggingArea from './dragging_area';
 import TileBar from './tile_bar';
 
-const TileCard = ({
-  primaryStyle,
-  setDragging,
-  name,
-  schemaID,
-}: {
-  primaryStyle: React.CSSProperties;
-  name: string;
-  setDragging: React.Dispatch<React.SetStateAction<boolean>>;
-  schemaID: string;
-}) => {
-  const renderNode = useContext(renderNodeContext);
+interface TileCard {
+    primaryStyle: React.CSSProperties;
+    name: string;
+    setDragging: React.Dispatch<React.SetStateAction<boolean>>;
+    schemaID: string;
+}
 
-  const [{ isDragging }, drag, preview] = useDrag({
-    type: 'card',
-    item: { name, schemaID },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
+const TileCard = ({ primaryStyle, setDragging, name, schemaID }: TileCard) => {
+    const renderNode = useContext(renderNodeContext);
 
-  const [{ isOver }, drop] = useDrop({
-    accept: 'card',
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
-  });
+    const [widgetItems, setWidgetItems] =
+        useRecoilState<string[]>(widgetBarItems);
 
-  useEffect(() => {
-    setDragging(isDragging);
-  }, [isDragging]);
+    const [{ isDragging }, drag, preview] = useDrag({
+        type: 'card',
+        item: { name, schemaID },
+        collect: (monitor) => ({
+            isDragging: monitor.isDragging(),
+        }),
+    });
 
-  return (
-    !isDragging && (
-      <div
-        ref={(newRef) => {
-          preview(newRef);
-          drop(newRef);
-        }}
-        id={name}
-        style={{ ...primaryStyle, overflow: 'hidden', position: 'relative' }}>
-        <TileBar ref={drag} name={name} schemaID={schemaID} />
-        <portals.OutPortal node={renderNode[name].portalNode} />
-        {isOver && <DraggingArea schemaID={schemaID} name={name} />}
-      </div>
-    )
-  );
+    const [{ isOver }, drop] = useDrop({
+        accept: 'card',
+        collect: (monitor) => ({
+            isOver: monitor.isOver(),
+        }),
+    });
+
+    useEffect(() => {
+        setDragging(isDragging);
+    }, [isDragging]);
+
+    return (
+        <AnimatePresence>
+            {!isDragging && (
+                <motion.div
+                    layout
+                    transition={{ duration: 0.1 }}
+                    ref={(newRef) => {
+                        preview(newRef);
+                        drop(newRef);
+                    }}
+                    id={name}
+                    style={{
+                        ...primaryStyle,
+                        overflow: 'hidden',
+                        position: 'relative',
+                    }}
+                    className="rounded-md">
+                    <TileBar ref={drag} name={name} schemaID={schemaID} />
+                    <portals.OutPortal node={renderNode[name].portalNode} />
+                    <AnimatePresence>
+                        {isOver && (
+                            <DraggingArea schemaID={schemaID} name={name} />
+                        )}
+                    </AnimatePresence>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
 };
 export default TileCard;
