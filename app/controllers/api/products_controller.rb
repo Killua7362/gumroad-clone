@@ -51,27 +51,61 @@ module Api
             render json: { error: 'Cannot go live because collaborators are yet to approve' }, status: 404 and return
           end
 
-          thumbID = uploadImage('thumbimageSource', "(#{product.user_id}_#{product.id}_thumbnail)",
-                                "#{product.folder_id}")
-          coverID = uploadImage('coverimageSource', "(#{product.user_id}_#{product.id}_cover)",
-                                "#{product.folder_id}")
+          thumbID = if params.has_key?(:thumbimageSource)
+                      uploadImage('thumbimageSource', "(#{product.user_id}_#{product.id}_thumbnail)",
+                                  "#{product.folder_id}")
+                    else
+                      product.thumbimageSource.split('?id=')[1]
+                    end
+          coverID = if params.has_key?(:coverimageSource)
+                      uploadImage('coverimageSource', "(#{product.user_id}_#{product.id}_cover)",
+                                  "#{product.folder_id}")
+                    else
+                      product.coverimageSource.split('?id=')[1]
+                    end
 
           existing_ids = [thumbID, coverID]
 
-          modifiedContents = params.to_unsafe_h[:contents].map do |e|
-            next e if e['content'].blank? # Skip if content is empty
+          modifiedContents = if params.has_key?(:contents)
+                               params.to_unsafe_h[:contents].map do |e|
+                                 next e if e['content'].blank? # Skip if content is empty
 
-            begin
-              e['content'], existing_ids = fileUploader(e['content'], existing_ids, product.id, product.user_id,
-                                                        product.folder_id)
-              e
-            rescue JSON::ParserError => e
-              render json: { error: 'Invalid contents JSON format' }, status: 400 and return
-            end
-          end
+                                 begin
+                                   e['content'], existing_ids = fileUploader(e['content'], existing_ids, product.id, product.user_id,
+                                                                             product.folder_id)
+                                   e
+                                 rescue JSON::ParserError => e
+                                   render json: { error: 'Invalid contents JSON format' }, status: 400 and return
+                                 end
+                               end
+                             else
+                               product.contents.map do |e|
+                                 next e if e['content'].blank?
 
-          modifiedDescription, existing_ids = fileUploader(params.to_unsafe_h[:description], existing_ids, product.id, product.user_id,
-                                                           product.folder_id)
+                                 jsonObj = JSON.parse(e['content'])
+                                 jsonObj['content'].map! do |node|
+                                   if (node['type'] == 'file' or node['type'] == 'image') and isBase64(node['attrs']['src'])
+                                     existing_ids.push(node['type'] == 'image' ? node['attrs']['src'].split('?id=')[1] : node['attrs']['src'])
+                                   end
+                                 end
+                               end
+                               product.contents
+                             end
+
+          modifiedDescription, existing_ids = if params.has_key?(:description)
+                                                fileUploader(params.to_unsafe_h[:description], existing_ids, product.id, product.user_id,
+                                                             product.folder_id)
+                                              else
+                                                unless product.description.blank?
+                                                  jsonObj = JSON.parse(product.description)
+                                                  jsonObj['content'].map! do |node|
+                                                    if (node['type'] == 'file' or node['type'] == 'image') and isBase64(node['attrs']['src'])
+                                                      existing_ids.push(node['type'] == 'image' ? node['attrs']['src'].split('?id=')[1] : node['attrs']['src'])
+                                                    end
+                                                  end
+                                                end
+                                                [product.description, existing_ids]
+                                              end
 
           # delete other files which are not in the existing_ids
 

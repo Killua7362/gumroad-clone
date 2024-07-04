@@ -55,7 +55,9 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
             height: isOpen ? '100%' : '4rem',
         },
     };
+
     const navigate = useNavigate({ from: location.pathname.split('?')[0] });
+
     useEffect(() => {
         const width = window.innerWidth;
         const onResize = () => {
@@ -66,7 +68,9 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
         window.addEventListener('resize', onResize);
         return () => window.removeEventListener('resize', onResize);
     }, []);
+
     const [rendered, setRendered] = useState(false);
+
     useLayoutEffect(() => {
         setWindowWidth(window.innerWidth);
         setRendered(true);
@@ -92,150 +96,148 @@ const SideBar = ({ ...sideBarProps }: SideBarProps) => {
 
     return (
         rendered && (
-            <motion.div
+            <motion.nav
                 initial="initial"
                 animate="animate"
                 exit="initial"
                 variants={
                     windowWidth! < 640 ? divMobileVariants : divDesktopVariants
                 }
-                className="fixed flex bg-[#0d100f] flex-col font-medium border-b-[0.1px] sm:border-[0.1px] border-white/30 overflow-hidden"
+                className="fixed bg-[#0d100f] font-medium border-b-[0.1px] sm:border-[0.1px] border-white/30 overflow-hidden"
                 style={{
                     zIndex: 30,
                 }}>
-                <div className="uppercase flex items-center text-xl sm:text-2xl py-4 sm:py-8 px-5 justify-between border-white/30 border-b-[0.1px]">
-                    <div className="">
-                        {isOpen && (
-                            <div className="hidden sm:block">Gumroad</div>
-                        )}
-                        <div className="block sm:hidden">
-                            {_.capitalize(location.pathname.split('/')[1])}
-                        </div>
-                    </div>
-                    <div
-                        className="relative top-0 sm:top-1 cursor-pointer"
+                <header className="uppercase flex items-center text-xl sm:text-2xl py-4 sm:py-8 px-5 justify-between border-white/30 border-b-[0.1px]">
+                    {isOpen && (
+                        <h1 className="hidden sm:block text-3xl">Gumroad</h1>
+                    )}
+                    <h1 className="block sm:hidden text-2xl">
+                        {_.capitalize(location.pathname.split('/')[1])}
+                    </h1>
+                    <motion.section
+                        initial={false}
+                        animate={{
+                            rotate: isOpen ? 0 : 180,
+                            position: 'relative',
+                            top: '0.2rem',
+                            cursor: 'pointer',
+                        }}
                         onClick={() => {
                             setIsOpen(!isOpen);
                         }}>
-                        <motion.div
-                            initial={false}
-                            animate={{
-                                rotate: isOpen ? 0 : 180,
-                            }}>
-                            <div className="rotate-[90deg] sm:rotate-0">
-                                <MdOutlineKeyboardArrowLeft />
-                            </div>
-                        </motion.div>
-                    </div>
-                </div>
-                <div
-                    className="flex flex-col overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-[#2c2c31] flex-1"
-                    style={{
-                        direction: 'rtl',
-                    }}>
-                    <SideBarCard
-                        title="Home"
-                        sideBarProps={sideBarProps}
-                        icon={<BsFillBackpack4Fill />}
-                        extraClasses="!px-6"
-                        isOpen={isOpen}
-                        windowWidth={windowWidth}
-                        {...(browserHistory.getURL('/home') as LinkProps)}
-                    />
-                    <SideBarCard
-                        title="Products"
-                        sideBarProps={sideBarProps}
-                        extraClasses="!px-6"
-                        icon={<IoBagRemove />}
-                        isOpen={isOpen}
-                        windowWidth={windowWidth}
-                        {...(browserHistory.getURL(
-                            '/products/home'
-                        ) as LinkProps)}
-                    />
-                    <SideBarCard
-                        title="Checkout"
-                        sideBarProps={sideBarProps}
-                        extraClasses="!px-6"
-                        icon={<IoMdCart />}
-                        isOpen={isOpen}
-                        windowWidth={windowWidth}
-                        {...(browserHistory.getURL(
-                            '/checkout/form'
-                        ) as LinkProps)}
-                    />
-                </div>
-                <div className="flex flex-col gap-y-2 relative">
-                    <LinkShortCuts isOpen={isOpen} />
-                    <motion.div
-                        initial={{
-                            height: '5rem',
-                        }}
-                        animate={{
-                            height: isAccountOpen ? '16.1rem' : '5rem',
-                        }}
-                        exit={{
-                            height: '0',
-                            opacity: 0,
-                        }}
-                        className={`${isAccountOpen && 'border-[0.1px]'} overflow-hidden relative border-white/30 p-2 flex flex-col overflow-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-[#2c2c31]`}
+                        <MdOutlineKeyboardArrowLeft className="rotate-[90deg] sm:rotate-0" />
+                    </motion.section>
+                </header>
+                <main className="h-[calc(100%-6.3rem)] flex flex-col justify-between">
+                    <ul
+                        className="overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-[#2c2c31]"
                         style={{
                             direction: 'rtl',
                         }}>
-                        {isAccountOpen && (
-                            <>
-                                <SideBarCard
-                                    title="Settings"
-                                    sideBarProps={sideBarProps}
-                                    icon={<IoSettingsSharp />}
-                                    isOpen={isOpen}
-                                    disableLink={true}
-                                    windowWidth={windowWidth}
-                                    params={{ id: loginStatus.user_id! }}
-                                    target="_blank"
-                                    to="/"
-                                />
-                                <SideBarCard
-                                    title="Profile"
-                                    sideBarProps={sideBarProps}
-                                    icon={<SiAboutdotme />}
-                                    isOpen={isOpen}
-                                    windowWidth={windowWidth}
-                                    params={{ id: loginStatus.user_id! }}
-                                    target="_blank"
-                                    to="/profile/$id"
-                                />
-                                <SideBarCard
-                                    title="Logout"
-                                    onClickHandler={() => {
-                                        loginStatusSetter();
-                                    }}
-                                    disableLink={true}
-                                    sideBarProps={sideBarProps}
-                                    icon={<CgLogOut />}
-                                    isOpen={isOpen}
-                                    windowWidth={windowWidth}
-                                    to="/"
-                                />
-                            </>
-                        )}
                         <SideBarCard
-                            title="Account"
-                            onClickHandler={() => {
-                                setIsAccountOpen(!isAccountOpen);
-                            }}
-                            closeSideBar={false}
-                            disableLink={true}
-                            extraClasses={`${!isAccountOpen && 'border-[1px]'} rounded-xl`}
+                            title="Home"
                             sideBarProps={sideBarProps}
-                            icon={<MdAccountCircle />}
+                            icon={<BsFillBackpack4Fill />}
+                            extraClasses="!px-6"
                             isOpen={isOpen}
                             windowWidth={windowWidth}
-                            to="/"
+                            {...(browserHistory.getURL('/home') as LinkProps)}
                         />
-                    </motion.div>
-                </div>
-            </motion.div>
+                        <SideBarCard
+                            title="Products"
+                            sideBarProps={sideBarProps}
+                            extraClasses="!px-6"
+                            icon={<IoBagRemove />}
+                            isOpen={isOpen}
+                            windowWidth={windowWidth}
+                            {...(browserHistory.getURL(
+                                '/products/home'
+                            ) as LinkProps)}
+                        />
+                        <SideBarCard
+                            title="Checkout"
+                            sideBarProps={sideBarProps}
+                            extraClasses="!px-6"
+                            icon={<IoMdCart />}
+                            isOpen={isOpen}
+                            windowWidth={windowWidth}
+                            {...(browserHistory.getURL(
+                                '/checkout/form'
+                            ) as LinkProps)}
+                        />
+                    </ul>
+                    <section className="grid gap-y-2 relative">
+                        <LinkShortCuts isOpen={isOpen} />
+                        <motion.ul
+                            initial={{
+                                height: '5rem',
+                            }}
+                            animate={{
+                                height: isAccountOpen ? '16.1rem' : '5rem',
+                            }}
+                            exit={{
+                                height: '0',
+                                opacity: 0,
+                            }}
+                            className={`${isAccountOpen && 'border-[0.1px]'} overflow-hidden relative border-white/30 p-2 flex flex-col overflow-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-[#2c2c31]`}
+                            style={{
+                                direction: 'rtl',
+                            }}>
+                            {isAccountOpen && (
+                                <>
+                                    <SideBarCard
+                                        title="Settings"
+                                        sideBarProps={sideBarProps}
+                                        icon={<IoSettingsSharp />}
+                                        isOpen={isOpen}
+                                        disableLink={true}
+                                        windowWidth={windowWidth}
+                                        params={{ id: loginStatus.user_id! }}
+                                        target="_blank"
+                                        to="/"
+                                    />
+                                    <SideBarCard
+                                        title="Profile"
+                                        sideBarProps={sideBarProps}
+                                        icon={<SiAboutdotme />}
+                                        isOpen={isOpen}
+                                        windowWidth={windowWidth}
+                                        params={{ id: loginStatus.user_id! }}
+                                        target="_blank"
+                                        to="/profile/$id"
+                                    />
+                                    <SideBarCard
+                                        title="Logout"
+                                        onClickHandler={() => {
+                                            loginStatusSetter();
+                                        }}
+                                        disableLink={true}
+                                        sideBarProps={sideBarProps}
+                                        icon={<CgLogOut />}
+                                        isOpen={isOpen}
+                                        windowWidth={windowWidth}
+                                        to="/"
+                                    />
+                                </>
+                            )}
+                            <SideBarCard
+                                title="Account"
+                                onClickHandler={() => {
+                                    setIsAccountOpen(!isAccountOpen);
+                                }}
+                                closeSideBar={false}
+                                disableLink={true}
+                                extraClasses={`${!isAccountOpen && 'border-[1px]'} rounded-xl`}
+                                sideBarProps={sideBarProps}
+                                icon={<MdAccountCircle />}
+                                isOpen={isOpen}
+                                windowWidth={windowWidth}
+                                to="/"
+                            />
+                        </motion.ul>
+                    </section>
+                </main>
+            </motion.nav>
         )
     );
 };

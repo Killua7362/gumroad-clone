@@ -42,7 +42,7 @@ const TilingRoot = () => {
 
     return (
         <>
-            <motion.div
+            <motion.article
                 layout
                 ref={drop}
                 className={`${isOver && !(!!tileSchema?.primary || !!tileSchema?.secondary) && 'bg-sky-400/30 border-2 border-sky-400'} `}
@@ -54,7 +54,7 @@ const TilingRoot = () => {
                     schema={tileSchema}
                     initialStyle={{ width: '100%', height: '100%' }}
                 />
-            </motion.div>
+            </motion.article>
             <WidgetBar />
         </>
     );

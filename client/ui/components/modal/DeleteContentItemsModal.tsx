@@ -12,9 +12,9 @@ const DeleteContentItemModal = ({ pos }: DeleteContentItemModal) => {
     return (
         <Modal.Root>
             <Modal.Base>
-                <div className="bg-background z-50 border-white/30 rounded-xl min-w-[15rem] border-[0.1px] p-6 text-lg flex flex-col gap-y-6 items-center">
-                    <div className="text-xl">Confirm Delete?</div>
-                    <div className="flex gap-x-4">
+                <article className="bg-background z-50 border-white/30 rounded-xl min-w-[15rem] border-[0.1px] p-6 text-lg grid gap-y-6 text-center  m-[2rem]">
+                    <h2 className="text-xl">Confirm Delete?</h2>
+                    <section className="flex gap-x-4">
                         <Modal.Close>
                             <Button buttonName="Cancel" />
                         </Modal.Close>
@@ -24,17 +24,17 @@ const DeleteContentItemModal = ({ pos }: DeleteContentItemModal) => {
                                 onClickHandler={() => {
                                     deleteFile(pos);
                                 }}
-                                extraClasses={[`!rounded-none`]}
                                 variant="destructive"
                             />
                         </Modal.Close>
-                    </div>
-                </div>
+                    </section>
+                </article>
             </Modal.Base>
             <Modal.Open>
                 <Button
                     buttonName=""
-                    extraClasses={[`!p-4 !text-red-400 !border-red-400`]}>
+                    variant="destructive"
+                    extraClasses={[`!p-4`]}>
                     <IoTrashBin />
                 </Button>
             </Modal.Open>

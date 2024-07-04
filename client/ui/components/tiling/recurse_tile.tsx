@@ -58,11 +58,11 @@ const RecurseTile = ({ schema, initialStyle }: RecurseTile) => {
         border: '1px solid rgba(255,255,255,0.2)',
     };
 
-    const [recurseTileRef, setRecurseTileRef] = useState<HTMLDivElement>();
+    const [recurseTileRef, setRecurseTileRef] = useState<HTMLElement>();
 
     return (
         (!!schema?.primary || !!schema?.secondary) && (
-            <div
+            <article
                 className={`flex ${schema?.tile === 'row' ? 'flex-col' : 'flex-row'} text-black relative`}
                 style={{
                     height: initialStyle.height,
@@ -113,7 +113,7 @@ const RecurseTile = ({ schema, initialStyle }: RecurseTile) => {
                         ) : null}
                     </>
                 )}
-            </div>
+            </article>
         )
     );
 };

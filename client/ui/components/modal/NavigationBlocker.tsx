@@ -15,13 +15,13 @@ const NavigationBlocker = ({
     return (
         <Modal.Root listeners={listeners}>
             <Modal.Base>
-                <div
-                    className="bg-background z-50 border-white/30 rounded-xl min-w-[15rem] border-[0.1px] p-6 text-lg flex flex-col gap-y-6 items-center"
+                <article
+                    className="bg-background z-50 border-white/30 rounded-xl min-w-[15rem] border-[0.1px] p-6 text-lg grid text-center gap-y-6 items-center m-[2rem]"
                     onClick={(e) => {
                         e.stopPropagation();
                     }}>
-                    <div className="text-xl">Unsaved Changes.</div>
-                    <div className="flex gap-x-4">
+                    <h2 className="text-xl">Unsaved Changes</h2>
+                    <section className="flex gap-x-4">
                         <Modal.Close>
                             <Button
                                 buttonName="Stay"
@@ -41,8 +41,8 @@ const NavigationBlocker = ({
                                 ]}
                             />
                         </Modal.Close>
-                    </div>
-                </div>
+                    </section>
+                </article>
             </Modal.Base>
         </Modal.Root>
     );

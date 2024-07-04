@@ -28,9 +28,11 @@ const ProductEditContentDeleteModal = ({
     return (
         <Modal.Root key={i}>
             <Modal.Base>
-                <div className="bg-background z-50 border-white/30 rounded-xl min-w-[15rem] border-[0.1px] p-6 text-lg flex flex-col gap-y-6 items-center">
-                    <div className="text-xl">Confirm Delete?</div>
-                    <div className="flex gap-x-4">
+                <article className="bg-background z-50 border-white/30 rounded-xl min-w-[15rem] border-[0.1px] p-6 text-lg grid gap-y-6 m-[2rem] text-center">
+                    <header>
+                        <h2 className="text-xl">Confirm Delete?</h2>
+                    </header>
+                    <section className="flex gap-x-4">
                         <Modal.Close>
                             <Button buttonName="Cancel" />
                         </Modal.Close>
@@ -54,18 +56,16 @@ const ProductEditContentDeleteModal = ({
                                         });
                                     }
                                 }}
-                                extraClasses={[
-                                    '!border-red-400/70 !text-red-400 hover:text-red-400/70',
-                                ]}
+                                variant="destructive"
                             />
                         </Modal.Close>
-                    </div>
-                </div>
+                    </section>
+                </article>
             </Modal.Base>
             <Modal.Open>
-                <div className="p-4 py-3 bg-white text-black w-full cursor-pointer hover:bg-white/90">
+                <li className="p-4 py-3 bg-white text-black w-full cursor-pointer hover:bg-white/90">
                     Delete
-                </div>
+                </li>
             </Modal.Open>
         </Modal.Root>
     );

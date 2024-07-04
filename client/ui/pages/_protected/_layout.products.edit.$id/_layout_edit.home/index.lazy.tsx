@@ -106,7 +106,7 @@ const ProductEditHomePage = () => {
 
     return (
         <div className="flex flex-col items-center justify-end lg:justify-start xl:justify-center lg:flex-row w-full">
-            <div className="flex flex-col gap-y-4 w-11/12 xl:w-6/12 xl:h-[40rem] px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background justify-between gap-y-4">
+            <div className="flex flex-col gap-y-4 w-11/12 xl:w-6/12 xl:h-[38rem] px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background justify-between gap-y-4">
                 <div className="flex flex-col gap-y-2">
                     <span>Name</span>
                     <fieldset className="border-white/30 border-[0.1px] rounded-md">
@@ -508,7 +508,7 @@ const ProductEditHomePage = () => {
                 </div>
             </div>
             <div
-                className={`w-6/12 h-[40rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}>
+                className={`w-6/12 h-[38rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}>
                 <div className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">
                     Preview
                 </div>

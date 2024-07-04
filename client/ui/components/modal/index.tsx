@@ -53,7 +53,7 @@ const ModalBase = ({
     return createPortal(
         <AnimatePresence>
             {active && (
-                <motion.div
+                <motion.article
                     initial={{
                         opacity: 0,
                     }}
@@ -75,7 +75,7 @@ const ModalBase = ({
                         'top-0 fixed flex justify-center items-center z-50 w-screen min-h-screen bg-background/30 backdrop-blur-sm text-white'
                     )}>
                     {children}
-                </motion.div>
+                </motion.article>
             )}
         </AnimatePresence>,
         mountElement!

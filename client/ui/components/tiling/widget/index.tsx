@@ -54,7 +54,7 @@ const WidgetBar = () => {
     const [childOver, setChildOver] = useState(false);
 
     return (
-        <motion.div
+        <motion.nav
             layout
             ref={drop}
             className="absolute h-full z-50 w-[4.5rem] border-white/30 border-[0.1px] p-2 flex flex-col gap-y-3"
@@ -77,7 +77,7 @@ const WidgetBar = () => {
                     />
                 );
             })}
-        </motion.div>
+        </motion.nav>
     );
 };
 

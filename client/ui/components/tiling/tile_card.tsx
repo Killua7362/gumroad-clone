@@ -43,7 +43,7 @@ const TileCard = ({ primaryStyle, setDragging, name, schemaID }: TileCard) => {
     return (
         <AnimatePresence>
             {!isDragging && (
-                <motion.div
+                <motion.section
                     layout
                     transition={{ duration: 0.1 }}
                     ref={(newRef) => {
@@ -64,7 +64,7 @@ const TileCard = ({ primaryStyle, setDragging, name, schemaID }: TileCard) => {
                             <DraggingArea schemaID={schemaID} name={name} />
                         )}
                     </AnimatePresence>
-                </motion.div>
+                </motion.section>
             )}
         </AnimatePresence>
     );

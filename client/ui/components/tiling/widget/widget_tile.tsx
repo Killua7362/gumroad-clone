@@ -96,53 +96,51 @@ const WidgetTile = ({
     }, [isOver]);
 
     return (
-        <>
-            <motion.div
-                className={`h-[3rem] ${name === '' ? 'border-blue-400' : 'border-white/30'} hover:border-white border-[0.1px] bg-background flex items-center justify-center cursor-pointer rounded-md overflow-none relative`}
-                onMouseEnter={() => {
-                    setIsOver(true);
-                }}
-                onMouseLeave={() => {
-                    setIsOver(false);
-                }}
-                onClick={() => {
-                    setActiveName(activeName === name ? '' : name);
-                }}
-                ref={(newRef) => {
-                    drag(drop(newRef));
-                }}>
+        <motion.li
+            className={`h-[3rem] ${name === '' ? 'border-blue-400' : 'border-white/30'} hover:border-white border-[0.1px] bg-background flex items-center justify-center cursor-pointer rounded-md overflow-none relative`}
+            onMouseEnter={() => {
+                setIsOver(true);
+            }}
+            onMouseLeave={() => {
+                setIsOver(false);
+            }}
+            onClick={() => {
+                setActiveName(activeName === name ? '' : name);
+            }}
+            ref={(newRef) => {
+                drag(drop(newRef));
+            }}>
+            {
+                // <FcAlarmClock className="text-3xl"/>
+            }
+            {id}
+            <AnimatePresence>
+                {isHover && !isDragging && activeName !== name && (
+                    <motion.article
+                        initial={{ opacity: 0 }}
+                        exit={{ opacity: 0 }}
+                        animate={{
+                            opacity: 1,
+                            transition: { duration: 0.3 },
+                        }}
+                        className={`absolute left-[-8rem] bg-white text-black w-[8rem] text-center py-[0.4rem]`}>
+                        {name}
+                    </motion.article>
+                )}
+            </AnimatePresence>
+            <AnimatePresence>
                 {
-                    // <FcAlarmClock className="text-3xl"/>
+                    // !isDragging && activeName === name &&
+                    // <motion.div
+                    // 				initial={{opacity:0}}
+                    // 				exit={{opacity:0}}
+                    // 				animate={{opacity:1,transition:{duration:0.3}}}
+                    // 				className='absolute left-[-8rem] bg-white text-black w-[8rem] text-center py-[0.4rem]'>
+                    // 		testing
+                    // </motion.div>
                 }
-                {id}
-                <AnimatePresence>
-                    {isHover && !isDragging && activeName !== name && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            exit={{ opacity: 0 }}
-                            animate={{
-                                opacity: 1,
-                                transition: { duration: 0.3 },
-                            }}
-                            className={`absolute left-[-8rem] bg-white text-black w-[8rem] text-center py-[0.4rem]`}>
-                            {name}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-                <AnimatePresence>
-                    {
-                        // !isDragging && activeName === name &&
-                        // <motion.div
-                        // 				initial={{opacity:0}}
-                        // 				exit={{opacity:0}}
-                        // 				animate={{opacity:1,transition:{duration:0.3}}}
-                        // 				className='absolute left-[-8rem] bg-white text-black w-[8rem] text-center py-[0.4rem]'>
-                        // 		testing
-                        // </motion.div>
-                    }
-                </AnimatePresence>
-            </motion.div>
-        </>
+            </AnimatePresence>
+        </motion.li>
     );
 };
 export default WidgetTile;

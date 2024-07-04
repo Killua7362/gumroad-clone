@@ -9,7 +9,7 @@ interface TileBar {
     schemaID: string;
 }
 
-const TileBar = React.forwardRef<HTMLDivElement, TileBar>((props, ref) => {
+const TileBar = React.forwardRef<HTMLElement, TileBar>((props, ref) => {
     const { name, schemaID } = props;
 
     const renderNode = useContext(renderNodeContext);
@@ -19,11 +19,11 @@ const TileBar = React.forwardRef<HTMLDivElement, TileBar>((props, ref) => {
         useRecoilState<string[]>(widgetBarItems);
 
     return (
-        <div
+        <section
             className="w-full h-[2.5rem] cursor-move flex items-center p-4 justify-between text-white border-b-[0.1px] border-white/20 bg-[#1a1c1c]"
             ref={ref}>
-            <span>{renderNode[name].name}</span>
-            <div
+            {renderNode[name].name}
+            <span
                 className="rounded-full bg-red-400 h-4 w-4 text-white p-1 text-sm cursor-pointer"
                 onClick={(e) => {
                     e.stopPropagation();
@@ -38,8 +38,9 @@ const TileBar = React.forwardRef<HTMLDivElement, TileBar>((props, ref) => {
                     setWidgetItems((prev) => {
                         return [...prev, name];
                     });
-                }}></div>
-        </div>
+                }}
+            />
+        </section>
     );
 });
 

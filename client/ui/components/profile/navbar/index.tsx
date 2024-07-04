@@ -10,7 +10,7 @@ const ProfileNavbar = ({ name, preview }: ProfileNavbar) => {
     const params = preview ? undefined : useParams({ from: '/profile/$id/' });
 
     return (
-        <div className="fixed border-b-[0.1px] border-white/30 min-h-[6rem] w-full top-0 bg-background z-30">
+        <section className="fixed border-b-[0.1px] border-white/30 min-h-[6rem] w-full top-0 bg-background z-30">
             <div className="w-10/12 xl:w-8/12 h-full mx-auto flex items-center justify-between md:flex-row flex-col gap-y-6 my-6">
                 <Link
                     disabled={preview}
@@ -41,7 +41,7 @@ const ProfileNavbar = ({ name, preview }: ProfileNavbar) => {
                     </Link>
                 </div>
             </div>
-        </div>
+        </section>
     );
 };
 export default ProfileNavbar;

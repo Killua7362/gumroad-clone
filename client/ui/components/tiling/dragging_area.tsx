@@ -79,7 +79,7 @@ const DraggingTile = ({
     });
 
     return (
-        <motion.div
+        <motion.section
             initial={{ opacity: 0, ...initial }}
             exit={{ opacity: 0, ...initial }}
             animate={{ opacity: 1, transition: { duration: 0.3 }, ...style }}
@@ -93,7 +93,7 @@ const DraggingTile = ({
                     display: isOver ? 'block' : 'none',
                 }}
             />
-        </motion.div>
+        </motion.section>
     );
 };
 
