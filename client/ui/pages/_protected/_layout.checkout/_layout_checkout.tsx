@@ -16,11 +16,11 @@ export const Route = createFileRoute(
 const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <>
-            <div className="flex flex-col text-white/90 pb-5 pt-3 sm:pt-10 mr-4 gap-y-6">
-                <div className="text-3xl sm:text-4xl uppercase tracking-wide ml-4">
+            <header className="grid gap-y-6 pt-10 py-6">
+                <h1 className="text-3xl sm:text-4xl uppercase tracking-wide ml-4">
                     Checkout
-                </div>
-                <div className="border-b-[1px] h-5 border-white/30 flex gap-x-4 w-full">
+                </h1>
+                <section className="border-b-[1px] h-5 border-white/30 flex gap-x-4 w-full">
                     <Link
                         to="/checkout/form"
                         style={{
@@ -53,11 +53,11 @@ const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
                             />
                         )}
                     </Link>
-                </div>
-            </div>
-            <div className="text-xl flex flex-col lg:flex-row gap-4 relative left-0 mt-4">
-                {children}
-            </div>
+                </section>
+            </header>
+            <main>
+                <article className="text-xl relative mt-4">{children}</article>
+            </main>
         </>
     );
 };

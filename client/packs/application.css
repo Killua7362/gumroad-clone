@@ -8,6 +8,7 @@ html {
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: white #09090b;
+  box-sizing: border-box;
 }
 
 :root:has(.do-not-scroll) {
@@ -25,15 +26,13 @@ html {
 }
 
 *,
-::before,
-::after {
+*:before,
+*:after {
   border-width: 0;
   border-style: solid;
   border-color: currentColor /* or gray-DEFAULT / gray-400 */;
   margin: 0;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
+  box-sizing: inherit;
 	font-weight:normal;
 }
 

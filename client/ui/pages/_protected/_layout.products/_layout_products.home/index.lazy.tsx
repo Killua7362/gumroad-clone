@@ -76,8 +76,8 @@ const ProductsHomePage = () => {
 
     return (
         productIsSuccess && (
-            <div className="w-full h-full flex flex-col gap-y-4">
-                <div className="flex gap-x-3 items-center">
+            <>
+                <section className="flex gap-x-3 items-center px-4 sm:px-0">
                     <NewProductModal />
                     <Button
                         extraClasses={['rounded-xl']}
@@ -98,9 +98,10 @@ const ProductsHomePage = () => {
                                     sort_bar_active: !params.sort_bar_active,
                                 }),
                             });
-                        }}></Button>
+                        }}
+                    />
                     <AnimatePresence>
-                        <motion.div
+                        <motion.label
                             layout={true}
                             transition={{ duration: 0.1 }}
                             className={`min-h-[2.4rem] w-fit border-white/30 flex rounded-xl items-center ${params.search_bar_active && 'focus-within:border-white border-[0.1px] bg-background text-white'}`}>
@@ -151,13 +152,13 @@ const ProductsHomePage = () => {
                                     />
                                 )}
                             </AnimatePresence>
-                        </motion.div>
+                        </motion.label>
                     </AnimatePresence>
-                </div>
+                </section>
 
                 <AnimatePresence>
                     {params.sort_bar_active && (
-                        <motion.div
+                        <motion.section
                             initial={{
                                 opacity: 0,
                             }}
@@ -168,7 +169,7 @@ const ProductsHomePage = () => {
                                 opacity: 0,
                             }}
                             transition={{ duration: 0.2 }}
-                            className="relative flex gap-x-3 items-center"
+                            className="relative flex gap-x-3 items-center px-4 sm:px-0"
                             onClick={(e) => {
                                 e.stopPropagation();
                             }}>
@@ -207,10 +208,10 @@ const ProductsHomePage = () => {
                                     <FaArrowDownWideShort />
                                 )}
                             </Button>
-                        </motion.div>
+                        </motion.section>
                     )}
                 </AnimatePresence>
-                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <section className="mt-2 grid grid-cols-1 lg:grid-cols-2 gap-6 px-8 sm:pr-6 sm:pl-0">
                     {processProducts({
                         products: Object.entries(allProducts),
                         searchURL: new URLSearchParams(
@@ -227,7 +228,7 @@ const ProductsHomePage = () => {
                                     ...value,
                                 }}>
                                 <Fragment>
-                                    <div
+                                    <span
                                         className="absolute right-[1rem] top-[1rem] cursor-pointer hover:text-white/70 text-xl"
                                         onClick={(event) => {
                                             event.preventDefault();
@@ -243,10 +244,10 @@ const ProductsHomePage = () => {
                                                   });
                                         }}>
                                         <IoMdSettings />
-                                    </div>
+                                    </span>
                                     <AnimatePresence>
                                         {
-                                            <motion.div
+                                            <motion.menu
                                                 initial={{
                                                     height: 0,
                                                     opacity: 0,
@@ -267,13 +268,13 @@ const ProductsHomePage = () => {
                                                     height: 0,
                                                     opacity: 0,
                                                 }}
-                                                className={` ${contextMenuConfig.active && contextMenuConfig.activeIdx === i ? 'flex' : 'hidden'} min-w-[10rem] overflow-hidden bg-background flex-col border-white/30 border-[0.1px] absolute rounded-md right-[1.5rem] top-[2.5rem]`}
+                                                className={`${contextMenuConfig.active && contextMenuConfig.activeIdx === i ? 'grid' : 'hidden'} overflow-hidden bg-background border-white/30 border-[0.1px] absolute right-[2rem] top-[2.5rem] text-lg list-none p-0`}
                                                 onClick={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
                                                 }}>
-                                                <div
-                                                    className="px-4 py-3 hover:bg-accent/50 cursor-pointer"
+                                                <li
+                                                    className="pl-4 pr-8 py-3 hover:bg-accent/50 cursor-pointer"
                                                     onClick={async () => {
                                                         try {
                                                             EditProductSchema.parseAsync(
@@ -308,29 +309,31 @@ const ProductsHomePage = () => {
                                                         );
                                                     }}>
                                                     Go Live
-                                                </div>
-                                                <Link
-                                                    to={`/products/edit/${key}/home`}
-                                                    className="text-white no-underline">
-                                                    <div className="px-4 py-3 hover:bg-accent/50 cursor-pointer">
-                                                        Edit
-                                                    </div>
-                                                </Link>
+                                                </li>
+                                                <li>
+                                                    <Link
+                                                        to={`/products/edit/${key}/home`}
+                                                        className="text-white no-underline">
+                                                        <span className="pl-4 pr-16 py-3 hover:bg-accent/50 cursor-pointer">
+                                                            Edit
+                                                        </span>
+                                                    </Link>
+                                                </li>
                                                 <DeleteProductModal
                                                     idx={key}
                                                     setContextMenuConfig={
                                                         setContextMenuConfig
                                                     }
                                                 />
-                                            </motion.div>
+                                            </motion.menu>
                                         }
                                     </AnimatePresence>
                                 </Fragment>
                             </ProductCard>
                         );
                     })}
-                </div>
-            </div>
+                </section>
+            </>
         )
     );
 };

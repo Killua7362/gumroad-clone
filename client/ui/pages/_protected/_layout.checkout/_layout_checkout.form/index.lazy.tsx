@@ -40,9 +40,9 @@ const CheckoutForm = () => {
     });
 
     const code = `
-		<div className="w-[60vw] mb-[-10rem] min-h-screen relative origin-top-left bg-background pointer-events-none" style={{transform:'scale(0.8)'}}>
+		<article className="w-[60vw] mb-[-10rem] min-h-screen relative origin-top-left bg-background pointer-events-none" style={{transform:'scale(0.8)'}}>
 			<ProfileHomePage preview={true} name={name} bio={bio} category={category} userId={userId}/>
-		</div>
+		</article>
 	`;
 
     if (profileIsLoading) return <Loader />;
@@ -89,18 +89,18 @@ const CheckoutForm = () => {
 
     return (
         profileIsSuccess && (
-            <div className="flex flex-col items-center justify-end lg:justify-start xl:justify-center lg:flex-row w-full">
+            <article className="w-full flex flex-col items-center sm:items-start xl:flex-row">
                 <form
                     id="checkout_form"
-                    className="flex flex-col gap-y-4 w-11/12 xl:w-6/12 xl:h-[38.5rem] px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background justify-between gap-y-4"
+                    className="grid gap-y-4 w-full lg:w-6/12 lg:h-[38rem] px-4 sm:pr-6 sm:pl-0 xl:px-5 overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white scrollbar-track-background"
                     onSubmit={handleSubmit((data) => {
                         if (isDirty) {
                             profileStatusSetter({ ...data });
                         }
                     })}>
-                    <div className="flex flex-col gap-y-4">
-                        <div className="flex flex-col gap-y-4">
-                            <div className="text-xl">Name</div>
+                    <section className="grid gap-y-4">
+                        <label className="grid gap-y-4">
+                            <h2 className="text-xl">Name</h2>
                             <FormInput<CheckoutFormSchemaType>
                                 name="name"
                                 errors={errors}
@@ -108,9 +108,9 @@ const CheckoutForm = () => {
                                 placeholder="Name"
                                 type="text"
                             />
-                        </div>
-                        <div className="flex flex-col gap-y-4">
-                            <div className="text-xl">Bio</div>
+                        </label>
+                        <label className="grid gap-y-4">
+                            <h2 className="text-xl">Bio</h2>
                             <FormInput<CheckoutFormSchemaType>
                                 name="bio"
                                 errors={errors}
@@ -118,159 +118,149 @@ const CheckoutForm = () => {
                                 placeholder="Bio"
                                 type="text"
                             />
-                        </div>
-                        <div className="flex flex-col gap-y-4">
-                            <div className="text-xl">Products</div>
-                            <div className="flex flex-col gap-y-4">
-                                {fields.map((e, i) => {
-                                    return (
-                                        <div
-                                            key={e.id}
-                                            className="flex flex-col gap-y-2">
-                                            <div className="flex flex-col gap-y-4">
-                                                <div className="flex items-center gap-x-4">
-                                                    <span>{i + 1}</span>
-                                                    <FormInput<CheckoutFormSchemaType>
-                                                        type="text"
-                                                        name={`category.${i}.name`}
-                                                        errors={errors}
-                                                        register={register}
-                                                        placeholder="Category Name"
-                                                    />
-                                                </div>
-                                                <div className="flex gap-x-4">
-                                                    <FilterCheckoutModal
-                                                        watch={watch}
-                                                        setValue={setValue}
-                                                        i={i}
-                                                        resetField={resetField}
-                                                    />
-                                                    <Button
-                                                        buttonName=""
-                                                        extraClasses={[
-                                                            `!w-full`,
-                                                        ]}
-                                                        onClickHandler={() => {
-                                                            setValue(
-                                                                `category.${i}.hidden`,
-                                                                !watch(
-                                                                    `category.${i}.hidden`
-                                                                ),
-                                                                {
-                                                                    shouldDirty:
-                                                                        true,
-                                                                }
-                                                            );
-                                                        }}>
-                                                        {watch(
-                                                            `category.${i}.hidden`
-                                                        ) ? (
-                                                            <span className="flex gap-x-2 items-center">
-                                                                <FaEye />
-                                                                Unhide
-                                                            </span>
-                                                        ) : (
-                                                            <span className="flex gap-x-2 items-center">
-                                                                <FaEyeSlash />
-                                                                Hide
-                                                            </span>
-                                                        )}
-                                                    </Button>
-                                                    <Button
-                                                        buttonName=""
-                                                        extraClasses={[
-                                                            `!w-full`,
-                                                        ]}
-                                                        onClickHandler={() => {
-                                                            remove(i);
-                                                        }}>
-                                                        <RiDeleteBin2Fill className="text-red-400" />
-                                                        <span>Delete</span>
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                            {errors.category && (
-                                                <div className="text-red-400 flex flex-col gap-y-1">
-                                                    {errors.category[i]
-                                                        ?.name && (
-                                                        <span>
-                                                            Name:{' '}
+                        </label>
+                    </section>
+                    <label className="grid gap-y-4">
+                        <h2 className="text-xl">Product category</h2>
+                        <ul className="grid gap-y-4">
+                            {fields.map((e, i) => {
+                                return (
+                                    <li key={e.id} className="grid gap-y-2">
+                                        <section className="grid gap-y-4">
+                                            <label className="flex items-center gap-x-4">
+                                                {i + 1}
+                                                <FormInput<CheckoutFormSchemaType>
+                                                    type="text"
+                                                    name={`category.${i}.name`}
+                                                    errors={errors}
+                                                    register={register}
+                                                    placeholder="Category Name"
+                                                />
+                                            </label>
+                                            <ul className="flex gap-x-4">
+                                                <FilterCheckoutModal
+                                                    watch={watch}
+                                                    setValue={setValue}
+                                                    i={i}
+                                                    resetField={resetField}
+                                                />
+                                                <Button
+                                                    buttonName=""
+                                                    extraClasses={[`!w-full`]}
+                                                    onClickHandler={() => {
+                                                        setValue(
+                                                            `category.${i}.hidden`,
+                                                            !watch(
+                                                                `category.${i}.hidden`
+                                                            ),
                                                             {
-                                                                errors.category[
-                                                                    i
-                                                                ]?.name?.message
+                                                                shouldDirty:
+                                                                    true,
                                                             }
+                                                        );
+                                                    }}>
+                                                    {watch(
+                                                        `category.${i}.hidden`
+                                                    ) ? (
+                                                        <span className="flex gap-x-2 items-center">
+                                                            <FaEye />
+                                                            Unhide
+                                                        </span>
+                                                    ) : (
+                                                        <span className="flex gap-x-2 items-center">
+                                                            <FaEyeSlash />
+                                                            Hide
                                                         </span>
                                                     )}
-                                                    {errors.category[i]
-                                                        ?.url && (
-                                                        <span>
-                                                            Filter:{' '}
-                                                            {
-                                                                errors.category[
-                                                                    i
-                                                                ]?.url?.message
-                                                            }
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                                <div className="gap-x-4 items-center flex w-full justify-end">
-                                    <Button
-                                        buttonName="Add new category"
-                                        onClickHandler={() => {
-                                            append({
-                                                name: '',
-                                                hidden: true,
-                                                url: '',
-                                            });
-                                        }}
-                                        extraClasses={['w-full py-4']}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                                                </Button>
+                                                <Button
+                                                    buttonName=""
+                                                    extraClasses={[`!w-full`]}
+                                                    onClickHandler={() => {
+                                                        remove(i);
+                                                    }}>
+                                                    <RiDeleteBin2Fill className="text-red-400" />
+                                                    <span>Delete</span>
+                                                </Button>
+                                            </ul>
+                                        </section>
+                                        {errors.category && (
+                                            <section className="text-red-400 grid gap-y-1">
+                                                {errors.category[i]?.name && (
+                                                    <span>
+                                                        Name:{' '}
+                                                        {
+                                                            errors.category[i]
+                                                                ?.name?.message
+                                                        }
+                                                    </span>
+                                                )}
+                                                {errors.category[i]?.url && (
+                                                    <span>
+                                                        Filter:{' '}
+                                                        {
+                                                            errors.category[i]
+                                                                ?.url?.message
+                                                        }
+                                                    </span>
+                                                )}
+                                            </section>
+                                        )}
+                                    </li>
+                                );
+                            })}
+                            <footer className="gap-x-4 grid w-full">
+                                <Button
+                                    buttonName="Add new category"
+                                    onClickHandler={() => {
+                                        append({
+                                            name: '',
+                                            hidden: true,
+                                            url: '',
+                                        });
+                                    }}
+                                    extraClasses={['w-full py-4']}
+                                />
+                            </footer>
+                        </ul>
+                    </label>
 
-                        <div className="flex flex-col gap-y-4">
-                            <div className="text-xl">Footer</div>
-                            <div className="flex flex-col gap-y-4">
-                                <div className="flex gap-x-4 items-center">
-                                    <span>1</span>
-                                    <FormInput<CheckoutFormSchemaType>
-                                        type="text"
-                                        name={`bio`}
-                                        errors={errors}
-                                        register={register}
-                                        placeholder="Item Title"
-                                    />
-                                    <FormInput<CheckoutFormSchemaType>
-                                        type="text"
-                                        name={`bio`}
-                                        errors={errors}
-                                        register={register}
-                                        placeholder="Item Link"
-                                    />
-                                    <Button
-                                        buttonName=""
-                                        variant="destructive"
-                                        extraClasses={[`!p-3 !text-xl`]}>
-                                        <IoTrashBin />
-                                    </Button>
-                                </div>
-                                <div className="gap-x-4 items-center flex w-full justify-end">
-                                    <Button
-                                        buttonName="Add Footer Item"
-                                        onClickHandler={() => {}}
-                                        extraClasses={['w-full py-4']}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex gap-x-4 w-full justify-end">
+                    <label className="grid gap-y-4">
+                        <h2 className="text-xl">Footer</h2>
+                        <ul className="grid gap-y-4">
+                            <li className="flex gap-x-4 items-center">
+                                1
+                                <FormInput<CheckoutFormSchemaType>
+                                    type="text"
+                                    name={`bio`}
+                                    errors={errors}
+                                    register={register}
+                                    placeholder="Item Title"
+                                />
+                                <FormInput<CheckoutFormSchemaType>
+                                    type="text"
+                                    name={`bio`}
+                                    errors={errors}
+                                    register={register}
+                                    placeholder="Item Link"
+                                />
+                                <Button
+                                    buttonName=""
+                                    variant="destructive"
+                                    extraClasses={[`!p-3 !text-xl`]}>
+                                    <IoTrashBin />
+                                </Button>
+                            </li>
+                        </ul>
+                        <footer>
+                            <Button
+                                buttonName="Add Footer Item"
+                                onClickHandler={() => {}}
+                                extraClasses={['w-full py-4']}
+                            />
+                        </footer>
+                    </label>
+                    <footer className="flex gap-x-4 w-full justify-end">
                         <Button
                             buttonName="Revert"
                             onClickHandler={() => {
@@ -283,16 +273,16 @@ const CheckoutForm = () => {
                             formID="checkout_form"
                             isLoading={profileIsLoading}
                         />
-                    </div>
+                    </footer>
                 </form>
-                <div
+                <section
                     className={`w-6/12 h-[38.5rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}>
-                    <div className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">
+                    <span className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">
                         Preview
-                    </div>
+                    </span>
                     <Runner scope={scope} code={code} />
-                </div>
-            </div>
+                </section>
+            </article>
         )
     );
 };

@@ -2,11 +2,14 @@ import { hideToastState } from '@/atoms/states';
 import { productTypeOptions } from '@/forms/schema/edit_product_schema';
 import { currencyTypeOptions } from '@/forms/schema/misc_schema';
 import { convertToBase64 } from '@/lib/image_process';
+import { EditProductSchemaType } from '@/react-query/mutations';
 import Button from '@/ui/components/button';
+import { FormInput } from '@/ui/components/forms';
 import { SelectComponent } from '@/ui/components/select';
 import { MarkdownEditor } from '@/ui/misc/markdown-editor';
 import { ProductsDetailsPage } from '@/ui/pages/profile.$id/product.$productid/index.lazy';
 import { createLazyFileRoute } from '@tanstack/react-router';
+import _ from 'lodash';
 import { Fragment, useCallback, useContext } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useFieldArray } from 'react-hook-form';
@@ -48,9 +51,9 @@ const ProductEditHomePage = () => {
     const coverImageSrc = watch('coverimageSource') || '';
 
     const code = `
-		<div className="w-[60vw] mb-[-10rem] min-h-screen relative origin-top-left bg-background pointer-events-none" style={{transform:'scale(0.8)'}}>
+		<article className="w-[60vw] mb-[-10rem] min-h-screen relative origin-top-left bg-background pointer-events-none" style={{transform:'scale(0.8)'}}>
 			<ProductsDetailsPage preview={true} watch={watch}/>
-		</div>
+		</article>
 	`;
 
     const scope = {
@@ -105,24 +108,20 @@ const ProductEditHomePage = () => {
     } = useDropzone({ onDrop: onDropCover });
 
     return (
-        <div className="flex flex-col items-center justify-end lg:justify-start xl:justify-center lg:flex-row w-full">
-            <div className="flex flex-col gap-y-4 w-11/12 xl:w-6/12 xl:h-[38rem] px-0 xl:px-8 overflow-y-auto bg-background overflow-x-hidden scrollbar-thin scrollbar-thumb-white scrollbar-track-background justify-between gap-y-4">
-                <div className="flex flex-col gap-y-2">
-                    <span>Name</span>
-                    <fieldset className="border-white/30 border-[0.1px] rounded-md">
-                        <input
-                            className="outline-none bg-background text-white w-full text-lg"
-                            {...register('title')}
-                        />
-                        {errors.title && (
-                            <legend className="text-sm text-red-400">
-                                {errors.title.message}
-                            </legend>
-                        )}
-                    </fieldset>
-                </div>
-                <div className="flex flex-col gap-y-2">
-                    <span>Product Type</span>
+        <article className="w-full flex flex-col items-center sm:items-start xl:flex-row">
+            <section className="grid gap-y-4 w-full lg:w-6/12 lg:h-[38rem] px-4 sm:pr-6 sm:pl-0 xl:px-5 overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white scrollbar-track-background">
+                <label className="grid gap-y-4">
+                    <h2 className="text-xl">Name</h2>
+                    <FormInput<EditProductSchemaType>
+                        name="title"
+                        errors={errors}
+                        register={register}
+                        placeholder="Name"
+                        type="text"
+                    />
+                </label>
+                <label className="grid gap-y-4">
+                    <h2 className="text-xl">Product Type</h2>
                     <SelectComponent
                         isMulti={true}
                         options={productTypeOptions}
@@ -144,23 +143,19 @@ const ProductEditHomePage = () => {
                             {errors.tags.message}
                         </legend>
                     )}
-                </div>
-                <div className="flex flex-col gap-y-2">
-                    <div>Summary</div>
-                    <fieldset className="border-white/30 border-[0.1px] rounded-md">
-                        <input
-                            className="outline-none bg-background text-white w-full text-lg"
-                            {...register('summary')}
-                        />
-                        {errors.summary && (
-                            <legend className="text-sm text-red-400">
-                                {errors.summary.message}
-                            </legend>
-                        )}
-                    </fieldset>
-                </div>
-                <div className="flex flex-col gap-y-2">
-                    <div>Description</div>
+                </label>
+                <label className="grid gap-y-4">
+                    <h2 className="text-xl">Summary</h2>
+                    <FormInput<EditProductSchemaType>
+                        name="summary"
+                        errors={errors}
+                        register={register}
+                        placeholder="Name"
+                        type="text"
+                    />
+                </label>
+                <label className="grid gap-y-4">
+                    <h2 className="text-xl">Description</h2>
                     <MarkdownEditor
                         pageContent={description}
                         setContent={(data: RemirrorJSON) => {
@@ -180,10 +175,10 @@ const ProductEditHomePage = () => {
                             {errors.description.message}
                         </legend>
                     )}
-                </div>
-                <div className="flex flex-col gap-y-2 relative">
-                    <div>Thumbnail</div>
-                    <div
+                </label>
+                <label className="grid gap-y-4 relative">
+                    <h2 className="text-xl">Thumbnail</h2>
+                    <section
                         className={`${errors.thumbimageSource ? 'border-red-400' : 'border-white/30'} border-dashed border-[0.1px] p-10 flex items-center justify-center flex-col gap-y-4`}
                         {...getRootPropsThumb()}>
                         {thumbImageSrc !== '' && (
@@ -213,14 +208,14 @@ const ProductEditHomePage = () => {
                             )}
                         </div>
                         {isDragActiveThumb && (
-                            <div className="absolute w-full h-[95%] m-auto flex items-center justify-center backdrop-blur-sm border-2 border-dashed text-2xl">
+                            <p className="absolute w-full h-[95%] m-auto flex items-center justify-center backdrop-blur-sm border-2 border-dashed text-2xl">
                                 Drop the image here
-                            </div>
+                            </p>
                         )}
                         {errors.thumbimageSource && (
-                            <div className="text-sm text-red-400">
+                            <p className="text-sm text-red-400">
                                 {errors.thumbimageSource.message}
-                            </div>
+                            </p>
                         )}
                         <input
                             type="file"
@@ -252,11 +247,11 @@ const ProductEditHomePage = () => {
                             }}
                             {...getInputPropsThumb()}
                         />
-                    </div>
-                </div>
-                <div className="flex flex-col gap-y-2 relative">
-                    <div>Cover</div>
-                    <div
+                    </section>
+                </label>
+                <label className="grid gap-y-4 relative">
+                    <h2 className="text-xl">Cover</h2>
+                    <section
                         className={`${errors.coverimageSource ? 'border-red-400' : 'border-white/30'} border-dashed border-[0.1px] p-10 flex items-center justify-center flex-col gap-y-4`}
                         {...getRootPropsCover()}>
                         {coverImageSrc !== '' && (
@@ -286,14 +281,14 @@ const ProductEditHomePage = () => {
                             )}
                         </div>
                         {isDragActiveCover && (
-                            <div className="absolute w-full h-[95%] m-auto flex items-center justify-center backdrop-blur-sm border-2 border-dashed text-2xl">
+                            <p className="absolute w-full h-[95%] m-auto flex items-center justify-center backdrop-blur-sm border-2 border-dashed text-2xl">
                                 Drop the image here
-                            </div>
+                            </p>
                         )}
                         {errors.coverimageSource && (
-                            <div className="text-sm text-red-400">
+                            <p className="text-sm text-red-400">
                                 {errors.coverimageSource.message}
-                            </div>
+                            </p>
                         )}
                         <input
                             type="file"
@@ -325,10 +320,10 @@ const ProductEditHomePage = () => {
                             }}
                             {...getInputPropsCover()}
                         />
-                    </div>
-                </div>
-                <div className="flex flex-col gap-y-3">
-                    <div>Price</div>
+                    </section>
+                </label>
+                <label className="grid gap-y-4">
+                    <h2 className="text-xl">Price</h2>
                     <fieldset className="border-white/30 border-[0.1px] rounded-md p-2 focus-within:border-white flex">
                         <SelectComponent
                             placeholder="Enter Price..."
@@ -357,10 +352,10 @@ const ProductEditHomePage = () => {
                             </legend>
                         )}
                     </fieldset>
-                </div>
-                <div className="flex flex-col gap-y-3">
-                    <div>Collabs</div>
-                    <div className="flex gap-x-4">
+                </label>
+                <section className="grid gap-y-4">
+                    <h2 className="text-xl">Collabs</h2>
+                    <label className="flex gap-x-4">
                         <input
                             type="checkbox"
                             className=" bg-background text-white border-white/30 border-[0.1px] p-1 w-fit"
@@ -372,31 +367,10 @@ const ProductEditHomePage = () => {
                                 });
                             }}
                         />
-                        <div className="text-base">Activate Collab</div>
-                    </div>
+                        <span className="text-base">Activate Collab</span>
+                    </label>
                     {collab_active && (
                         <Fragment>
-                            <div className="flex gap-x-4 items-center text-lg text-white/70">
-                                <fieldset className="border-white/30 w-full border-[0.1px] rounded-md p-2 focus-within:border-white">
-                                    <legend className="text-sm">member</legend>
-                                    <div className="w-full">Me</div>
-                                </fieldset>
-                                <fieldset className="border-white/30 w-full border-[0.1px] rounded-md p-2 focus-within:border-white">
-                                    <legend className="text-sm">
-                                        Share(in %)
-                                    </legend>
-                                    <div className="w-full">
-                                        {collabs === undefined
-                                            ? 100
-                                            : 100 -
-                                              collabs.reduce(
-                                                  (a, { share }) =>
-                                                      a + (Number(share) || 0),
-                                                  0
-                                              )}
-                                    </div>
-                                </fieldset>
-                            </div>
                             {errors.collabs && errors.collabs['root'] && (
                                 <div className="text-red-400 text-sm">
                                     {errors.collabs['root']?.message}
@@ -407,59 +381,66 @@ const ProductEditHomePage = () => {
                                     {errors.collabs.message}
                                 </div>
                             )}
-                            {fields.map((collab, index) => {
-                                return (
-                                    <div
-                                        className="flex gap-x-4 items-center"
-                                        key={collab.id}>
-                                        <div>{index + 1}</div>
-                                        <fieldset className="border-white/30 border-[0.1px] rounded-md p-2 focus-within:border-white">
-                                            <input
-                                                className="text-lg bg-background text-white outline-none px-4"
-                                                {...register(
-                                                    `collabs.${index}.email`
+
+                            <table className="text-start border-spacing-2 text-base border-separate">
+                                <thead>
+                                    <th></th>
+                                    <th>Email</th>
+                                    <th>Share</th>
+                                    <th></th>
+                                </thead>
+                                <tbody>
+                                    {fields.map((collab, index) => {
+                                        return (
+                                            <tr key={collab.id}>
+                                                <td>{index + 1}</td>
+                                                <td>
+                                                    <FormInput<EditProductSchemaType>
+                                                        name={`collabs.${index}.email`}
+                                                        errors={errors}
+                                                        register={register}
+                                                        placeholder=""
+                                                        type="text"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <FormInput<EditProductSchemaType>
+                                                        name={`collabs.${index}.share`}
+                                                        errors={errors}
+                                                        register={register}
+                                                        placeholder=""
+                                                        type="text"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <IoTrashBin
+                                                        className="text-red-400 cursor-pointer text-xl"
+                                                        onClick={() => {
+                                                            remove(index);
+                                                        }}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                                <tfoot className="text-lg">
+                                    <tr>
+                                        <td></td>
+                                        <td>Remaining share</td>
+                                        <td>
+                                            {100 -
+                                                _.sum(
+                                                    watch('collabs').map(
+                                                        (e) => e.share
+                                                    )
                                                 )}
-                                            />
-                                            {errors.collabs &&
-                                                errors.collabs[index]
-                                                    ?.email && (
-                                                    <legend className="text-red-400 text-sm">
-                                                        {
-                                                            errors.collabs[
-                                                                index
-                                                            ]?.email?.message
-                                                        }
-                                                    </legend>
-                                                )}
-                                        </fieldset>
-                                        <fieldset className="border-white/30 border-[0.1px] rounded-md p-2 focus-within:border-white">
-                                            <input
-                                                className="text-lg bg-background text-white outline-none px-4"
-                                                {...register(
-                                                    `collabs.${index}.share`
-                                                )}
-                                            />
-                                            {errors.collabs &&
-                                                errors.collabs[index]
-                                                    ?.share && (
-                                                    <legend className="text-red-400 text-sm">
-                                                        {
-                                                            errors.collabs[
-                                                                index
-                                                            ]?.share?.message
-                                                        }
-                                                    </legend>
-                                                )}
-                                        </fieldset>
-                                        <IoTrashBin
-                                            className="text-red-400 cursor-pointer"
-                                            onClick={() => {
-                                                remove(index);
-                                            }}
-                                        />
-                                    </div>
-                                );
-                            })}
+                                            %
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
                             <Button
                                 buttonName="Add new member"
                                 extraClasses={[`!w-full`]}
@@ -473,47 +454,47 @@ const ProductEditHomePage = () => {
                             />
                         </Fragment>
                     )}
-                </div>
-                <div className="flex flex-col gap-y-3">
-                    <div>Settings</div>
-                    <div className="flex flex-col gap-y-2">
-                        <div className="flex gap-x-4">
+                </section>
+                <section className="grid gap-y-4">
+                    <h2 className="text-xl">Settings</h2>
+                    <article className="grid gap-y-2">
+                        <label className="flex gap-x-4">
                             <input
                                 type="checkbox"
                                 className=" bg-background text-white border-white/30 border-[0.1px] p-1 w-fit"
                             />
-                            <div className="text-base">
+                            <span className="text-base">
                                 Allow customers to pay whatever they want
-                            </div>
-                        </div>
-                        <div className="flex gap-x-4">
+                            </span>
+                        </label>
+                        <label className="flex gap-x-4">
                             <input
                                 type="checkbox"
                                 className=" bg-background text-white border-white/30 border-[0.1px] p-1 w-fit"
                             />
-                            <div className="text-base">
+                            <span className="text-base">
                                 Allow customers to leave Reviews
-                            </div>
-                        </div>
-                        <div className="flex gap-x-4">
+                            </span>
+                        </label>
+                        <label className="flex gap-x-4">
                             <input
                                 type="checkbox"
                                 className=" bg-background text-white border-white/30 border-[0.1px] p-1 w-fit"
                             />
-                            <div className="text-base">
+                            <span className="text-base">
                                 Show number of sales
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div
-                className={`w-6/12 h-[38rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}>
-                <div className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">
+                            </span>
+                        </label>
+                    </article>
+                </section>
+            </section>
+            <section
+                className={`w-6/12 h-[38rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] lg:block border-white/30 p-2 px-0 border-l-[0.1px]`}>
+                <span className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">
                     Preview
-                </div>
+                </span>
                 <Runner scope={scope} code={code} />
-            </div>
-        </div>
+            </section>
+        </article>
     );
 };
