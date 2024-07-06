@@ -14,8 +14,8 @@ const ProductCard = ({ children, productData }: ProductCard) => {
     };
 
     return (
-        <article className="flex flex-col flex-wrap sm:flex-row gap-y-4 gap-x-6 items-center border-white/30 border-[0.1px] rounded-xl p-6 relative min-w-fit max-w-[20rem] sm:max-w-[38rem] overflow-hidden">
-            <section>
+        <article className="flex gap-y-4 gap-x-6 items-center border-white/30 border-[0.1px] rounded-xl p-6 relative sm:min-w-[34rem] md:min-w-0 flex-wrap sm:flex-nowrap md:flex-wrap lg:flex-nowrap xl:flex-wrap 2xl:flex-nowrap overflow-hidden">
+            <section className="w-full min-w-[12rem] max-w-[18rem] xl:w-auto">
                 {productData?.thumbimageSource &&
                 productData?.thumbimageSource !== '' ? (
                     <img
@@ -29,8 +29,8 @@ const ProductCard = ({ children, productData }: ProductCard) => {
                     <FaImage className="text-[3rem] sm:text-[4rem] h-[3rem] w-[8rem]" />
                 )}
             </section>
-            <section className="flex flex-col justify-between gap-y-3">
-                <header>
+            <section className="flex sm:flex-col justify-between gap-y-2 gap-x-4 w-full xl:w-auto flex-wrap sm:flex-nowrap">
+                <header className="grid gap-y-1">
                     <Link
                         style={{
                             fontFamily: 'inherit',
@@ -50,9 +50,7 @@ const ProductCard = ({ children, productData }: ProductCard) => {
                     <p className="text-white/70 text-lg tracking-wide font-thin text-justify">
                         {productData.summary || 'No summary'}
                     </p>
-                </header>
-                <footer className="grid gap-y-2">
-                    <ul className="flex flex-wrap gap-x-3">
+                    <ul className="flex flex-wrap gap-x-3 mt-2 sm:mt-0">
                         {productData.tags !== '' &&
                             productData.tags.split(',').map((e, i) => {
                                 return (
@@ -64,7 +62,9 @@ const ProductCard = ({ children, productData }: ProductCard) => {
                                 );
                             })}
                     </ul>
-                    <ul className="flex gap-x-6 mt-1 text-sm">
+                </header>
+                <footer className="grid gap-y-2">
+                    <ul className="flex flex-col sm:flex-row gap-x-6 mt-1 text-sm">
                         <li
                             className={`${productData.live ? 'text-green-400' : 'text-red-400'}  flex items-center gap-x-1`}>
                             <FaDotCircle className="text-sm relative" />

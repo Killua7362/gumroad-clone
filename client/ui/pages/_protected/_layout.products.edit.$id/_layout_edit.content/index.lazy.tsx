@@ -1,11 +1,4 @@
-import {
-    createRef,
-    Fragment,
-    RefObject,
-    useContext,
-    useEffect,
-    useState,
-} from 'react';
+import { createRef, RefObject, useContext, useEffect, useState } from 'react';
 
 import Button from '@/ui/components/button';
 import ProductEditContentDeleteModal from '@/ui/components/modal/ProductEditContentDeleteModal';
@@ -18,7 +11,7 @@ import {
     IonRow,
 } from '@ionic/react';
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { motion, Reorder } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useFieldArray, useFormState } from 'react-hook-form';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { CiStar } from 'react-icons/ci';
@@ -105,27 +98,11 @@ const ProductEditContentPage = () => {
         setContextActive(temp2);
     }, [pages.length]);
 
-    const [items, setItems] = useState([0, 1, 2, 3]);
-
     return (
         rendered && (
-            <Fragment>
+            <>
                 <article className="flex lg:justify-start flex-row lg:flex-col gap-y-3 gap-x-6 mt-4 mx-4">
                     <section className="border-white/30 border-[0.1px] flex flex-col gap-y-4 justify-between w-full max-w-[20rem]">
-                        <Reorder.Group
-                            axis="y"
-                            values={items}
-                            onReorder={(value) => {
-                                console.log(value);
-                                setItems(value);
-                            }}>
-                            {items.map((item) => (
-                                <Reorder.Item key={item} value={item}>
-                                    {item}
-                                </Reorder.Item>
-                            ))}
-                        </Reorder.Group>
-
                         <IonReorderGroup
                             disabled={false}
                             onIonItemReorder={(event) => {
@@ -136,18 +113,24 @@ const ProductEditContentPage = () => {
                                         shouldDirty: true,
                                     }
                                 );
-                                navigate({
-                                    search: (
-                                        prev: ProductContentSearchType
-                                    ) => ({
-                                        ...prev,
-                                        page: (event.detail.to + 1) as number,
-                                    }),
-                                    state: {
-                                        ...getValues(),
-                                    },
-                                    replace: true,
-                                });
+                                if (
+                                    event.detail.from ===
+                                    (searchParams.page as number) - 1
+                                ) {
+                                    navigate({
+                                        search: (
+                                            prev: ProductContentSearchType
+                                        ) => ({
+                                            ...prev,
+                                            page: (event.detail.to +
+                                                1) as number,
+                                        }),
+                                        state: {
+                                            ...getValues(),
+                                        },
+                                        replace: true,
+                                    });
+                                }
                             }}
                             className="flex flex-col gap-2">
                             {fields.map((e, i) => {
@@ -224,7 +207,7 @@ const ProductEditContentPage = () => {
                                                 }}
                                             />
                                         </IonRow>
-                                        <motion.div
+                                        <motion.ul
                                             layout
                                             style={{
                                                 display: contextActive[i]
@@ -244,7 +227,7 @@ const ProductEditContentPage = () => {
                                             transition={{
                                                 layout: { duration: 0.2 },
                                             }}>
-                                            <div
+                                            <li
                                                 className="p-4 py-3 bg-white text-black cursor-pointer hover:bg-white/90"
                                                 onClick={() => {
                                                     inputRefs[
@@ -255,7 +238,7 @@ const ProductEditContentPage = () => {
                                                     ].current?.focus();
                                                 }}>
                                                 Rename
-                                            </div>
+                                            </li>
                                             {pages.length > 1 && (
                                                 <ProductEditContentDeleteModal
                                                     i={i}
@@ -263,7 +246,7 @@ const ProductEditContentPage = () => {
                                                     pagesLength={pages.length}
                                                 />
                                             )}
-                                        </motion.div>
+                                        </motion.ul>
                                     </IonItem>
                                 );
                             })}
@@ -276,14 +259,14 @@ const ProductEditContentPage = () => {
                             }}
                         />
                     </section>
-                    <div className="flex flex-col w-full max-w-[20rem] border-white/30 border-[0.1px] h-fit p-4 justify-center items-center gap-y-3">
-                        <div className="p-2 text-2xl">Review</div>
-                        <div className="flex gap-x-4 px-1 justify-between w-full">
-                            <div className="text-lg">Rating:</div>
-                            <div className="flex my-[0.1rem]">
+                    <section className="flex flex-col w-full max-w-[20rem] border-white/30 border-[0.1px] h-fit p-4 justify-center items-center gap-y-3">
+                        <h2 className="p-2 text-2xl">Review</h2>
+                        <section className="flex gap-x-4 px-1 justify-between w-full">
+                            Rating:
+                            <ul className="flex my-[0.1rem] list-none">
                                 {new Array(5).fill(0).map((e, i) => {
                                     return (
-                                        <div
+                                        <li
                                             key={`review_star_${i}`}
                                             className="cursor-pointer"
                                             onMouseEnter={() => {
@@ -322,80 +305,80 @@ const ProductEditContentPage = () => {
                                             ) : (
                                                 <CiStar />
                                             )}
-                                        </div>
+                                        </li>
                                     );
                                 })}
-                            </div>
-                        </div>
+                            </ul>
+                        </section>
                         {reviewOptions.reviewEdit ? (
-                            <div>
-                                <fieldset className="border-white/30 border-[0.1px] focus-within:border-white">
-                                    <textarea
-                                        style={{
-                                            fontFamily: 'inherit',
-                                        }}
-                                        className="bg-background text-white outline-none text-base resize-none h-[6rem]"
-                                        value={
-                                            reviewOptions.tempReviewDescription
-                                        }
-                                        onChange={(event) => {
-                                            event.preventDefault();
-                                            reviewOptions.reviewEdit &&
-                                                event.currentTarget?.value &&
-                                                setReviewOptions((prev) => {
-                                                    return {
-                                                        ...prev,
-                                                        tempReviewDescription:
-                                                            event.currentTarget
-                                                                .value,
-                                                    };
-                                                });
-                                        }}
-                                    />
-                                </fieldset>
-                            </div>
+                            <fieldset className="border-white/30 border-[0.1px] focus-within:border-white">
+                                <textarea
+                                    style={{
+                                        fontFamily: 'inherit',
+                                    }}
+                                    className="bg-background text-white outline-none text-base resize-none h-[6rem]"
+                                    value={reviewOptions.tempReviewDescription}
+                                    onChange={(event) => {
+                                        event.preventDefault();
+                                        reviewOptions.reviewEdit &&
+                                            event.currentTarget?.value &&
+                                            setReviewOptions((prev) => {
+                                                return {
+                                                    ...prev,
+                                                    tempReviewDescription:
+                                                        event.currentTarget
+                                                            .value,
+                                                };
+                                            });
+                                    }}
+                                />
+                            </fieldset>
                         ) : (
-                            <div className="text-base w-full">
+                            <p className="text-base w-full">
                                 {reviewOptions.reviewDescription === ''
                                     ? 'No Description'
                                     : reviewOptions.reviewDescription}
-                            </div>
+                            </p>
                         )}
                         {reviewOptions.reviewEdit && (
-                            <div className="flex gap-x-2 w-full">
-                                <Button
-                                    extraClasses={[`!w-full`]}
-                                    buttonName={'Save'}
-                                    onClickHandler={() => {
-                                        setReviewOptions((prev) => {
-                                            return {
-                                                ...prev,
-                                                reviewEdit: false,
-                                                reviewDescription:
-                                                    reviewOptions.tempReviewDescription,
-                                                reviewScore:
-                                                    reviewOptions.tempSelectReviewScore,
-                                            };
-                                        });
-                                    }}
-                                />
-                                <Button
-                                    extraClasses={[`!w-full`]}
-                                    buttonName={'Cancel'}
-                                    onClickHandler={() => {
-                                        setReviewOptions((prev) => {
-                                            return {
-                                                ...prev,
-                                                reviewEdit: false,
-                                                tempReviewDescription:
-                                                    reviewOptions.reviewDescription,
-                                                tempReviewScore:
-                                                    reviewOptions.reviewScore,
-                                            };
-                                        });
-                                    }}
-                                />
-                            </div>
+                            <ul className="flex gap-x-2 w-full list-none">
+                                <li className="w-full">
+                                    <Button
+                                        extraClasses={[`!w-full`]}
+                                        buttonName={'Save'}
+                                        onClickHandler={() => {
+                                            setReviewOptions((prev) => {
+                                                return {
+                                                    ...prev,
+                                                    reviewEdit: false,
+                                                    reviewDescription:
+                                                        reviewOptions.tempReviewDescription,
+                                                    reviewScore:
+                                                        reviewOptions.tempSelectReviewScore,
+                                                };
+                                            });
+                                        }}
+                                    />
+                                </li>
+                                <li className="w-full">
+                                    <Button
+                                        extraClasses={[`!w-full`]}
+                                        buttonName={'Cancel'}
+                                        onClickHandler={() => {
+                                            setReviewOptions((prev) => {
+                                                return {
+                                                    ...prev,
+                                                    reviewEdit: false,
+                                                    tempReviewDescription:
+                                                        reviewOptions.reviewDescription,
+                                                    tempReviewScore:
+                                                        reviewOptions.reviewScore,
+                                                };
+                                            });
+                                        }}
+                                    />
+                                </li>
+                            </ul>
                         )}
                         {!reviewOptions.reviewEdit && (
                             <Button
@@ -408,7 +391,7 @@ const ProductEditContentPage = () => {
                                 }}
                             />
                         )}
-                    </div>
+                    </section>
                 </article>
                 <MarkdownEditor
                     pageContent={
@@ -429,8 +412,9 @@ const ProductEditContentPage = () => {
                             outline: '#09090B',
                             text: 'white',
                         },
-                    }}></MarkdownEditor>
-            </Fragment>
+                    }}
+                />
+            </>
         )
     );
 };

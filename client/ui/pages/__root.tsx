@@ -69,14 +69,14 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
     const sideBarProps: SideBarProps = getSideBarProps();
 
     return (
-        <div className="min-h-screen min-w-screen flex flex-col sm:flex-row flex-wrap relative bg-background">
+        <article className="min-h-screen min-w-screen flex flex-col sm:flex-row flex-wrap relative bg-background">
             <Toast />
             <AnimatePresence mode="wait" initial={false}>
                 {(sideBarActive || false) && <SideBar {...sideBarProps} />}
             </AnimatePresence>
             <motion.div
                 layout
-                className={`absolute w-full min-h-screen sm:w-auto flex flex-col justify-between overflow-y-auto overflow-x-hidden sm:ml-8 sm:right-0 px-2 sm:px-0 scrollbar-thin scrollbar-thumb-white scrollbar-track-background top-[4.5rem] sm:top-0`}
+                className={`absolute w-full min-h-screen sm:w-auto flex flex-col justify-between overflow-y-auto overflow-x-hidden sm:ml-8 sm:right-0 px-2 sm:px-0 scrollbar-thin scrollbar-thumb-white scrollbar-track-background top-[5rem] sm:top-0`}
                 transition={{
                     x: { type: 'spring', bounce: 0 },
                 }}
@@ -89,9 +89,9 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
                                 : '5rem'
                             : 0,
                 }}>
-                <div className="h-full relative">{children}</div>
+                <section className="h-full relative">{children}</section>
                 <Footer />
             </motion.div>
-        </div>
+        </article>
     );
 };

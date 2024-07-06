@@ -71,11 +71,11 @@ const Home = () => {
     return (
         rendered && (
             <renderNodeContext.Provider value={renderNode}>
-                <div className="h-[87vh] w-full relative flex items-center overflow-hidden">
+                <article className="h-[87vh] w-full relative flex items-center overflow-hidden">
                     <DndProvider backend={HTML5Backend}>
                         <TilingRoot />
                     </DndProvider>
-                </div>
+                </article>
 
                 {Object.entries(renderDivs).map(([key, val]) => {
                     return (

@@ -211,7 +211,7 @@ const ProductsHomePage = () => {
                         </motion.section>
                     )}
                 </AnimatePresence>
-                <section className="mt-2 grid grid-cols-1 lg:grid-cols-2 gap-6 px-8 sm:pr-6 sm:pl-0">
+                <section className="mt-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 px-8 sm:pr-6 sm:pl-0">
                     {processProducts({
                         products: Object.entries(allProducts),
                         searchURL: new URLSearchParams(
