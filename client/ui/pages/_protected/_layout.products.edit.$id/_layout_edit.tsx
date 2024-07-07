@@ -32,14 +32,14 @@ export const productEditContext =
 export const Route = createFileRoute(
     '/_protected/_layout/products/edit/$id/_layout_edit'
 )({
-    loader: async ({ params }) => {
+    loader: async ({ params }): Promise<ProductType> => {
         const singleProductDataQuery = singleProductFetcherProps({
             productId: params.id,
         });
         const singleProductData = await queryClient.ensureQueryData(
             singleProductDataQuery
         );
-        return singleProductData as ProductType;
+        return singleProductData;
     },
     component: ({ singleProductData }) => {
         return (

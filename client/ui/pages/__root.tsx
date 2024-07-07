@@ -24,7 +24,7 @@ export interface SideBarProps {
     setWindowWidth: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const getSideBarProps = () => {
+const getSideBarProps = (): SideBarProps => {
     const [sideBarOpen, setSideBarOpen] = useState(false);
     const [windowWidth, setWindowWidth] = useState<number>(700);
 
@@ -33,16 +33,15 @@ const getSideBarProps = () => {
         windowWidth,
         setSideBarOpen,
         setWindowWidth,
-    } as SideBarProps;
+    };
 };
 
 export const Route = createRootRoute({
     loader: async () => {
-        const loginStatus = await queryClient.ensureQueryData(
+        const loginStatus: authSchema = await queryClient.ensureQueryData(
             loginStatusFetcherProps
         );
-        const result = loginStatus as authSchema;
-        return result;
+        return loginStatus;
     },
     component: () => {
         const { status, isLoading } = useRouterState();

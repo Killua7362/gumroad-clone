@@ -57,7 +57,7 @@ const CheckoutForm = () => {
         errors,
         resetField,
         isDirty,
-    } = getCheckoutFormProps(profileStatus || {});
+    } = getCheckoutFormProps(profileStatus!);
 
     const { mutate: profileStatusSetter, isPending: profileStatusLoading } =
         getProfileStatusSetter({
@@ -70,7 +70,6 @@ const CheckoutForm = () => {
     const bio = watch('bio');
     const name = watch('name');
     const category = watch('category');
-
     const userId = (queryClient.getQueryData(['loginStatus']) as authSchema)
         .user_id;
 

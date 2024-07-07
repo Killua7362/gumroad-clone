@@ -47,10 +47,10 @@ const ProductCard = ({ children, productData }: ProductCard) => {
                             <GoLink className="text-lg text-sky-400 cursor-pointer" />
                         )}
                     </Link>
-                    <p className="text-white/70 text-lg tracking-wide font-thin text-justify">
+                    <p className="text-white/70 text-lg tracking-wide font-thin text-justify hyphens-auto">
                         {productData.summary || 'No summary'}
                     </p>
-                    <ul className="flex flex-wrap gap-x-3 mt-2 sm:mt-0">
+                    <ul className="flex flex-wrap gap-x-3 mt-2">
                         {productData.tags !== '' &&
                             productData.tags.split(',').map((e, i) => {
                                 return (

@@ -115,15 +115,14 @@ const ProductEditContentPage = () => {
                                 );
                                 if (
                                     event.detail.from ===
-                                    (searchParams.page as number) - 1
+                                    Number(searchParams.page) - 1
                                 ) {
                                     navigate({
                                         search: (
                                             prev: ProductContentSearchType
                                         ) => ({
                                             ...prev,
-                                            page: (event.detail.to +
-                                                1) as number,
+                                            page: Number(event.detail.to + 1),
                                         }),
                                         state: {
                                             ...getValues(),
@@ -395,13 +394,12 @@ const ProductEditContentPage = () => {
                 </article>
                 <MarkdownEditor
                     pageContent={
-                        pages[(searchParams.page as number) - 1]
-                            ?.content as string
+                        pages[Number(searchParams.page) - 1]?.content as string
                     }
                     key={searchParams.page}
                     setContent={(data: RemirrorJSON) => {
                         setValue(
-                            `contents.${((searchParams.page || 1) as number) - 1}.content`,
+                            `contents.${(Number(searchParams.page) || 1) - 1}.content`,
                             JSON.stringify(data),
                             { shouldDirty: true }
                         );
