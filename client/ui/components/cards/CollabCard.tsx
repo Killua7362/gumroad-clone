@@ -69,7 +69,14 @@ const CollabCard = ({ children, productData }: CollabCard) => {
                 <table className="text-start border-spacing-2 text-base border-separate w-full sm:w-auto">
                     <thead>
                         <th></th>
-                        <th>Email</th>
+                        <th>
+                            Email (approved{' '}
+                            {
+                                productData.collabs?.filter((e) => e.approved)
+                                    .length
+                            }{' '}
+                            of {productData.collabs?.length})
+                        </th>
                         <th>Share</th>
                     </thead>
                     <tbody>

@@ -71,6 +71,9 @@ const ProductEditContentPage = () => {
 
     const [rendered, setRendered] = useState(false);
 
+    const collabs = watch('collabs');
+    const collab_active = watch('collab_active');
+
     useEffect(() => {
         if (!searchParams.page || searchParams.page! > pages.length) {
             navigate({
@@ -390,6 +393,15 @@ const ProductEditContentPage = () => {
                                 }}
                             />
                         )}
+                        <section className="w-full">
+                            <h4 className="text-lg">Author</h4>
+                            <ul className="list-none grid gap-y-2 text-base">
+                                {collab_active &&
+                                    collabs.map((e) => {
+                                        return <li>{e.email}</li>;
+                                    })}
+                            </ul>
+                        </section>
                     </section>
                 </article>
                 <MarkdownEditor

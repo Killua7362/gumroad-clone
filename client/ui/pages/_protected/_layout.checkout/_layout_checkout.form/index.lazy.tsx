@@ -91,7 +91,7 @@ const CheckoutForm = () => {
             <article className="w-full flex flex-col items-center sm:items-start xl:flex-row">
                 <form
                     id="checkout_form"
-                    className="grid gap-y-4 w-full lg:w-6/12 lg:h-[38rem] px-4 sm:pr-6 sm:pl-0 xl:px-5 overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white scrollbar-track-background"
+                    className="grid gap-y-4 w-full lg:w-6/12 lg:h-[40rem] px-4 sm:pr-6 sm:pl-0 xl:px-5 overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white scrollbar-track-background"
                     onSubmit={handleSubmit((data) => {
                         if (isDirty) {
                             profileStatusSetter({ ...data });
@@ -275,7 +275,7 @@ const CheckoutForm = () => {
                     </footer>
                 </form>
                 <section
-                    className={`w-6/12 h-[38.5rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}>
+                    className={`w-6/12 h-[40rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}>
                     <span className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">
                         Preview
                     </span>

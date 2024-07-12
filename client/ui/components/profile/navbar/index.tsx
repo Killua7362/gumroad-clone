@@ -7,10 +7,10 @@ interface ProfileNavbar {
 }
 
 const ProfileNavbar = ({ name, preview }: ProfileNavbar) => {
-    const params = preview ? undefined : useParams({ from: '/profile/$id/' });
+    const params = preview ? undefined : useParams({ strict: false });
 
     return (
-        <section className="fixed border-b-[0.1px] border-white/30 min-h-[6rem] w-full top-0 bg-background z-30">
+        <section className="fixed border-b-[0.1px] border-white/30 min-h-[6rem] w-full top-0 bg-background z-30 left-0">
             <div className="w-10/12 xl:w-8/12 h-full mx-auto flex items-center justify-between md:flex-row flex-col gap-y-6 my-6">
                 <Link
                     disabled={preview}

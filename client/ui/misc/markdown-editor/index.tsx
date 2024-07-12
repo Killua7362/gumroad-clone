@@ -21,13 +21,7 @@ import {
     useRemirror,
 } from '@remirror/react';
 import { AllStyledComponent } from '@remirror/styles/emotion';
-import {
-    FC,
-    PropsWithChildren,
-    useCallback,
-    useContext,
-    useState,
-} from 'react';
+import { FC, PropsWithChildren, useCallback, useState } from 'react';
 import jsx from 'refractor/lang/jsx.js';
 import typescript from 'refractor/lang/typescript.js';
 import { ExtensionPriority } from 'remirror';
@@ -55,7 +49,6 @@ import {
     CustomImageExtension,
     CustomUploadExtension,
 } from '@/ui/misc/markdown-editor/components';
-import { productEditContext } from '@/ui/pages/_protected/_layout.products.edit.$id/_layout_edit';
 import { css, cx } from '@emotion/css';
 import type { RemirrorProps, UseThemeProps } from '@remirror/react';
 import type { CreateEditorStateProps, RemirrorJSON } from 'remirror';
@@ -202,9 +195,6 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
         ],
         [placeholder]
     );
-
-    const localProductEditContext = useContext(productEditContext);
-    const { setValue } = localProductEditContext!;
 
     const { manager, state, setState } = useRemirror({
         extensions,

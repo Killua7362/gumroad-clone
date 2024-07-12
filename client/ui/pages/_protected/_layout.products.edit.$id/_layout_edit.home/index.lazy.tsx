@@ -154,7 +154,7 @@ const ProductEditHomePage = () => {
                         type="text"
                     />
                 </label>
-                <label className="grid gap-y-4">
+                <section className="grid gap-y-4">
                     <h2 className="text-xl">Description</h2>
                     <MarkdownEditor
                         pageContent={description}
@@ -175,7 +175,7 @@ const ProductEditHomePage = () => {
                             {errors.description.message}
                         </legend>
                     )}
-                </label>
+                </section>
                 <label className="grid gap-y-4 relative">
                     <h2 className="text-xl">Thumbnail</h2>
                     <section

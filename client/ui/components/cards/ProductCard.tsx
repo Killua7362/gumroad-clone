@@ -14,7 +14,7 @@ const ProductCard = ({ children, productData }: ProductCard) => {
     };
 
     return (
-        <article className="flex gap-y-4 gap-x-6 items-center border-white/30 border-[0.1px] rounded-xl p-6 relative sm:min-w-[34rem] md:min-w-0 flex-wrap sm:flex-nowrap md:flex-wrap lg:flex-nowrap xl:flex-wrap 2xl:flex-nowrap overflow-hidden">
+        <article className="flex gap-y-4 gap-x-6 items-center border-white/30 border-[0.1px] rounded-xl p-6 relative sm:min-w-[34rem] md:min-w-0 flex-wrap sm:flex-nowrap md:flex-wrap lg:flex-nowrap xl:flex-wrap 2xl:flex-nowrap">
             <section className="w-full min-w-[12rem] max-w-[18rem] xl:w-auto">
                 {productData?.thumbimageSource &&
                 productData?.thumbimageSource !== '' ? (

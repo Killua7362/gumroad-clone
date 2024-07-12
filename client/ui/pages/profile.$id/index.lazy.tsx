@@ -3,7 +3,7 @@ import {
     getProfileProductsFetcher,
     getProfileStatus,
 } from '@/react-query/query';
-import ProfilePageProductCard from '@/ui/components/cards/ProfilePageProductCard';
+import ProfilePageProductCategory from '@/ui/components/cards/ProfilePageProductCategory';
 import Loader from '@/ui/components/loader';
 import ProfilePageLayout from '@/ui/layouts/ProfilePageLayout';
 import {
@@ -62,27 +62,28 @@ export const ProfileHomePage = ({
             <ProfilePageLayout
                 preview={preview}
                 name={preview ? profilePageProps.name! : profileStatus.name}>
-                <div
-                    className={`w-full flex flex-col gap-y-6 h-full scrollbar-thin scrollbar-thumb-white scrollbar-track-background ${preview ? 'pt-[6rem]' : 'pt-[10rem] md:pt-[6.2rem]'}`}>
-                    <div className="min-h-[5rem] w-[100%] flex justify-center items-center bg-accent/30 shadow-xl shadow-black/60">
-                        <div className="w-10/12 xl:w-8/12 text-xl">
-                            <span className="w-full">
+                <article
+                    className={`w-full grid gap-y-6 h-full scrollbar-thin scrollbar-thumb-white scrollbar-track-background ${preview ? 'pt-[6rem]' : 'pt-[6rem] sm:pt-[11rem] md:pt-[6rem]'}`}>
+                    <section className="min-h-[5rem] w-full flex justify-center items-center bg-accent/30 shadow-xl shadow-black/60">
+                        <header className="w-10/12 xl:w-8/12 text-xl">
+                            <h3 className="w-full">
                                 {preview
                                     ? profilePageProps.bio!
                                     : profileStatus.bio}
-                            </span>
-                        </div>
-                    </div>
-                    <div className="w-10/12 xl:w-8/12 mx-auto h-full flex flex-col mt-2 gap-y-8">
+                            </h3>
+                        </header>
+                    </section>
+                    <section className="w-10/12 xl:w-8/12 mx-auto h-full flex flex-col mt-2 gap-y-8">
                         {preview &&
                             profilePageProps.category &&
                             profilePageProps.category.map((e, i) => {
                                 return (
                                     !e.hidden && (
-                                        <ProfilePageProductCard
+                                        <ProfilePageProductCategory
                                             key={`profile_page_product_${i}`}
                                             name={e.name}
                                             url={e.url}
+                                            preview={preview}
                                             profileProducts={Object.entries(
                                                 profileProducts
                                             )}
@@ -95,10 +96,11 @@ export const ProfileHomePage = ({
                             profileStatus.category.map((e, i) => {
                                 return (
                                     !e.hidden && (
-                                        <ProfilePageProductCard
+                                        <ProfilePageProductCategory
                                             key={`profile_page_product_${i}`}
                                             name={e.name}
                                             url={e.url}
+                                            preview={preview}
                                             profileProducts={Object.entries(
                                                 profileProducts
                                             )}
@@ -106,8 +108,8 @@ export const ProfileHomePage = ({
                                     )
                                 );
                             })}
-                    </div>
-                </div>
+                    </section>
+                </article>
             </ProfilePageLayout>
         );
     }

@@ -27,7 +27,8 @@ export const renderNodeContext = createContext<TileRender>({});
 const Home = () => {
     const tileSchema: TileSchema = useRecoilValue(tileRootSchema);
     const [rendered, setRendered] = useState(false);
-    const [widgetItems, setWidgetItems] = useRecoilState(widgetBarItems);
+    const [widgetItems, setWidgetItems] =
+        useRecoilState<string[]>(widgetBarItems);
 
     const renderDivs = {
         A: [<div className="h-full w-full"></div>, 'First'],
@@ -55,23 +56,31 @@ const Home = () => {
         const allSchemaIds: Set<string> = getAllRenderID({
             schema: tileSchema as TileSchema,
         });
+        let tempWidgetItems: string[] = [...widgetItems];
         if (
             Object.keys(renderDivs).length !==
             allSchemaIds.size + widgetItems.length
         ) {
-            setWidgetItems(() => {
-                return Object.keys(renderDivs).filter(
-                    (e) => !allSchemaIds.has(e)
-                );
-            });
+            tempWidgetItems = Object.keys(renderDivs).filter(
+                (e) => !allSchemaIds.has(e)
+            );
         }
+        let idx = tempWidgetItems.indexOf('');
+        if (idx !== -1) {
+            tempWidgetItems[idx] = Object.keys(renderDivs).filter(
+                (e) => !allSchemaIds.has(e) && tempWidgetItems.indexOf(e) !== -1
+            )[0];
+        }
+        setWidgetItems(() => {
+            return tempWidgetItems;
+        });
         setRendered(true);
     }, []);
 
     return (
         rendered && (
             <renderNodeContext.Provider value={renderNode}>
-                <article className="h-[87vh] w-full relative flex items-center overflow-hidden">
+                <article className="h-[calc(86vh-2.25rem)] w-full relative flex items-center overflow-hidden mt-9">
                     <DndProvider backend={HTML5Backend}>
                         <TilingRoot />
                     </DndProvider>
