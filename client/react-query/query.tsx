@@ -8,19 +8,20 @@ interface returnLoginStatusFetcher {
     isPending: boolean;
 }
 
-export const loginStatusFetcherProps = {
-    queryKey: ['loginStatus'],
-    queryFn: () =>
-        fetch(`${window.location.origin}/api/sessions/logged_in`).then(
-            async (res) => {
-                return res.json();
-            }
-        ),
+export const loginStatusFetcherProps = () => {
+    return {
+        queryKey: ['loginStatus'],
+        queryFn: () =>
+            fetch(`${window.location.origin}/api/sessions/logged_in`).then(
+                async (res) => {
+                    return res.json();
+                }
+            ),
+    };
 };
-
 export const loginStatusFetcher = (): returnLoginStatusFetcher => {
     const { data, isSuccess, isPending } = useQuery({
-        ...loginStatusFetcherProps,
+        ...loginStatusFetcherProps(),
         meta: {
             persist: false,
         },

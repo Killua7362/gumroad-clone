@@ -19,7 +19,8 @@ export type ProductHomeRouteType = z.infer<typeof ProductHomeSchema>;
 export const Route = createFileRoute(
     '/_protected/_layout/products/_layout_products/home/'
 )({
-    loader: async (): Promise<ProductTypePayload> => {
+    loaderDeps: ({ search: { reverse } }) => ({ reverse }),
+    loader: async ({ deps: { reverse } }): Promise<ProductTypePayload> => {
         const allProducts = await queryClient.ensureQueryData(
             allProductsFetcherProps
         );

@@ -29,7 +29,7 @@ const ProductCard = ({ children, productData }: ProductCard) => {
                     <FaImage className="text-[3rem] sm:text-[4rem] h-[3rem] w-[8rem]" />
                 )}
             </section>
-            <section className="flex sm:flex-col justify-between gap-y-2 gap-x-4 w-full xl:w-auto flex-wrap sm:flex-nowrap">
+            <section className="flex sm:flex-col justify-between gap-y-2 gap-x-4 w-full xl:w-auto h-full flex-wrap sm:flex-nowrap">
                 <header className="grid gap-y-1">
                     <Link
                         style={{

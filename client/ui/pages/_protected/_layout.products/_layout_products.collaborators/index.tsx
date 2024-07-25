@@ -25,13 +25,18 @@ interface returnProductPageCollaborators {
 export const Route = createFileRoute(
     '/_protected/_layout/products/_layout_products/collaborators/'
 )({
-    loader: async (): Promise<returnProductPageCollaborators> => {
+    loaderDeps: ({ search: { type } }) => ({ type }),
+    loader: async ({
+        deps: { type },
+    }): Promise<returnProductPageCollaborators> => {
         const allProducts = await queryClient.ensureQueryData(
             allProductsFetcherProps
         );
+
         const collabProducts = await queryClient.ensureQueryData(
             collabsProductFetcherProps
         );
+
         return {
             allProducts,
             collabProducts,

@@ -184,7 +184,9 @@ const ProductsHomePage = () => {
                                     navigate({
                                         search: () => ({
                                             ...params,
-                                            sort_by: v?.value || 'title',
+                                            sort_by:
+                                                (v?.value as typeof params.sort_by) ||
+                                                'title',
                                         }),
                                     });
                                 }}

@@ -39,7 +39,7 @@ const getSideBarProps = (): SideBarProps => {
 export const Route = createRootRoute({
     loader: async () => {
         const loginStatus: authSchema = await queryClient.ensureQueryData(
-            loginStatusFetcherProps
+            loginStatusFetcherProps()
         );
         return loginStatus;
     },

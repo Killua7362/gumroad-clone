@@ -33,6 +33,7 @@
     "compression-webpack-plugin": "9",
     "css-loader": "^6.10.0",
     "css-minimizer-webpack-plugin": "^6.0.0",
+    "currency-symbol-map": "^5.1.0",
     "eslint-config-shakacode": "^19.0.0",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
     "framer-motion": "^11.0.20",

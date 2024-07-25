@@ -23,6 +23,7 @@ const CollaboratorsPage = () => {
         isSuccess: productIsSuccess,
         isPending: productsIsLoading,
     } = allProductsFetcher({ initialData: initialData?.allProducts });
+
     const {
         data: collabProducts,
         isSuccess: collabIsSuccess,
