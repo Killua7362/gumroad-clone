@@ -1,4 +1,3 @@
-import { processProducts } from '@/lib/products_process';
 import { Link, useParams } from '@tanstack/react-router';
 import { FaImage } from 'react-icons/fa';
 import { Fragment } from 'react/jsx-runtime';
@@ -6,7 +5,7 @@ import { Fragment } from 'react/jsx-runtime';
 interface ProfilePageCardProps {
     name: string;
     url: string;
-    profileProducts: Entries<ProductTypePayload>;
+    profileProducts: ProductType[];
     preview?: boolean;
 }
 
@@ -16,13 +15,9 @@ const ProfilePageProductCard = ({
     profileProducts,
     preview = false,
 }: ProfilePageCardProps) => {
-    const getProducts = [
-        ...processProducts({ products: profileProducts, searchURL: url }),
-    ];
-
     const params = preview ? undefined : useParams({ from: '/profile/$id/' });
     return (
-        getProducts.length > 0 && (
+        profileProducts.length > 0 && (
             <Fragment>
                 <header>
                     <h2 className="text-xl">{name}</h2>
@@ -35,16 +30,16 @@ const ProfilePageProductCard = ({
                             'repeat(auto-fit,minmax(200px,1fr))',
                         gridGap: '2rem',
                     }}>
-                    {getProducts.map(([key, value], i) => {
+                    {profileProducts.map((value, i) => {
                         return (
                             <Link
                                 className="w-full h-full no-underline text-white"
                                 to="/profile/$id/product/$productid"
                                 params={{
-                                    id: params?.id ?? key,
-                                    productid: key,
+                                    id: params?.id ?? value.product_id!,
+                                    productid: value.product_id!,
                                 }}
-                                key={key}>
+                                key={value.product_id}>
                                 <article className="flex h-full flex-col xs:flex-row sm:flex-col gap-3 hover:border-white border-white/30 border-[0.1px] rounded-md p-5 cursor-pointer">
                                     <section className="w-full h-full">
                                         {value?.thumbimageSource &&

@@ -1,16 +1,10 @@
 import { queryClient } from '@/app/RouteComponent';
-import {
-    allProductsFetcherProps,
-    collabsProductFetcherProps,
-} from '@/react-query/query';
+import { collabsProductFetcherProps } from '@/react-query/query';
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 
 const productPageCollaboratorsSchema = z.object({
-    type: z
-        .enum(['incoming', 'outgoing'] as const)
-        .catch('incoming')
-        .optional(),
+    type: z.enum(['incoming', 'outgoing'] as const).catch('incoming'),
 });
 
 export type productPageCollaboratorsSchemaType = z.infer<
@@ -18,8 +12,7 @@ export type productPageCollaboratorsSchemaType = z.infer<
 >;
 
 interface returnProductPageCollaborators {
-    allProducts: ProductTypePayload;
-    collabProducts: ProductTypePayload;
+    collabProducts: ProductType[];
 }
 
 export const Route = createFileRoute(
@@ -29,16 +22,11 @@ export const Route = createFileRoute(
     loader: async ({
         deps: { type },
     }): Promise<returnProductPageCollaborators> => {
-        const allProducts = await queryClient.ensureQueryData(
-            allProductsFetcherProps
-        );
-
         const collabProducts = await queryClient.ensureQueryData(
-            collabsProductFetcherProps
+            collabsProductFetcherProps({ type })
         );
 
         return {
-            allProducts,
             collabProducts,
         };
     },

@@ -31,417 +31,423 @@ import { Route as ProfileIdProductProductidIndexImport } from './pages/profile.$
 // Create Virtual Routes
 
 const ProtectedLayoutProductsImport = createFileRoute(
-  '/_protected/_layout/products'
+    '/_protected/_layout/products'
 )();
 const ProtectedLayoutCheckoutImport = createFileRoute(
-  '/_protected/_layout/checkout'
+    '/_protected/_layout/checkout'
 )();
 const ProfileIdCheckoutIndexLazyImport = createFileRoute(
-  '/profile/$id/checkout/'
+    '/profile/$id/checkout/'
 )();
 const ProtectedLayoutHomeIndexLazyImport = createFileRoute(
-  '/_protected/_layout/home/'
+    '/_protected/_layout/home/'
 )();
 const NonprotectedLayoutSignupIndexLazyImport = createFileRoute(
-  '/_nonprotected/_layout/signup/'
+    '/_nonprotected/_layout/signup/'
 )();
 const NonprotectedLayoutSigninIndexLazyImport = createFileRoute(
-  '/_nonprotected/_layout/signin/'
+    '/_nonprotected/_layout/signin/'
 )();
 const ProtectedLayoutProductsEditIdImport = createFileRoute(
-  '/_protected/_layout/products/edit/$id'
+    '/_protected/_layout/products/edit/$id'
 )();
 const ProtectedLayoutCheckoutLayoutcheckoutSuggestionsIndexLazyImport =
-  createFileRoute(
-    '/_protected/_layout/checkout/_layout_checkout/suggestions/'
-  )();
+    createFileRoute(
+        '/_protected/_layout/checkout/_layout_checkout/suggestions/'
+    )();
 const ProtectedLayoutProductsEditIdLayouteditHomeIndexLazyImport =
-  createFileRoute('/_protected/_layout/products/edit/$id/_layout_edit/home/')();
+    createFileRoute(
+        '/_protected/_layout/products/edit/$id/_layout_edit/home/'
+    )();
 
 // Create/Update Routes
 
 const ProtectedLayoutRoute = ProtectedLayoutImport.update({
-  id: '/_protected/_layout',
-  getParentRoute: () => rootRoute,
+    id: '/_protected/_layout',
+    getParentRoute: () => rootRoute,
 } as any);
 
 const NonprotectedLayoutRoute = NonprotectedLayoutImport.update({
-  id: '/_nonprotected/_layout',
-  getParentRoute: () => rootRoute,
+    id: '/_nonprotected/_layout',
+    getParentRoute: () => rootRoute,
 } as any);
 
 const ProtectedLayoutProductsRoute = ProtectedLayoutProductsImport.update({
-  path: '/products',
-  getParentRoute: () => ProtectedLayoutRoute,
+    path: '/products',
+    getParentRoute: () => ProtectedLayoutRoute,
 } as any);
 
 const ProtectedLayoutCheckoutRoute = ProtectedLayoutCheckoutImport.update({
-  path: '/checkout',
-  getParentRoute: () => ProtectedLayoutRoute,
+    path: '/checkout',
+    getParentRoute: () => ProtectedLayoutRoute,
 } as any);
 
 const ProfileIdIndexRoute = ProfileIdIndexImport.update({
-  path: '/profile/$id/',
-  getParentRoute: () => rootRoute,
+    path: '/profile/$id/',
+    getParentRoute: () => rootRoute,
 } as any).lazy(() =>
-  import('./pages/profile.$id/index.lazy').then((d) => d.Route)
+    import('./pages/profile.$id/index.lazy').then((d) => d.Route)
 );
 
 const ProfileIdCheckoutIndexLazyRoute = ProfileIdCheckoutIndexLazyImport.update(
-  {
-    path: '/profile/$id/checkout/',
-    getParentRoute: () => rootRoute,
-  } as any
+    {
+        path: '/profile/$id/checkout/',
+        getParentRoute: () => rootRoute,
+    } as any
 ).lazy(() =>
-  import('./pages/profile.$id/checkout/index.lazy').then((d) => d.Route)
+    import('./pages/profile.$id/checkout/index.lazy').then((d) => d.Route)
 );
 
 const ProtectedLayoutHomeIndexLazyRoute =
-  ProtectedLayoutHomeIndexLazyImport.update({
-    path: '/home/',
-    getParentRoute: () => ProtectedLayoutRoute,
-  } as any).lazy(() =>
-    import('./pages/_protected/_layout.home.index.lazy').then((d) => d.Route)
-  );
+    ProtectedLayoutHomeIndexLazyImport.update({
+        path: '/home/',
+        getParentRoute: () => ProtectedLayoutRoute,
+    } as any).lazy(() =>
+        import('./pages/_protected/_layout.home.index.lazy').then(
+            (d) => d.Route
+        )
+    );
 
 const NonprotectedLayoutSignupIndexLazyRoute =
-  NonprotectedLayoutSignupIndexLazyImport.update({
-    path: '/signup/',
-    getParentRoute: () => NonprotectedLayoutRoute,
-  } as any).lazy(() =>
-    import('./pages/_nonprotected/_layout.signup/index.lazy').then(
-      (d) => d.Route
-    )
-  );
+    NonprotectedLayoutSignupIndexLazyImport.update({
+        path: '/signup/',
+        getParentRoute: () => NonprotectedLayoutRoute,
+    } as any).lazy(() =>
+        import('./pages/_nonprotected/_layout.signup/index.lazy').then(
+            (d) => d.Route
+        )
+    );
 
 const NonprotectedLayoutSigninIndexLazyRoute =
-  NonprotectedLayoutSigninIndexLazyImport.update({
-    path: '/signin/',
-    getParentRoute: () => NonprotectedLayoutRoute,
-  } as any).lazy(() =>
-    import('./pages/_nonprotected/_layout.signin/index.lazy').then(
-      (d) => d.Route
-    )
-  );
+    NonprotectedLayoutSigninIndexLazyImport.update({
+        path: '/signin/',
+        getParentRoute: () => NonprotectedLayoutRoute,
+    } as any).lazy(() =>
+        import('./pages/_nonprotected/_layout.signin/index.lazy').then(
+            (d) => d.Route
+        )
+    );
 
 const ProtectedLayoutProductsIndexRoute =
-  ProtectedLayoutProductsIndexImport.update({
-    path: '/',
-    getParentRoute: () => ProtectedLayoutProductsRoute,
-  } as any);
+    ProtectedLayoutProductsIndexImport.update({
+        path: '/',
+        getParentRoute: () => ProtectedLayoutProductsRoute,
+    } as any);
 
 const ProtectedLayoutCheckoutIndexRoute =
-  ProtectedLayoutCheckoutIndexImport.update({
-    path: '/',
-    getParentRoute: () => ProtectedLayoutCheckoutRoute,
-  } as any);
+    ProtectedLayoutCheckoutIndexImport.update({
+        path: '/',
+        getParentRoute: () => ProtectedLayoutCheckoutRoute,
+    } as any);
 
 const ProtectedLayoutProductsLayoutproductsRoute =
-  ProtectedLayoutProductsLayoutproductsImport.update({
-    id: '/_layout_products',
-    getParentRoute: () => ProtectedLayoutProductsRoute,
-  } as any);
+    ProtectedLayoutProductsLayoutproductsImport.update({
+        id: '/_layout_products',
+        getParentRoute: () => ProtectedLayoutProductsRoute,
+    } as any);
 
 const ProtectedLayoutCheckoutLayoutcheckoutRoute =
-  ProtectedLayoutCheckoutLayoutcheckoutImport.update({
-    id: '/_layout_checkout',
-    getParentRoute: () => ProtectedLayoutCheckoutRoute,
-  } as any);
+    ProtectedLayoutCheckoutLayoutcheckoutImport.update({
+        id: '/_layout_checkout',
+        getParentRoute: () => ProtectedLayoutCheckoutRoute,
+    } as any);
 
 const ProtectedLayoutProductsEditIdRoute =
-  ProtectedLayoutProductsEditIdImport.update({
-    path: '/edit/$id',
-    getParentRoute: () => ProtectedLayoutProductsRoute,
-  } as any);
+    ProtectedLayoutProductsEditIdImport.update({
+        path: '/edit/$id',
+        getParentRoute: () => ProtectedLayoutProductsRoute,
+    } as any);
 
 const ProfileIdProductProductidIndexRoute =
-  ProfileIdProductProductidIndexImport.update({
-    path: '/profile/$id/product/$productid/',
-    getParentRoute: () => rootRoute,
-  } as any).lazy(() =>
-    import('./pages/profile.$id/product.$productid/index.lazy').then(
-      (d) => d.Route
-    )
-  );
+    ProfileIdProductProductidIndexImport.update({
+        path: '/profile/$id/product/$productid/',
+        getParentRoute: () => rootRoute,
+    } as any).lazy(() =>
+        import('./pages/profile.$id/product.$productid/index.lazy').then(
+            (d) => d.Route
+        )
+    );
 
 const ProtectedLayoutCheckoutLayoutcheckoutSuggestionsIndexLazyRoute =
-  ProtectedLayoutCheckoutLayoutcheckoutSuggestionsIndexLazyImport.update({
-    path: '/suggestions/',
-    getParentRoute: () => ProtectedLayoutCheckoutLayoutcheckoutRoute,
-  } as any).lazy(() =>
-    import(
-      './pages/_protected/_layout.checkout/_layout_checkout.suggestions/index.lazy'
-    ).then((d) => d.Route)
-  );
+    ProtectedLayoutCheckoutLayoutcheckoutSuggestionsIndexLazyImport.update({
+        path: '/suggestions/',
+        getParentRoute: () => ProtectedLayoutCheckoutLayoutcheckoutRoute,
+    } as any).lazy(() =>
+        import(
+            './pages/_protected/_layout.checkout/_layout_checkout.suggestions/index.lazy'
+        ).then((d) => d.Route)
+    );
 
 const ProtectedLayoutProductsEditIdIndexRoute =
-  ProtectedLayoutProductsEditIdIndexImport.update({
-    path: '/',
-    getParentRoute: () => ProtectedLayoutProductsEditIdRoute,
-  } as any);
+    ProtectedLayoutProductsEditIdIndexImport.update({
+        path: '/',
+        getParentRoute: () => ProtectedLayoutProductsEditIdRoute,
+    } as any);
 
 const ProtectedLayoutProductsLayoutproductsHomeIndexRoute =
-  ProtectedLayoutProductsLayoutproductsHomeIndexImport.update({
-    path: '/home/',
-    getParentRoute: () => ProtectedLayoutProductsLayoutproductsRoute,
-  } as any).lazy(() =>
-    import(
-      './pages/_protected/_layout.products/_layout_products.home/index.lazy'
-    ).then((d) => d.Route)
-  );
+    ProtectedLayoutProductsLayoutproductsHomeIndexImport.update({
+        path: '/home/',
+        getParentRoute: () => ProtectedLayoutProductsLayoutproductsRoute,
+    } as any).lazy(() =>
+        import(
+            './pages/_protected/_layout.products/_layout_products.home/index.lazy'
+        ).then((d) => d.Route)
+    );
 
 const ProtectedLayoutProductsLayoutproductsCollaboratorsIndexRoute =
-  ProtectedLayoutProductsLayoutproductsCollaboratorsIndexImport.update({
-    path: '/collaborators/',
-    getParentRoute: () => ProtectedLayoutProductsLayoutproductsRoute,
-  } as any).lazy(() =>
-    import(
-      './pages/_protected/_layout.products/_layout_products.collaborators/index.lazy'
-    ).then((d) => d.Route)
-  );
+    ProtectedLayoutProductsLayoutproductsCollaboratorsIndexImport.update({
+        path: '/collaborators/',
+        getParentRoute: () => ProtectedLayoutProductsLayoutproductsRoute,
+    } as any).lazy(() =>
+        import(
+            './pages/_protected/_layout.products/_layout_products.collaborators/index.lazy'
+        ).then((d) => d.Route)
+    );
 
 const ProtectedLayoutCheckoutLayoutcheckoutFormIndexRoute =
-  ProtectedLayoutCheckoutLayoutcheckoutFormIndexImport.update({
-    path: '/form/',
-    getParentRoute: () => ProtectedLayoutCheckoutLayoutcheckoutRoute,
-  } as any).lazy(() =>
-    import(
-      './pages/_protected/_layout.checkout/_layout_checkout.form/index.lazy'
-    ).then((d) => d.Route)
-  );
+    ProtectedLayoutCheckoutLayoutcheckoutFormIndexImport.update({
+        path: '/form/',
+        getParentRoute: () => ProtectedLayoutCheckoutLayoutcheckoutRoute,
+    } as any).lazy(() =>
+        import(
+            './pages/_protected/_layout.checkout/_layout_checkout.form/index.lazy'
+        ).then((d) => d.Route)
+    );
 
 const ProtectedLayoutProductsEditIdLayouteditRoute =
-  ProtectedLayoutProductsEditIdLayouteditImport.update({
-    id: '/_layout_edit',
-    getParentRoute: () => ProtectedLayoutProductsEditIdRoute,
-  } as any);
+    ProtectedLayoutProductsEditIdLayouteditImport.update({
+        id: '/_layout_edit',
+        getParentRoute: () => ProtectedLayoutProductsEditIdRoute,
+    } as any);
 
 const ProtectedLayoutProductsEditIdLayouteditHomeIndexLazyRoute =
-  ProtectedLayoutProductsEditIdLayouteditHomeIndexLazyImport.update({
-    path: '/home/',
-    getParentRoute: () => ProtectedLayoutProductsEditIdLayouteditRoute,
-  } as any).lazy(() =>
-    import(
-      './pages/_protected/_layout.products.edit.$id/_layout_edit.home/index.lazy'
-    ).then((d) => d.Route)
-  );
+    ProtectedLayoutProductsEditIdLayouteditHomeIndexLazyImport.update({
+        path: '/home/',
+        getParentRoute: () => ProtectedLayoutProductsEditIdLayouteditRoute,
+    } as any).lazy(() =>
+        import(
+            './pages/_protected/_layout.products.edit.$id/_layout_edit.home/index.lazy'
+        ).then((d) => d.Route)
+    );
 
 const ProtectedLayoutProductsEditIdLayouteditContentIndexRoute =
-  ProtectedLayoutProductsEditIdLayouteditContentIndexImport.update({
-    path: '/content/',
-    getParentRoute: () => ProtectedLayoutProductsEditIdLayouteditRoute,
-  } as any).lazy(() =>
-    import(
-      './pages/_protected/_layout.products.edit.$id/_layout_edit.content/index.lazy'
-    ).then((d) => d.Route)
-  );
+    ProtectedLayoutProductsEditIdLayouteditContentIndexImport.update({
+        path: '/content/',
+        getParentRoute: () => ProtectedLayoutProductsEditIdLayouteditRoute,
+    } as any).lazy(() =>
+        import(
+            './pages/_protected/_layout.products.edit.$id/_layout_edit.content/index.lazy'
+        ).then((d) => d.Route)
+    );
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/_nonprotected/_layout': {
-      id: '/_nonprotected/_layout';
-      path: '';
-      fullPath: '';
-      preLoaderRoute: typeof NonprotectedLayoutImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/_protected/_layout': {
-      id: '/_protected/_layout';
-      path: '';
-      fullPath: '';
-      preLoaderRoute: typeof ProtectedLayoutImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/profile/$id/': {
-      id: '/profile/$id/';
-      path: '/profile/$id';
-      fullPath: '/profile/$id';
-      preLoaderRoute: typeof ProfileIdIndexImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/_protected/_layout/checkout': {
-      id: '/_protected/_layout/checkout';
-      path: '/checkout';
-      fullPath: '/checkout';
-      preLoaderRoute: typeof ProtectedLayoutCheckoutImport;
-      parentRoute: typeof ProtectedLayoutImport;
-    };
-    '/_protected/_layout/checkout/_layout_checkout': {
-      id: '/_protected/_layout/checkout/_layout_checkout';
-      path: '/checkout';
-      fullPath: '/checkout';
-      preLoaderRoute: typeof ProtectedLayoutCheckoutLayoutcheckoutImport;
-      parentRoute: typeof ProtectedLayoutCheckoutRoute;
-    };
-    '/_protected/_layout/products': {
-      id: '/_protected/_layout/products';
-      path: '/products';
-      fullPath: '/products';
-      preLoaderRoute: typeof ProtectedLayoutProductsImport;
-      parentRoute: typeof ProtectedLayoutImport;
-    };
-    '/_protected/_layout/products/_layout_products': {
-      id: '/_protected/_layout/products/_layout_products';
-      path: '/products';
-      fullPath: '/products';
-      preLoaderRoute: typeof ProtectedLayoutProductsLayoutproductsImport;
-      parentRoute: typeof ProtectedLayoutProductsRoute;
-    };
-    '/_protected/_layout/checkout/': {
-      id: '/_protected/_layout/checkout/';
-      path: '/';
-      fullPath: '/checkout/';
-      preLoaderRoute: typeof ProtectedLayoutCheckoutIndexImport;
-      parentRoute: typeof ProtectedLayoutCheckoutImport;
-    };
-    '/_protected/_layout/products/': {
-      id: '/_protected/_layout/products/';
-      path: '/';
-      fullPath: '/products/';
-      preLoaderRoute: typeof ProtectedLayoutProductsIndexImport;
-      parentRoute: typeof ProtectedLayoutProductsImport;
-    };
-    '/_nonprotected/_layout/signin/': {
-      id: '/_nonprotected/_layout/signin/';
-      path: '/signin';
-      fullPath: '/signin';
-      preLoaderRoute: typeof NonprotectedLayoutSigninIndexLazyImport;
-      parentRoute: typeof NonprotectedLayoutImport;
-    };
-    '/_nonprotected/_layout/signup/': {
-      id: '/_nonprotected/_layout/signup/';
-      path: '/signup';
-      fullPath: '/signup';
-      preLoaderRoute: typeof NonprotectedLayoutSignupIndexLazyImport;
-      parentRoute: typeof NonprotectedLayoutImport;
-    };
-    '/_protected/_layout/home/': {
-      id: '/_protected/_layout/home/';
-      path: '/home';
-      fullPath: '/home';
-      preLoaderRoute: typeof ProtectedLayoutHomeIndexLazyImport;
-      parentRoute: typeof ProtectedLayoutImport;
-    };
-    '/profile/$id/checkout/': {
-      id: '/profile/$id/checkout/';
-      path: '/profile/$id/checkout';
-      fullPath: '/profile/$id/checkout';
-      preLoaderRoute: typeof ProfileIdCheckoutIndexLazyImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/profile/$id/product/$productid/': {
-      id: '/profile/$id/product/$productid/';
-      path: '/profile/$id/product/$productid';
-      fullPath: '/profile/$id/product/$productid';
-      preLoaderRoute: typeof ProfileIdProductProductidIndexImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/_protected/_layout/products/edit/$id': {
-      id: '/_protected/_layout/products/edit/$id';
-      path: '/edit/$id';
-      fullPath: '/products/edit/$id';
-      preLoaderRoute: typeof ProtectedLayoutProductsEditIdImport;
-      parentRoute: typeof ProtectedLayoutProductsImport;
-    };
-    '/_protected/_layout/products/edit/$id/_layout_edit': {
-      id: '/_protected/_layout/products/edit/$id/_layout_edit';
-      path: '/edit/$id';
-      fullPath: '/products/edit/$id';
-      preLoaderRoute: typeof ProtectedLayoutProductsEditIdLayouteditImport;
-      parentRoute: typeof ProtectedLayoutProductsEditIdRoute;
-    };
-    '/_protected/_layout/checkout/_layout_checkout/form/': {
-      id: '/_protected/_layout/checkout/_layout_checkout/form/';
-      path: '/form';
-      fullPath: '/checkout/form';
-      preLoaderRoute: typeof ProtectedLayoutCheckoutLayoutcheckoutFormIndexImport;
-      parentRoute: typeof ProtectedLayoutCheckoutLayoutcheckoutImport;
-    };
-    '/_protected/_layout/products/_layout_products/collaborators/': {
-      id: '/_protected/_layout/products/_layout_products/collaborators/';
-      path: '/collaborators';
-      fullPath: '/products/collaborators';
-      preLoaderRoute: typeof ProtectedLayoutProductsLayoutproductsCollaboratorsIndexImport;
-      parentRoute: typeof ProtectedLayoutProductsLayoutproductsImport;
-    };
-    '/_protected/_layout/products/_layout_products/home/': {
-      id: '/_protected/_layout/products/_layout_products/home/';
-      path: '/home';
-      fullPath: '/products/home';
-      preLoaderRoute: typeof ProtectedLayoutProductsLayoutproductsHomeIndexImport;
-      parentRoute: typeof ProtectedLayoutProductsLayoutproductsImport;
-    };
-    '/_protected/_layout/products/edit/$id/': {
-      id: '/_protected/_layout/products/edit/$id/';
-      path: '/';
-      fullPath: '/products/edit/$id/';
-      preLoaderRoute: typeof ProtectedLayoutProductsEditIdIndexImport;
-      parentRoute: typeof ProtectedLayoutProductsEditIdImport;
-    };
-    '/_protected/_layout/checkout/_layout_checkout/suggestions/': {
-      id: '/_protected/_layout/checkout/_layout_checkout/suggestions/';
-      path: '/suggestions';
-      fullPath: '/checkout/suggestions';
-      preLoaderRoute: typeof ProtectedLayoutCheckoutLayoutcheckoutSuggestionsIndexLazyImport;
-      parentRoute: typeof ProtectedLayoutCheckoutLayoutcheckoutImport;
-    };
-    '/_protected/_layout/products/edit/$id/_layout_edit/content/': {
-      id: '/_protected/_layout/products/edit/$id/_layout_edit/content/';
-      path: '/content';
-      fullPath: '/products/edit/$id/content';
-      preLoaderRoute: typeof ProtectedLayoutProductsEditIdLayouteditContentIndexImport;
-      parentRoute: typeof ProtectedLayoutProductsEditIdLayouteditImport;
-    };
-    '/_protected/_layout/products/edit/$id/_layout_edit/home/': {
-      id: '/_protected/_layout/products/edit/$id/_layout_edit/home/';
-      path: '/home';
-      fullPath: '/products/edit/$id/home';
-      preLoaderRoute: typeof ProtectedLayoutProductsEditIdLayouteditHomeIndexLazyImport;
-      parentRoute: typeof ProtectedLayoutProductsEditIdLayouteditImport;
-    };
-  }
+    interface FileRoutesByPath {
+        '/_nonprotected/_layout': {
+            id: '/_nonprotected/_layout';
+            path: '';
+            fullPath: '';
+            preLoaderRoute: typeof NonprotectedLayoutImport;
+            parentRoute: typeof rootRoute;
+        };
+        '/_protected/_layout': {
+            id: '/_protected/_layout';
+            path: '';
+            fullPath: '';
+            preLoaderRoute: typeof ProtectedLayoutImport;
+            parentRoute: typeof rootRoute;
+        };
+        '/profile/$id/': {
+            id: '/profile/$id/';
+            path: '/profile/$id';
+            fullPath: '/profile/$id';
+            preLoaderRoute: typeof ProfileIdIndexImport;
+            parentRoute: typeof rootRoute;
+        };
+        '/_protected/_layout/checkout': {
+            id: '/_protected/_layout/checkout';
+            path: '/checkout';
+            fullPath: '/checkout';
+            preLoaderRoute: typeof ProtectedLayoutCheckoutImport;
+            parentRoute: typeof ProtectedLayoutImport;
+        };
+        '/_protected/_layout/checkout/_layout_checkout': {
+            id: '/_protected/_layout/checkout/_layout_checkout';
+            path: '/checkout';
+            fullPath: '/checkout';
+            preLoaderRoute: typeof ProtectedLayoutCheckoutLayoutcheckoutImport;
+            parentRoute: typeof ProtectedLayoutCheckoutRoute;
+        };
+        '/_protected/_layout/products': {
+            id: '/_protected/_layout/products';
+            path: '/products';
+            fullPath: '/products';
+            preLoaderRoute: typeof ProtectedLayoutProductsImport;
+            parentRoute: typeof ProtectedLayoutImport;
+        };
+        '/_protected/_layout/products/_layout_products': {
+            id: '/_protected/_layout/products/_layout_products';
+            path: '/products';
+            fullPath: '/products';
+            preLoaderRoute: typeof ProtectedLayoutProductsLayoutproductsImport;
+            parentRoute: typeof ProtectedLayoutProductsRoute;
+        };
+        '/_protected/_layout/checkout/': {
+            id: '/_protected/_layout/checkout/';
+            path: '/';
+            fullPath: '/checkout/';
+            preLoaderRoute: typeof ProtectedLayoutCheckoutIndexImport;
+            parentRoute: typeof ProtectedLayoutCheckoutImport;
+        };
+        '/_protected/_layout/products/': {
+            id: '/_protected/_layout/products/';
+            path: '/';
+            fullPath: '/products/';
+            preLoaderRoute: typeof ProtectedLayoutProductsIndexImport;
+            parentRoute: typeof ProtectedLayoutProductsImport;
+        };
+        '/_nonprotected/_layout/signin/': {
+            id: '/_nonprotected/_layout/signin/';
+            path: '/signin';
+            fullPath: '/signin';
+            preLoaderRoute: typeof NonprotectedLayoutSigninIndexLazyImport;
+            parentRoute: typeof NonprotectedLayoutImport;
+        };
+        '/_nonprotected/_layout/signup/': {
+            id: '/_nonprotected/_layout/signup/';
+            path: '/signup';
+            fullPath: '/signup';
+            preLoaderRoute: typeof NonprotectedLayoutSignupIndexLazyImport;
+            parentRoute: typeof NonprotectedLayoutImport;
+        };
+        '/_protected/_layout/home/': {
+            id: '/_protected/_layout/home/';
+            path: '/home';
+            fullPath: '/home';
+            preLoaderRoute: typeof ProtectedLayoutHomeIndexLazyImport;
+            parentRoute: typeof ProtectedLayoutImport;
+        };
+        '/profile/$id/checkout/': {
+            id: '/profile/$id/checkout/';
+            path: '/profile/$id/checkout';
+            fullPath: '/profile/$id/checkout';
+            preLoaderRoute: typeof ProfileIdCheckoutIndexLazyImport;
+            parentRoute: typeof rootRoute;
+        };
+        '/profile/$id/product/$productid/': {
+            id: '/profile/$id/product/$productid/';
+            path: '/profile/$id/product/$productid';
+            fullPath: '/profile/$id/product/$productid';
+            preLoaderRoute: typeof ProfileIdProductProductidIndexImport;
+            parentRoute: typeof rootRoute;
+        };
+        '/_protected/_layout/products/edit/$id': {
+            id: '/_protected/_layout/products/edit/$id';
+            path: '/edit/$id';
+            fullPath: '/products/edit/$id';
+            preLoaderRoute: typeof ProtectedLayoutProductsEditIdImport;
+            parentRoute: typeof ProtectedLayoutProductsImport;
+        };
+        '/_protected/_layout/products/edit/$id/_layout_edit': {
+            id: '/_protected/_layout/products/edit/$id/_layout_edit';
+            path: '/edit/$id';
+            fullPath: '/products/edit/$id';
+            preLoaderRoute: typeof ProtectedLayoutProductsEditIdLayouteditImport;
+            parentRoute: typeof ProtectedLayoutProductsEditIdRoute;
+        };
+        '/_protected/_layout/checkout/_layout_checkout/form/': {
+            id: '/_protected/_layout/checkout/_layout_checkout/form/';
+            path: '/form';
+            fullPath: '/checkout/form';
+            preLoaderRoute: typeof ProtectedLayoutCheckoutLayoutcheckoutFormIndexImport;
+            parentRoute: typeof ProtectedLayoutCheckoutLayoutcheckoutImport;
+        };
+        '/_protected/_layout/products/_layout_products/collaborators/': {
+            id: '/_protected/_layout/products/_layout_products/collaborators/';
+            path: '/collaborators';
+            fullPath: '/products/collaborators';
+            preLoaderRoute: typeof ProtectedLayoutProductsLayoutproductsCollaboratorsIndexImport;
+            parentRoute: typeof ProtectedLayoutProductsLayoutproductsImport;
+        };
+        '/_protected/_layout/products/_layout_products/home/': {
+            id: '/_protected/_layout/products/_layout_products/home/';
+            path: '/home';
+            fullPath: '/products/home';
+            preLoaderRoute: typeof ProtectedLayoutProductsLayoutproductsHomeIndexImport;
+            parentRoute: typeof ProtectedLayoutProductsLayoutproductsImport;
+        };
+        '/_protected/_layout/products/edit/$id/': {
+            id: '/_protected/_layout/products/edit/$id/';
+            path: '/';
+            fullPath: '/products/edit/$id/';
+            preLoaderRoute: typeof ProtectedLayoutProductsEditIdIndexImport;
+            parentRoute: typeof ProtectedLayoutProductsEditIdImport;
+        };
+        '/_protected/_layout/checkout/_layout_checkout/suggestions/': {
+            id: '/_protected/_layout/checkout/_layout_checkout/suggestions/';
+            path: '/suggestions';
+            fullPath: '/checkout/suggestions';
+            preLoaderRoute: typeof ProtectedLayoutCheckoutLayoutcheckoutSuggestionsIndexLazyImport;
+            parentRoute: typeof ProtectedLayoutCheckoutLayoutcheckoutImport;
+        };
+        '/_protected/_layout/products/edit/$id/_layout_edit/content/': {
+            id: '/_protected/_layout/products/edit/$id/_layout_edit/content/';
+            path: '/content';
+            fullPath: '/products/edit/$id/content';
+            preLoaderRoute: typeof ProtectedLayoutProductsEditIdLayouteditContentIndexImport;
+            parentRoute: typeof ProtectedLayoutProductsEditIdLayouteditImport;
+        };
+        '/_protected/_layout/products/edit/$id/_layout_edit/home/': {
+            id: '/_protected/_layout/products/edit/$id/_layout_edit/home/';
+            path: '/home';
+            fullPath: '/products/edit/$id/home';
+            preLoaderRoute: typeof ProtectedLayoutProductsEditIdLayouteditHomeIndexLazyImport;
+            parentRoute: typeof ProtectedLayoutProductsEditIdLayouteditImport;
+        };
+    }
 }
 
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
-  NonprotectedLayoutRoute: NonprotectedLayoutRoute.addChildren({
-    NonprotectedLayoutSigninIndexLazyRoute,
-    NonprotectedLayoutSignupIndexLazyRoute,
-  }),
-  ProtectedLayoutRoute: ProtectedLayoutRoute.addChildren({
-    ProtectedLayoutCheckoutRoute: ProtectedLayoutCheckoutRoute.addChildren({
-      ProtectedLayoutCheckoutLayoutcheckoutRoute:
-        ProtectedLayoutCheckoutLayoutcheckoutRoute.addChildren({
-          ProtectedLayoutCheckoutLayoutcheckoutFormIndexRoute,
-          ProtectedLayoutCheckoutLayoutcheckoutSuggestionsIndexLazyRoute,
-        }),
-      ProtectedLayoutCheckoutIndexRoute,
+    NonprotectedLayoutRoute: NonprotectedLayoutRoute.addChildren({
+        NonprotectedLayoutSigninIndexLazyRoute,
+        NonprotectedLayoutSignupIndexLazyRoute,
     }),
-    ProtectedLayoutProductsRoute: ProtectedLayoutProductsRoute.addChildren({
-      ProtectedLayoutProductsLayoutproductsRoute:
-        ProtectedLayoutProductsLayoutproductsRoute.addChildren({
-          ProtectedLayoutProductsLayoutproductsCollaboratorsIndexRoute,
-          ProtectedLayoutProductsLayoutproductsHomeIndexRoute,
+    ProtectedLayoutRoute: ProtectedLayoutRoute.addChildren({
+        ProtectedLayoutCheckoutRoute: ProtectedLayoutCheckoutRoute.addChildren({
+            ProtectedLayoutCheckoutLayoutcheckoutRoute:
+                ProtectedLayoutCheckoutLayoutcheckoutRoute.addChildren({
+                    ProtectedLayoutCheckoutLayoutcheckoutFormIndexRoute,
+                    ProtectedLayoutCheckoutLayoutcheckoutSuggestionsIndexLazyRoute,
+                }),
+            ProtectedLayoutCheckoutIndexRoute,
         }),
-      ProtectedLayoutProductsIndexRoute,
-      ProtectedLayoutProductsEditIdRoute:
-        ProtectedLayoutProductsEditIdRoute.addChildren({
-          ProtectedLayoutProductsEditIdLayouteditRoute:
-            ProtectedLayoutProductsEditIdLayouteditRoute.addChildren({
-              ProtectedLayoutProductsEditIdLayouteditContentIndexRoute,
-              ProtectedLayoutProductsEditIdLayouteditHomeIndexLazyRoute,
-            }),
-          ProtectedLayoutProductsEditIdIndexRoute,
+        ProtectedLayoutProductsRoute: ProtectedLayoutProductsRoute.addChildren({
+            ProtectedLayoutProductsLayoutproductsRoute:
+                ProtectedLayoutProductsLayoutproductsRoute.addChildren({
+                    ProtectedLayoutProductsLayoutproductsCollaboratorsIndexRoute,
+                    ProtectedLayoutProductsLayoutproductsHomeIndexRoute,
+                }),
+            ProtectedLayoutProductsIndexRoute,
+            ProtectedLayoutProductsEditIdRoute:
+                ProtectedLayoutProductsEditIdRoute.addChildren({
+                    ProtectedLayoutProductsEditIdLayouteditRoute:
+                        ProtectedLayoutProductsEditIdLayouteditRoute.addChildren(
+                            {
+                                ProtectedLayoutProductsEditIdLayouteditContentIndexRoute,
+                                ProtectedLayoutProductsEditIdLayouteditHomeIndexLazyRoute,
+                            }
+                        ),
+                    ProtectedLayoutProductsEditIdIndexRoute,
+                }),
         }),
+        ProtectedLayoutHomeIndexLazyRoute,
     }),
-    ProtectedLayoutHomeIndexLazyRoute,
-  }),
-  ProfileIdIndexRoute,
-  ProfileIdCheckoutIndexLazyRoute,
-  ProfileIdProductProductidIndexRoute,
+    ProfileIdIndexRoute,
+    ProfileIdCheckoutIndexLazyRoute,
+    ProfileIdProductProductidIndexRoute,
 });
 
 /* prettier-ignore-end */

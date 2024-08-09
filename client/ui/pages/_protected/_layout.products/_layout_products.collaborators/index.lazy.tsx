@@ -1,6 +1,6 @@
 import { queryClient } from '@/app/RouteComponent';
 import { getCollabApprover } from '@/react-query/mutations';
-import { allProductsFetcher, collabsProductFetcher } from '@/react-query/query';
+import { collabsProductFetcher } from '@/react-query/query';
 import Button from '@/ui/components/button';
 import CollabCard from '@/ui/components/cards/CollabCard';
 import Loader from '@/ui/components/loader';
@@ -17,62 +17,28 @@ export const Route = createLazyFileRoute(
 
 const CollaboratorsPage = () => {
     const initialData = Route.useLoaderData();
-
-    const {
-        data: allProducts,
-        isSuccess: productIsSuccess,
-        isPending: productsIsLoading,
-    } = allProductsFetcher({ initialData: initialData?.allProducts });
+    const params = Route.useSearch();
 
     const {
         data: collabProducts,
         isSuccess: collabIsSuccess,
         isPending: collabProductsIsLoading,
-    } = collabsProductFetcher({ initialData: initialData?.collabProducts });
+    } = collabsProductFetcher({
+        initialData: initialData?.collabProducts,
+        type: params.type,
+    });
 
-    if (productsIsLoading || collabProductsIsLoading) return <Loader />;
+    if (collabProductsIsLoading) return <Loader />;
 
-    const params = Route.useSearch();
     const navigate = Route.useNavigate();
 
     const { mutate: collabProductSetter } = getCollabApprover();
 
-    const productsCollection = () => {
-        if (params.type == 'outgoing') {
-            return allProducts;
-        } else {
-            return collabProducts;
-        }
-    };
-
-    const collabApproved = () => {
-        const result: Record<string, boolean> = {};
-        const productsCollectionData: ProductTypePayload = productsCollection();
-
-        Object.keys(productsCollectionData)
-            .filter((key) => !(key in allProducts))
-            .map((key, i) => {
-                result[key] =
-                    (productsCollectionData![key].collab_active &&
-                        Object.keys(productsCollectionData![key].collabs!)
-                            .length !== 0 &&
-                        (collabProducts![key]?.collabs || []).filter(
-                            (e) =>
-                                e.email ===
-                                (
-                                    queryClient.getQueryData([
-                                        'loginStatus',
-                                    ]) as authSchema
-                                )?.email
-                        )[0]?.approved) ||
-                    false;
-            });
-        return result;
-    };
-
+    const currentUserMail: string = (
+        queryClient.getQueryData(['loginStatus']) as authSchema
+    ).email!;
     return (
-        collabIsSuccess &&
-        productIsSuccess && (
+        collabIsSuccess && (
             <Fragment>
                 <section className="flex gap-x-3">
                     <Link
@@ -111,32 +77,37 @@ const CollaboratorsPage = () => {
                     </Link>
                 </section>
                 <section className="mt-2 grid grid-cols-1 lg:grid-cols-2 gap-6 px-8 sm:pr-6 sm:pl-0">
-                    {Object.keys(productsCollection()!).map((key, i) => {
+                    {collabProducts.map((value, i) => {
                         return (
-                            productsCollection()![key].collab_active &&
-                            Object.keys(productsCollection()![key].collabs!)
-                                .length !== 0 && (
-                                <CollabCard
-                                    key={key}
-                                    productData={{
-                                        ...productsCollection()![key],
-                                    }}>
+                            <CollabCard
+                                key={value.product_id}
+                                productData={{
+                                    ...value,
+                                }}>
+                                {params.type === 'incoming' && (
                                     <article className="w-full flex justify-end">
-                                        {!(key in allProducts!) && (
-                                            <Button
-                                                buttonName={
-                                                    collabApproved()[key]
-                                                        ? 'Disapprove'
-                                                        : 'Approve'
-                                                }
-                                                onClickHandler={async () => {
-                                                    collabProductSetter(key);
-                                                }}
-                                            />
-                                        )}
+                                        <Button
+                                            buttonName={
+                                                (
+                                                    value.collabs?.filter(
+                                                        (e) =>
+                                                            e.email ===
+                                                                currentUserMail &&
+                                                            e.approved === true
+                                                    ) || []
+                                                ).length > 0
+                                                    ? 'Disapprove'
+                                                    : 'Approve'
+                                            }
+                                            onClickHandler={async () => {
+                                                collabProductSetter(
+                                                    value.product_id!
+                                                );
+                                            }}
+                                        />
                                     </article>
-                                </CollabCard>
-                            )
+                                )}
+                            </CollabCard>
                         );
                     })}
                 </section>

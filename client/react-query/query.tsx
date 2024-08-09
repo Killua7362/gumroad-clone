@@ -30,41 +30,60 @@ export const loginStatusFetcher = (): returnLoginStatusFetcher => {
     return { data, isSuccess, isPending };
 };
 
-export const allProductsFetcherProps = {
-    queryKey: ['allProducts'],
-    queryFn: () =>
-        fetch(`${window.location.origin}/api/products`).then(async (res) => {
-            if (!res.ok) {
-                const errorMessage: string = await res
-                    .json()
-                    .then((data) => data.error);
-                return Promise.reject(new Error(errorMessage));
-            }
-            return res.json().then((data) => {
-                const result: ProductTypePayload = {};
-                for (let i = 0; i < data.data.length; i++) {
-                    result[data.data[i].id] = { ...data.data[i].attributes };
+interface allProductsFetcherProps {
+    reverse: boolean | undefined;
+    sort_by: 'title' | 'price' | 'created_at' | 'updated_at' | undefined;
+    search_word: string;
+}
+export const allProductsFetcherProps = ({
+    reverse,
+    sort_by,
+    search_word,
+}: allProductsFetcherProps) => {
+    return {
+        queryKey: ['allProducts', sort_by, reverse, search_word],
+        queryFn: () =>
+            fetch(
+                `${window.location.origin}/api/products?sort_by=${sort_by}&reverse=${reverse}&search_word=${search_word}`
+            ).then(async (res) => {
+                if (!res.ok) {
+                    const errorMessage: string = await res
+                        .json()
+                        .then((data) => data.error);
+                    return Promise.reject(new Error(errorMessage));
                 }
-                return result;
-            });
-        }),
+                return res.json().then((data) => {
+                    const result: ProductType[] = [];
+                    for (let i = 0; i < data.data.length; i++) {
+                        result[i] = {
+                            ...data.data[i].attributes,
+                            product_id: data.data[i].id,
+                        };
+                    }
+                    return result;
+                });
+            }),
+    };
 };
 
 interface returnAllProductsFetcher {
-    data: ProductTypePayload;
+    data: ProductType[];
     isSuccess: boolean;
     isPending: boolean;
 }
 
-interface allProductsFetcher {
-    initialData?: ProductTypePayload | undefined;
+interface allProductsFetcher extends allProductsFetcherProps {
+    initialData?: ProductType[] | undefined;
 }
 
 export const allProductsFetcher = ({
     initialData,
+    reverse,
+    sort_by,
+    search_word,
 }: allProductsFetcher): returnAllProductsFetcher => {
     const { data, isSuccess, isPending } = useQuery({
-        ...allProductsFetcherProps,
+        ...allProductsFetcherProps({ reverse, sort_by, search_word }),
         meta: {
             persist: false,
         },
@@ -79,11 +98,18 @@ export const allProductsFetcher = ({
     return { data: data!, isSuccess, isPending };
 };
 
-export const collabsProductFetcherProps = {
-    queryKey: ['collabProducts'],
-    queryFn: () =>
-        fetch(`${window.location.origin}/api/collabs/products`).then(
-            async (res) => {
+interface collabsProductFetcherProps {
+    type: 'incoming' | 'outgoing' | undefined;
+}
+export const collabsProductFetcherProps = ({
+    type,
+}: collabsProductFetcherProps) => {
+    return {
+        queryKey: ['collabProducts', type],
+        queryFn: () =>
+            fetch(
+                `${window.location.origin}/api/collabs/products?type=${type}`
+            ).then(async (res) => {
                 if (!res.ok) {
                     const errorMessage: string = await res
                         .json()
@@ -91,33 +117,35 @@ export const collabsProductFetcherProps = {
                     return Promise.reject(new Error(errorMessage));
                 }
                 return res.json().then((data) => {
-                    const result: ProductTypePayload = {};
+                    const result: ProductType[] = [];
                     for (let i = 0; i < data.data.length; i++) {
-                        result[data.data[i].id] = {
+                        result[i] = {
                             ...data.data[i].attributes,
+                            product_id: data.data[i].id,
                         };
                     }
                     return result;
                 });
-            }
-        ),
+            }),
+    };
 };
 
 interface returnCollabsProductFetcher {
-    data: ProductTypePayload;
+    data: ProductType[];
     isSuccess: boolean;
     isPending: boolean;
 }
 
-interface collabsProductFetcher {
-    initialData: ProductTypePayload | undefined;
+interface collabsProductFetcher extends collabsProductFetcherProps {
+    initialData: ProductType[] | undefined;
 }
 
 export const collabsProductFetcher = ({
     initialData,
+    type,
 }: collabsProductFetcher): returnCollabsProductFetcher => {
     const { data, isSuccess, isPending } = useQuery({
-        ...collabsProductFetcherProps,
+        ...collabsProductFetcherProps({ type }),
         meta: {
             persist: false,
         },
@@ -140,31 +168,23 @@ export const singleProductFetcherProps = ({
     return {
         queryKey: ['allProducts', productId!],
         queryFn: () => {
-            if (queryClient.getQueryData(['allProducts'])) {
-                return (
-                    queryClient.getQueryData([
-                        'allProducts',
-                    ]) as ProductTypePayload
-                )[productId!];
-            } else {
-                return fetch(
-                    `${window.location.origin}/api/products/${productId!}`
-                ).then(async (res) => {
-                    if (!res.ok) {
-                        const errorMessage: string = await res
-                            .json()
-                            .then((data) => data.error);
-                        return Promise.reject(new Error(errorMessage));
-                    }
-                    return res.json().then((data) => {
-                        const { id, ...temp } = {
-                            ...data.data.attributes,
-                            id: '',
-                        };
-                        return temp;
-                    });
+            return fetch(
+                `${window.location.origin}/api/products/${productId!}`
+            ).then(async (res) => {
+                if (!res.ok) {
+                    const errorMessage: string = await res
+                        .json()
+                        .then((data) => data.error);
+                    return Promise.reject(new Error(errorMessage));
+                }
+                return res.json().then((data) => {
+                    const { id, ...temp } = {
+                        ...data.data.attributes,
+                        id: '',
+                    };
+                    return temp;
                 });
-            }
+            });
         },
     };
 };
@@ -215,10 +235,11 @@ export const getProfileProductsFetcherProps = ({
                         return Promise.reject(new Error(errorMessage));
                     }
                     return res.json().then((data) => {
-                        const result: ProductTypePayload = {};
+                        const result: ProductType[] = [];
                         for (let i = 0; i < data.data.length; i++) {
-                            result[data.data[i].id] = {
+                            result[i] = {
                                 ...data.data[i].attributes,
+                                product_id: data.data[i].id,
                             };
                         }
                         return result;
@@ -229,14 +250,14 @@ export const getProfileProductsFetcherProps = ({
 };
 
 interface returnGetProfileProductFetcher {
-    data: ProductTypePayload;
+    data: ProductType[];
     isSuccess: boolean;
     isPending: boolean;
 }
 
 interface getProfileProductsFetcher {
     userId: string | undefined;
-    initialData?: ProductTypePayload | undefined;
+    initialData?: ProductType[] | undefined;
 }
 
 export const getProfileProductsFetcher = ({
@@ -266,28 +287,19 @@ export const getSingleProfileProductFetcherProps = ({
     return {
         queryKey: ['profileProducts', userId!, productId!],
         queryFn: () => {
-            if (queryClient.getQueryData(['profileProducts', userId!])) {
-                return (
-                    queryClient.getQueryData([
-                        'profileProducts',
-                        userId!,
-                    ]) as ProductTypePayload
-                )[productId!];
-            } else {
-                return fetch(
-                    `${window.location.origin}/api/profiles/${userId!}/${productId!}`
-                ).then(async (res) => {
-                    if (!res.ok) {
-                        const errorMessage: string = await res
-                            .json()
-                            .then((data) => data.error);
-                        return Promise.reject(new Error(errorMessage));
-                    }
-                    return res.json().then((data): ProductType => {
-                        return { ...data.data.attributes };
-                    });
+            return fetch(
+                `${window.location.origin}/api/profiles/${userId!}/${productId!}`
+            ).then(async (res) => {
+                if (!res.ok) {
+                    const errorMessage: string = await res
+                        .json()
+                        .then((data) => data.error);
+                    return Promise.reject(new Error(errorMessage));
+                }
+                return res.json().then((data): ProductType => {
+                    return { ...data.data.attributes };
                 });
-            }
+            });
         },
     };
 };

@@ -14,7 +14,7 @@ const ProductCard = ({ children, productData }: ProductCard) => {
     };
 
     return (
-        <article className="flex gap-y-4 gap-x-6 items-center border-white/30 border-[0.1px] rounded-xl p-6 relative sm:min-w-[34rem] md:min-w-0 flex-wrap sm:flex-nowrap md:flex-wrap lg:flex-nowrap xl:flex-wrap 2xl:flex-nowrap">
+        <article className="flex gap-y-4 gap-x-6 items-center border-white/30 border-[0.1px] rounded-xl p-6 relative sm:min-w-[34rem] md:min-w-0 flex-wrap sm:flex-nowrap md:flex-wrap lg:flex-nowrap xl:flex-wrap 2xl:flex-nowrap overflow-hidden">
             <section className="w-full min-w-[12rem] max-w-[18rem] xl:w-auto">
                 {productData?.thumbimageSource &&
                 productData?.thumbimageSource !== '' ? (
@@ -29,7 +29,7 @@ const ProductCard = ({ children, productData }: ProductCard) => {
                     <FaImage className="text-[3rem] sm:text-[4rem] h-[3rem] w-[8rem]" />
                 )}
             </section>
-            <section className="flex sm:flex-col justify-between gap-y-2 gap-x-4 w-full xl:w-auto h-full flex-wrap sm:flex-nowrap">
+            <section className="flex sm:flex-col justify-between gap-y-2 gap-x-4 w-full xl:w-auto flex-wrap sm:flex-nowrap">
                 <header className="grid gap-y-1">
                     <Link
                         style={{

@@ -1,31 +1,53 @@
-version: "3"
+version: '3'
 services:
-  db:
-    image: postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: base_db
-      POSTGRES_USER: base_user
-      POSTGRES_PASSWORD: base_password
-    ports:
-      - "5432:5432"
-  pgadmin:
-    image: dpage/pgadmin4
-    ports:
-      - "8888:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: base_user@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: base_password
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-  redis:
-    image: "redis:7.2-alpine"
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/var/lib/redis/data
+    db:
+        image: postgres
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: base_db
+            POSTGRES_USER: base_user
+            POSTGRES_PASSWORD: base_password
+        ports:
+            - '5432:5432'
+    pgadmin:
+        image: dpage/pgadmin4
+        ports:
+            - '8888:80'
+        environment:
+            PGADMIN_DEFAULT_EMAIL: base_user@gmail.com
+            PGADMIN_DEFAULT_PASSWORD: base_password
+        volumes:
+            - pgadmin_data:/var/lib/pgadmin
+    redis:
+        image: 'redis:7.2-alpine'
+        ports:
+            - '6379:6379'
+        volumes:
+            - redis_data:/var/lib/redis/data
+    elasticsearch:
+        image: elasticsearch:8.13.0
+        ports:
+            - 9200:9200
+            - 9300:9300
+        environment:
+            - discovery.type=single-node
+            - xpack.security.enabled=false
+        restart: always
+    kibana:
+        image: docker.elastic.co/kibana/kibana:8.13.0
+        restart: always
+        depends_on:
+            - elasticsearch
+        ports:
+            - 5601:5601
+        environment:
+            - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
 volumes:
-  postgres_data: {}
-  pgadmin_data: {}
-  redis_data: {}
+    postgres_data: {}
+    pgadmin_data: {}
+    redis_data: {}
+    elasticsearch-data:
+        driver: local
+    kibana-data:
+        driver: local

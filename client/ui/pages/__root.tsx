@@ -10,7 +10,6 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import Footer from '../components/Footer';
-import Bar from '../components/loader/Bar';
 import SharedStore from '../misc/shared-storage';
 
 interface RootContextProps {
@@ -44,19 +43,14 @@ export const Route = createRootRoute({
         return loginStatus;
     },
     component: () => {
-        const { status, isLoading } = useRouterState();
-        if (status === 'pending' || isLoading) {
-            return <Bar />;
-        } else {
-            return (
-                <>
-                    <SharedStore />
-                    <BaseLayout>
-                        <Outlet />
-                    </BaseLayout>
-                </>
-            );
-        }
+        return (
+            <>
+                <SharedStore />
+                <BaseLayout>
+                    <Outlet />
+                </BaseLayout>
+            </>
+        );
     },
 });
 

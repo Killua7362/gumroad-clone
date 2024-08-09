@@ -1,4 +1,21 @@
 class Product < ApplicationRecord
+  include Indexable
+  searchkick callbacks: false, case_sensitive: false
+  after_commit :index_elasticsearch, if: lambda { |model|
+                                           (model.previous_changes.keys & model.search_data.stringify_keys.keys).present?
+                                         }
+  def search_data
+    {
+      title:,
+      description: TextTransformers.extract_main(description),
+      summary:,
+      user_id:,
+      price:,
+      created_at:,
+      updated_at:
+    }
+  end
+
   require_relative './collabs'
   require_relative './contents'
 
@@ -43,3 +60,4 @@ class Product < ApplicationRecord
     end
   end
 end
+

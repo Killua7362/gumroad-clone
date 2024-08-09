@@ -7,7 +7,7 @@ import {
 import { createFileRoute } from '@tanstack/react-router';
 
 interface ProfilePage {
-    productData: ProductTypePayload;
+    productData: ProductType[];
     profileData: CheckoutFormSchemaType;
 }
 

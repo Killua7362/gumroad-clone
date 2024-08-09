@@ -384,10 +384,12 @@ const ProductEditHomePage = () => {
 
                             <table className="text-start border-spacing-2 text-base border-separate">
                                 <thead>
-                                    <th></th>
-                                    <th>Email</th>
-                                    <th>Share</th>
-                                    <th></th>
+                                    <tr>
+                                        <th></th>
+                                        <th>Email</th>
+                                        <th>Share</th>
+                                        <th></th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     {fields.map((collab, index) => {

@@ -6,26 +6,32 @@ module Api
     include CurrentUserConcern
 
     def index
-      if @current_user
-        user = User.find_by(email: @current_user.email)
-        products = Product.where(user_id: user.id)
+      render json: { error: 'Not logged in' }, status: 401 and return unless @current_user
 
-        render json: ProductSerializer.new(products, options).serializable_hash.to_json
-      else
-        render json: { error: 'Not logged in' }, status: 401
-      end
+      user = User.find_by(email: @current_user.email)
+      sort_by = params[:sort_by].presence || 'updated_at'
+      sort_order = (params[:reverse].presence || 'false') == 'true' ? 'desc' : 'asc'
+
+      products = Product.search(params[:search_word].presence || '*',
+                                where: { user_id: user.id },
+                                fields: %i[title^10 description^1 summary^5],
+                                misspellings: { below: 5 },
+                                order: { "#{sort_by}" => "#{sort_order}" })
+
+      # in meomry sorting
+      # products = products.to_a.sort_by(&sort_by.to_sym)
+      # products.reverse! if sort_order == :desc
+      render json: ProductSerializer.new(products.to_a, options).serializable_hash.to_json
     end
 
     def create
-      if @current_user
-        product = Product.new(products_params.merge(user_id: @current_user.id))
-        if product.save!
-          render json: ProductSerializer.new(product, options).serializable_hash.to_json
-        else
-          render json: { error: product.errors.messages }, status: 401
-        end
+      render json: { error: 'Not logged in' }, status: 401 and return unless @current_user
+
+      product = Product.new(products_params.merge(user_id: @current_user.id))
+      if product.save!
+        render json: ProductSerializer.new(product, options).serializable_hash.to_json
       else
-        render json: { error: 'Not Authorized' }, status: 401
+        render json: { error: product.errors.messages }, status: 401
       end
     end
 
@@ -159,13 +165,21 @@ module Api
       @options ||= { include: %i[reviews] }
     end
 
+    def sort_products(user_id, reverse, sort_by)
+      Product.where(user_id:).order("#{sort_by} #{reverse == 'true' ? 'DESC' : 'ASC'}")
+    end
+
+    def search_products(products, search_word)
+      products.search(search_word)
+    end
+
     def isBase64(base64string)
       pattern = Regexp.new('^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$')
       base64string.is_a?(String) && pattern.match?(base64string.split(',')[1])
     end
 
-    def base64ToFile(base64string, _filename, extension)
-      file = Tempfile.new([_filename, extension])
+    def base64ToFile(base64string, filename, extension)
+      file = Tempfile.new([filename, extension])
       file.binmode
       file.write Base64.decode64(base64string.split(',')[1])
       file.rewind

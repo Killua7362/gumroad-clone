@@ -47,7 +47,6 @@ const ProductLayout = ({ children }: { children: React.ReactNode }) => {
                         to="/products/collaborators"
                         search={(prev: productPageCollaboratorsSchemaType) => ({
                             type: 'outgoing',
-                            ...prev,
                         })}
                         style={{
                             textDecoration: 'none',

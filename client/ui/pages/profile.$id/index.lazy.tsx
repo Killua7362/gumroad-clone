@@ -84,9 +84,7 @@ export const ProfileHomePage = ({
                                             name={e.name}
                                             url={e.url}
                                             preview={preview}
-                                            profileProducts={Object.entries(
-                                                profileProducts
-                                            )}
+                                            profileProducts={profileProducts}
                                         />
                                     )
                                 );
@@ -101,9 +99,7 @@ export const ProfileHomePage = ({
                                             name={e.name}
                                             url={e.url}
                                             preview={preview}
-                                            profileProducts={Object.entries(
-                                                profileProducts
-                                            )}
+                                            profileProducts={profileProducts}
                                         />
                                     )
                                 );

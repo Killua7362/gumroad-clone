@@ -248,6 +248,7 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
                         {children}
                         <OnChangeJSON
                             onChange={(data) => {
+                                console.log(JSON.stringify(data));
                                 setContent && setContent(data);
                             }}
                         />

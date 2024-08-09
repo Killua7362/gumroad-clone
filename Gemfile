@@ -43,6 +43,10 @@ gem 'dotenv'
 gem 'google-apis-drive_v3'
 
 gem 'googleauth'
+
+gem 'searchkick'
+
+gem 'elasticsearch'
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
@@ -71,3 +75,7 @@ end
 gem 'shakapacker', '= 7.2'
 
 gem 'react_on_rails', '= 13.4'
+
+gem "sidekiq", "~> 7.3"
+
+gem "rubocop", "~> 1.65"

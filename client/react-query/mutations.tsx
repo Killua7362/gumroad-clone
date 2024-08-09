@@ -60,7 +60,6 @@ export const getProductDeleter = (): returnGetProductDeleter => {
             });
             return queryClient.invalidateQueries({
                 queryKey: ['allProducts'],
-                exact: true,
             });
         },
         onError: (err) => {
@@ -231,7 +230,6 @@ export const getProductEditor = ({
             });
             return queryClient.invalidateQueries({
                 queryKey: ['allProducts'],
-                exact: true,
             });
         },
         onError: (err) => {
@@ -329,7 +327,6 @@ export const getProductLiveToggle = (): returnGetProductLiveToggle => {
             });
             return queryClient.invalidateQueries({
                 queryKey: ['allProducts'],
-                exact: true,
             });
         },
         onError: (err) => {
