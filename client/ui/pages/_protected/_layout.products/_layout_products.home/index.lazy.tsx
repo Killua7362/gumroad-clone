@@ -1,21 +1,14 @@
-import { hideToastState } from '@/atoms/states';
-import { EditProductSchema } from '@/forms/schema/edit_product_schema';
 import { filterTypeOptions } from '@/forms/schema/misc_schema';
-import { getProductLiveToggle } from '@/react-query/mutations';
 import Button from '@/ui/components/button';
-import ProductCard from '@/ui/components/cards/ProductCard';
-import DeleteProductModal from '@/ui/components/modal/DeleteProductModal';
 import NewProductModal from '@/ui/components/modal/NewProductModal';
+import ProductCardLayout from '@/ui/components/profile/layout/ProductCardLayout';
 import { SelectComponent } from '@/ui/components/select';
-import { Await, createLazyFileRoute, Link } from '@tanstack/react-router';
+import { Await, createLazyFileRoute } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import _ from 'lodash';
-import { Fragment, Suspense, useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { FaArrowDownWideShort, FaArrowUpShortWide } from 'react-icons/fa6';
-import { IoMdSettings } from 'react-icons/io';
-import { useSetRecoilState } from 'recoil';
-import { z } from 'zod';
 
 export const Route = createLazyFileRoute(
     '/_protected/_layout/products/_layout_products/home/'
@@ -27,20 +20,13 @@ export const Route = createLazyFileRoute(
 
 export interface ProductsCardContextMenu {
     active: boolean;
-    activeIdx: number;
+    activeIdx: string;
 }
 
 const ProductsHomePage = () => {
-    const { allProducts: initialData } = Route.useLoaderData();
+    const { initialData } = Route.useLoaderData();
     const params = Route.useSearch();
 
-    const [contextMenuConfig, setContextMenuConfig] =
-        useState<ProductsCardContextMenu>({
-            active: false,
-            activeIdx: -1,
-        });
-
-    const setToastRender = useSetRecoilState(hideToastState);
     const navigate = Route.useNavigate();
 
     const debounceSearchInput = _.debounce((value: string) => {
@@ -48,20 +34,6 @@ const ProductsHomePage = () => {
             search: () => ({ ...params, search_word: value }),
         });
     }, 300);
-
-    useEffect(() => {
-        const closeContextMenu = () => {
-            setContextMenuConfig({
-                active: false,
-                activeIdx: 0,
-            });
-        };
-        document.body.addEventListener('click', closeContextMenu);
-        return () =>
-            document.body.removeEventListener('click', closeContextMenu);
-    }, []);
-
-    const { mutate: liveSetter } = getProductLiveToggle();
 
     return (
         <>
@@ -201,136 +173,7 @@ const ProductsHomePage = () => {
             <Suspense fallback={<div>Testing</div>}>
                 <Await promise={initialData}>
                     {(data) => {
-                        return (
-                            <section className="mt-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 px-8 sm:pr-6 sm:pl-0">
-                                {data.map((value, i) => {
-                                    return (
-                                        <ProductCard
-                                            key={value.product_id}
-                                            productData={{
-                                                ...value,
-                                            }}>
-                                            <Fragment>
-                                                <span
-                                                    className="absolute right-[1rem] top-[1rem] cursor-pointer hover:text-white/70 text-xl"
-                                                    onClick={(event) => {
-                                                        event.preventDefault();
-                                                        event.stopPropagation();
-                                                        contextMenuConfig.active
-                                                            ? setContextMenuConfig(
-                                                                  {
-                                                                      active: false,
-                                                                      activeIdx:
-                                                                          i,
-                                                                  }
-                                                              )
-                                                            : setContextMenuConfig(
-                                                                  {
-                                                                      active: true,
-                                                                      activeIdx:
-                                                                          i,
-                                                                  }
-                                                              );
-                                                    }}>
-                                                    <IoMdSettings />
-                                                </span>
-                                                <AnimatePresence>
-                                                    {
-                                                        <motion.menu
-                                                            initial={{
-                                                                height: 0,
-                                                                opacity: 0,
-                                                            }}
-                                                            animate={{
-                                                                height: contextMenuConfig.active
-                                                                    ? 'fit-content'
-                                                                    : 0,
-                                                                opacity:
-                                                                    contextMenuConfig.active
-                                                                        ? 1
-                                                                        : 0,
-                                                                transition: {
-                                                                    duration: 0.2,
-                                                                },
-                                                            }}
-                                                            exit={{
-                                                                height: 0,
-                                                                opacity: 0,
-                                                            }}
-                                                            className={`${contextMenuConfig.active && contextMenuConfig.activeIdx === i ? 'grid' : 'hidden'} overflow-hidden bg-background border-white/30 border-[0.1px] absolute right-[2rem] top-[2.5rem] text-lg list-none p-0`}
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                e.stopPropagation();
-                                                            }}>
-                                                            <li
-                                                                className="pl-4 pr-8 py-3 hover:bg-accent/50 cursor-pointer"
-                                                                onClick={async () => {
-                                                                    try {
-                                                                        EditProductSchema.parseAsync(
-                                                                            {
-                                                                                ...value,
-                                                                            }
-                                                                        );
-                                                                        await liveSetter(
-                                                                            {
-                                                                                key: value.product_id!,
-                                                                                live: !value.live,
-                                                                            }
-                                                                        );
-                                                                    } catch (e) {
-                                                                        if (
-                                                                            e instanceof
-                                                                            z.ZodError
-                                                                        ) {
-                                                                            setToastRender(
-                                                                                {
-                                                                                    active: false,
-                                                                                    message:
-                                                                                        'Some fields are empty',
-                                                                                }
-                                                                            );
-                                                                        }
-                                                                    }
-
-                                                                    setContextMenuConfig(
-                                                                        (
-                                                                            prev
-                                                                        ) => {
-                                                                            return {
-                                                                                ...prev,
-                                                                                active: false,
-                                                                            };
-                                                                        }
-                                                                    );
-                                                                }}>
-                                                                Go Live
-                                                            </li>
-                                                            <li>
-                                                                <Link
-                                                                    to={`/products/edit/${value.product_id!}/home`}
-                                                                    className="text-white no-underline">
-                                                                    <span className="pl-4 pr-16 py-3 hover:bg-accent/50 cursor-pointer">
-                                                                        Edit
-                                                                    </span>
-                                                                </Link>
-                                                            </li>
-                                                            <DeleteProductModal
-                                                                idx={
-                                                                    value.product_id!
-                                                                }
-                                                                setContextMenuConfig={
-                                                                    setContextMenuConfig
-                                                                }
-                                                            />
-                                                        </motion.menu>
-                                                    }
-                                                </AnimatePresence>
-                                            </Fragment>
-                                        </ProductCard>
-                                    );
-                                })}
-                            </section>
-                        );
+                        return <ProductCardLayout data={data} />;
                     }}
                 </Await>
             </Suspense>

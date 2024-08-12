@@ -1,9 +1,11 @@
 class Product < ApplicationRecord
   include Indexable
-  searchkick callbacks: false, case_sensitive: false
+  searchkick callbacks: false, case_sensitive: false, index_name: :products_index
   after_commit :index_elasticsearch, if: lambda { |model|
                                            (model.previous_changes.keys & model.search_data.stringify_keys.keys).present?
-                                         }
+                                         }, on: %i[create update]
+  after_destroy :destroy_index
+
   def search_data
     {
       title:,
@@ -60,4 +62,3 @@ class Product < ApplicationRecord
     end
   end
 end
-

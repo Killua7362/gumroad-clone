@@ -18,6 +18,7 @@ const CollabCard = ({ children, productData }: CollabCard) => {
             <section className="grid gap-y-2">
                 <header>
                     <Link
+                        className="group"
                         style={{
                             fontFamily: 'inherit',
                             textDecoration: 'none',
@@ -25,12 +26,19 @@ const CollabCard = ({ children, productData }: CollabCard) => {
                             alignItems: 'center',
                             gap: '0.5rem',
                         }}
+                        to="/profile/$id/product/$productid"
+                        params={{
+                            id: productData.user_id!,
+                            productid: productData.product_id!,
+                        }}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         disabled={!productData.live}>
-                        <h2 className="text-2xl tracking-wider flex gap-x-2 items-center">
+                        <h2 className="text-2xl tracking-wider flex gap-x-2 items-center group-hover:text-sky-400">
                             {productData.title}
                         </h2>
                         {productData.live && (
-                            <GoLink className="text-lg text-sky-400 cursor-pointer" />
+                            <GoLink className="text-lg text-sky-400 cursor-pointer opacity-0 group-hover:opacity-100" />
                         )}
                     </Link>
                 </header>

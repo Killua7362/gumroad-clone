@@ -1,4 +1,6 @@
+import { CableContext } from '@/app/ActionCableContext';
 import { queryClient } from '@/app/RouteComponent';
+import { indexStatus } from '@/atoms/states';
 import { loginStatusFetcherProps } from '@/react-query/query';
 import SideBar from '@/ui/components/sidebar';
 import Toast from '@/ui/components/toast';
@@ -7,9 +9,10 @@ import {
     Outlet,
     useRouterState,
 } from '@tanstack/react-router';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 import Footer from '../components/Footer';
+import Bar from '../components/loader/Bar';
 import SharedStore from '../misc/shared-storage';
 
 interface RootContextProps {
@@ -43,14 +46,19 @@ export const Route = createRootRoute({
         return loginStatus;
     },
     component: () => {
-        return (
-            <>
-                <SharedStore />
-                <BaseLayout>
-                    <Outlet />
-                </BaseLayout>
-            </>
-        );
+        const { status, isLoading } = useRouterState();
+        if (status === 'pending' || isLoading) {
+            return <Bar />;
+        } else {
+            return (
+                <>
+                    <SharedStore />
+                    <BaseLayout>
+                        <Outlet />
+                    </BaseLayout>
+                </>
+            );
+        }
     },
 });
 
@@ -61,18 +69,32 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
     const sideBarActive = (lastMatchContext as RootContextProps).sidebaractive!;
     const sideBarProps: SideBarProps = getSideBarProps();
 
+    const cableContext = useContext(CableContext);
+    const setIndexed = useSetRecoilState(indexStatus);
+
+    useEffect(() => {
+        cableContext!.cable.subscriptions.create(
+            {
+                channel: 'AsyncQueryChannel',
+            },
+            {
+                // connected: () => console.log('connected'),
+                // disconnected: () => console.log('disconnected'),
+                received: (data) => {
+                    setIndexed(data.indexed);
+                },
+            }
+        );
+
+        return () => cableContext!.cable.disconnect();
+    }, []);
+
     return (
         <article className="min-h-screen min-w-screen flex flex-col sm:flex-row flex-wrap bg-background">
             <Toast />
-            <AnimatePresence mode="wait" initial={false}>
-                {(sideBarActive || false) && <SideBar {...sideBarProps} />}
-            </AnimatePresence>
-            <motion.div
-                layout
+            {(sideBarActive || false) && <SideBar {...sideBarProps} />}
+            <div
                 className={`absolute w-full min-h-screen sm:w-auto flex flex-col justify-between overflow-y-auto overflow-x-hidden md:mx-8 sm:right-0 px-2 sm:px-0 scrollbar-thin scrollbar-thumb-white scrollbar-track-background top-[5rem] sm:top-0`}
-                transition={{
-                    x: { type: 'spring', bounce: 0 },
-                }}
                 style={{
                     left:
                         (sideBarActive || false) &&
@@ -84,7 +106,7 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
                 }}>
                 <section className="h-full relative mb-10">{children}</section>
                 <Footer />
-            </motion.div>
+            </div>
         </article>
     );
 };

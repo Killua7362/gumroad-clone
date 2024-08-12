@@ -38,6 +38,8 @@ interface returnGetProductDeleter {
 }
 
 export const getProductDeleter = (): returnGetProductDeleter => {
+    const setToastRender = useSetRecoilState(hideToastState);
+
     const { mutate, isPending } = useMutation({
         mutationFn: (id: string) =>
             fetch(`${window.location.origin}/api/products/${id}`, {
@@ -54,16 +56,20 @@ export const getProductDeleter = (): returnGetProductDeleter => {
                 return {};
             }),
         onSuccess: (data, id) => {
-            queryClient.invalidateQueries({
-                queryKey: ['allProducts', id!],
-                exact: true,
+            setToastRender({
+                active: false,
+                message: `${id}:Product deleted successfully`,
             });
             return queryClient.invalidateQueries({
                 queryKey: ['allProducts'],
+                refetchType: 'all',
             });
         },
-        onError: (err) => {
-            console.log(err);
+        onError: (err, id) => {
+            setToastRender({
+                active: false,
+                message: `${id}:Error occured while deleting the product`,
+            });
         },
         onSettled: () => {},
     });
@@ -95,13 +101,20 @@ export const getProductCreater = (): returnGetProductCreater => {
                 }
                 return res.json();
             }),
-        onSuccess: () => {
-            return queryClient.invalidateQueries({ queryKey: ['allProducts'] });
+        onSuccess: (data) => {
+            setToastRender({
+                active: false,
+                message: `${data.data.id}: Product created successfully`,
+            });
+            return queryClient.invalidateQueries({
+                queryKey: ['allProducts'],
+                refetchType: 'all',
+            });
         },
         onError: (err) => {
             setToastRender({
                 active: false,
-                message: err.message,
+                message: `Error occured while creating product`,
             });
         },
     });

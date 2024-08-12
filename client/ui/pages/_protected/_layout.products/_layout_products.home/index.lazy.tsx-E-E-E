@@ -234,9 +234,7 @@ const ProductsHomePage = () => {
                                                     }}>
                                                     <IoMdSettings />
                                                 </span>
-                                                <AnimatePresence
-                                                    mode="wait"
-                                                    initial={false}>
+                                                <AnimatePresence>
                                                     {
                                                         <motion.menu
                                                             initial={{

@@ -2,6 +2,7 @@ import { getProductDeleter } from '@/react-query/mutations';
 import Button from '@/ui/components/button';
 import * as Modal from '@/ui/components/modal';
 import { ProductsCardContextMenu } from '@/ui/pages/_protected/_layout.products/_layout_products.home/index.lazy';
+import { motion } from 'framer-motion';
 
 interface DeleteProductModal {
     idx: string;
@@ -43,15 +44,19 @@ const DeleteProductModal = ({
                 </article>
             </Modal.Base>
             <Modal.Open>
-                <li
-                    className="px-4 py-3 hover:bg-accent/50 cursor-pointer"
-                    onClick={() => {
-                        setContextMenuConfig((prev) => {
-                            return { ...prev, active: false };
-                        });
-                    }}>
-                    Delete
-                </li>
+                <motion.li
+                    whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+                    whileTap={{ scale: 0.95 }}>
+                    <button
+                        className={`w-full px-4 py-2 text-sm text-red-400 bg-background flex items-center gap-2 focus:outline-none hover:cursor-pointer hover:bg-background/80`}
+                        onClick={() => {
+                            setContextMenuConfig((prev) => {
+                                return { ...prev, active: false };
+                            });
+                        }}>
+                        Delete
+                    </button>
+                </motion.li>
             </Modal.Open>
         </Modal.Root>
     );

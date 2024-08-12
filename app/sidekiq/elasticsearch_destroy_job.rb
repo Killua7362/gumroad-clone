@@ -1,10 +1,10 @@
-class ElasticsearchJob
+class ElasticsearchDestroyJob
   include Sidekiq::Job
-  sidekiq_options retry: 0
 
   def perform(id)
-    object = Product.find_by(id: id.to_s)
-    object.reindex(mode: :inline)
+    object = Product.new
+    object.id = id
+    Product.search_index.remove(object)
 
     loop do
       break if Searchkick.reindex_status('products_development')[:completed]

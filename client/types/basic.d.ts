@@ -1,5 +1,6 @@
 declare module '*.css';
 declare module 'nprogress';
+declare module '*.jpg';
 
 interface IndividualCollab {
     email: string;
@@ -28,6 +29,7 @@ interface ProductType {
     contents?: ProductContetPage[];
     created_at?: string;
     updated_at?: string;
+    user_id?: string;
 }
 
 interface authSchema {

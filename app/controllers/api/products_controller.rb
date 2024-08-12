@@ -144,6 +144,7 @@ module Api
       product = Product.find_by(id: params[:id])
       if @current_user and @current_user.id == product.user_id
         DRIVE.delete_file(product.folder_id) unless product.folder_id.nil?
+
         if product.destroy
           head :no_content
         else
@@ -260,3 +261,4 @@ module Api
     end
   end
 end
+

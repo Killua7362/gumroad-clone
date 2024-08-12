@@ -1,5 +1,7 @@
 import { queryClient } from '@/app/RouteComponent';
+import { indexStatus } from '@/atoms/states';
 import { useQuery } from '@tanstack/react-query';
+import { useRecoilValue } from 'recoil';
 import { CheckoutFormSchemaType } from './mutations';
 
 interface returnLoginStatusFetcher {
@@ -82,6 +84,8 @@ export const allProductsFetcher = ({
     sort_by,
     search_word,
 }: allProductsFetcher): returnAllProductsFetcher => {
+    const indexable = useRecoilValue(indexStatus);
+
     const { data, isSuccess, isPending } = useQuery({
         ...allProductsFetcherProps({ reverse, sort_by, search_word }),
         meta: {
@@ -90,7 +94,8 @@ export const allProductsFetcher = ({
         enabled: !!(
             queryClient.getQueryData(['loginStatus']) &&
             (queryClient.getQueryData(['loginStatus']) as authSchema)
-                .logged_in == true
+                .logged_in == true &&
+            indexable
         ),
         initialData,
     });

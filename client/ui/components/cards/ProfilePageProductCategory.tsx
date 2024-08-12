@@ -36,7 +36,7 @@ const ProfilePageProductCard = ({
                                 className="w-full h-full no-underline text-white"
                                 to="/profile/$id/product/$productid"
                                 params={{
-                                    id: params?.id ?? value.product_id!,
+                                    id: params?.id ?? value.user_id!,
                                     productid: value.product_id!,
                                 }}
                                 key={value.product_id}>

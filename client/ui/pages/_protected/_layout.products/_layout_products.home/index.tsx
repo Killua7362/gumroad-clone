@@ -17,7 +17,7 @@ const ProductHomeSchema = z.object({
 export type ProductHomeRouteType = z.infer<typeof ProductHomeSchema>;
 
 type ProductHomeRouteReturnType = Promise<{
-    allProducts: Promise<ProductType[]>;
+    initialData: Promise<ProductType[]>;
 }>;
 
 export const Route = createFileRoute(
@@ -39,7 +39,7 @@ export const Route = createFileRoute(
             })
         );
         return {
-            allProducts: defer(allProducts),
+            initialData: defer(allProducts),
         };
     },
     validateSearch: ProductHomeSchema,
