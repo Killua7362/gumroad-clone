@@ -1,3 +1,4 @@
+import { cx } from '@emotion/css';
 import {
     FieldErrors,
     FieldPath,
@@ -12,6 +13,7 @@ interface FormInput<T extends FieldValues> {
     register: UseFormRegister<T>;
     placeholder: string;
     type: string;
+    className?: string;
 }
 
 export const FormInput = <T extends FieldValues>({
@@ -21,13 +23,17 @@ export const FormInput = <T extends FieldValues>({
     register,
     placeholder,
     type,
+    className = '',
 }: FormInput<T>) => {
     return (
         <fieldset
-            className={`${errors[name] ? 'border-red-400' : 'border-white/30 focus-within:border-white'} border-[0.1px] w-full rounded-md p-2 ${children && 'flex flex-row-reverse'}`}>
+            className={cx(
+                `${errors[name] ? 'border-red-400' : 'border-white/30 focus-within:border-blue-500 focus-within:ring-blue-500'} transition-colors duration-200 border-[0.1px] w-full rounded-md p-2 ${children && 'flex flex-row-reverse'}`,
+                className
+            )}>
             <input
                 type={type}
-                className="outline-none bg-background text-white w-full text-lg"
+                className="outline-none bg-inherit text-white w-full text-lg"
                 placeholder={`Type your ${placeholder} here...`}
                 {...register(name)}
             />

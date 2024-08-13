@@ -117,7 +117,7 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
                         proceed: () => void;
                         reset: () => void;
                     }) => (
-                        <>
+                        <div className="mx-auto sm:px-6 lg:px-8">
                             {status === 'blocked' && (
                                 <NavigationBlocker
                                     listeners={false}
@@ -127,12 +127,47 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
                             )}
                             <productEditContext.Provider
                                 value={productEditProps}>
-                                <header className="grid text-white/90 pb-5 pt-3 sm:pt-10 mr-4 gap-y-2">
-                                    <div className="flex justify-between">
-                                        <h1 className="text-3xl sm:text-4xl uppercase tracking-wide ml-4">
-                                            {watch('title') || 'Untitled'}
-                                        </h1>
-                                        <section className="grid gap-y-4">
+                                <header className="pt-4 py-8 sm:pt-8 border-b border-white/10 px-4 sm:px-0">
+                                    <nav className="flex justify-between">
+                                        <section className="grid">
+                                            <h1
+                                                className={`${isDirty ? 'text-red-400' : 'text-white'} text-4xl font-bold mb-6`}>
+                                                {watch('title') || 'Untitled'}
+                                            </h1>
+                                            <section className="flex space-x-4">
+                                                <Link
+                                                    to="/products/edit/$id/home"
+                                                    params={{ id: params.id }}
+                                                    style={{
+                                                        textDecoration: 'none',
+                                                    }}
+                                                    state={{
+                                                        ...getValues(),
+                                                    }}
+                                                    className={`  ${location.pathname === `/products/edit/${params.id}/home` ? 'text-white font-semibold' : 'text-white/80 hover:text-white '}`}>
+                                                    Home
+                                                </Link>
+                                                <Link
+                                                    to="/products/edit/$id/content"
+                                                    params={{ id: params.id }}
+                                                    search={(
+                                                        prev: ProductContentSearchType
+                                                    ) => ({
+                                                        page: 1,
+                                                        ...prev,
+                                                    })}
+                                                    style={{
+                                                        textDecoration: 'none',
+                                                    }}
+                                                    state={{
+                                                        ...getValues(),
+                                                    }}
+                                                    className={`  ${location.pathname === `/products/edit/${params.id}/content` ? 'text-white font-semibold' : 'text-white/80 hover:text-white '}`}>
+                                                    Content
+                                                </Link>
+                                            </section>
+                                        </section>
+                                        <section className="grid gap-y-3">
                                             <ul className="flex gap-x-4 list-none">
                                                 <li>
                                                     <Button
@@ -170,75 +205,8 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
                                                     />
                                                 </li>
                                             </ul>
-
-                                            <span
-                                                className={`whitespace-nowrap ${isDirty ? 'text-red-400' : 'text-green-400'} `}>
-                                                {isDirty
-                                                    ? 'Changes detected'
-                                                    : 'No changes'}
-                                            </span>
                                         </section>
-                                    </div>
-                                    <ul className="border-b-[1px] h-5 border-white/30 flex gap-x-4 w-full list-none">
-                                        <li>
-                                            <Link
-                                                to="/products/edit/$id/home"
-                                                params={{ id: params.id }}
-                                                style={{
-                                                    textDecoration: 'none',
-                                                }}
-                                                state={{
-                                                    ...getValues(),
-                                                }}
-                                                activeProps={{
-                                                    className:
-                                                        'cursor-default pointer-events-none',
-                                                }}>
-                                                <Button
-                                                    buttonName="Product"
-                                                    isActive={
-                                                        location.pathname ===
-                                                        `/products/edit/${params.id}/home`
-                                                    }
-                                                    extraClasses={[
-                                                        `!text-base !rounded-2xl`,
-                                                    ]}
-                                                />
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link
-                                                to="/products/edit/$id/content"
-                                                params={{ id: params.id }}
-                                                search={(
-                                                    prev: ProductContentSearchType
-                                                ) => ({
-                                                    page: 1,
-                                                    ...prev,
-                                                })}
-                                                style={{
-                                                    textDecoration: 'none',
-                                                }}
-                                                state={{
-                                                    ...getValues(),
-                                                }}
-                                                activeProps={{
-                                                    className:
-                                                        'cursor-default pointer-events-none',
-                                                }}>
-                                                <Button
-                                                    buttonName="Content"
-                                                    isActive={
-                                                        location.pathname ===
-                                                        `/products/edit/${params.id}/content`
-                                                    }
-                                                    extraClasses={[
-                                                        `!text-base !rounded-2xl`,
-                                                    ]}
-                                                />
-                                            </Link>
-                                        </li>
-                                    </ul>
+                                    </nav>
                                 </header>
                                 <form
                                     className="text-xl flex flex-col lg:flex-row gap-4 relative left-0 top-4"
@@ -267,7 +235,7 @@ const ProductEditPageLayout = ({ children }: { children: React.ReactNode }) => {
                                     {children}
                                 </form>
                             </productEditContext.Provider>
-                        </>
+                        </div>
                     )}
                 </Block>
             )

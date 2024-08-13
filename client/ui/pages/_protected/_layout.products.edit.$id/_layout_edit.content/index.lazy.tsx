@@ -1,7 +1,9 @@
 import { createRef, RefObject, useContext, useEffect, useState } from 'react';
 
+import { queryClient } from '@/app/RouteComponent';
 import Button from '@/ui/components/button';
 import ProductEditContentDeleteModal from '@/ui/components/modal/ProductEditContentDeleteModal';
+import { ReviewComponent } from '@/ui/layouts/ProductEditContentLayout';
 import { MarkdownEditor } from '@/ui/misc/markdown-editor';
 import {
     IonItem,
@@ -12,10 +14,8 @@ import {
 } from '@ionic/react';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
-import { useFieldArray, useFormState } from 'react-hook-form';
+import { useFieldArray } from 'react-hook-form';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { CiStar } from 'react-icons/ci';
-import { FaStar } from 'react-icons/fa';
 import { RemirrorJSON } from 'remirror';
 import { ProductContentSearchType } from '.';
 import { productEditContext } from '../_layout_edit';
@@ -28,15 +28,6 @@ export const Route = createLazyFileRoute(
     },
 });
 
-interface Review {
-    reviewEdit: boolean;
-    reviewScore: number;
-    tempReviewScore: number;
-    tempSelectReviewScore: number;
-    reviewDescription: string;
-    tempReviewDescription: string;
-}
-
 const ProductEditContentPage = () => {
     const localProductEditContext = useContext(productEditContext);
     const { control, watch, setValue, getValues } = localProductEditContext!;
@@ -46,23 +37,13 @@ const ProductEditContentPage = () => {
         control,
     });
 
+    const userMail = (queryClient.getQueryData(['loginStatus']) as authSchema)
+        .email;
+
     const pages = watch('contents') || [];
-
-    const { dirtyFields } = useFormState({ control });
-
-    const [reviewOptions, setReviewOptions] = useState<Review>({
-        reviewEdit: false,
-        reviewScore: 1,
-        tempReviewScore: 1,
-        tempSelectReviewScore: 1,
-        reviewDescription: '',
-        tempReviewDescription: '',
-    });
 
     const searchParams = Route.useSearch();
     const navigate = Route.useNavigate();
-
-    const [renaming, setRenaming] = useState(false);
 
     const [inputRefs, setInputRefs] = useState<RefObject<HTMLInputElement>[]>(
         []
@@ -261,144 +242,19 @@ const ProductEditContentPage = () => {
                             }}
                         />
                     </section>
-                    <section className="flex flex-col w-full max-w-[20rem] border-white/30 border-[0.1px] h-fit p-4 justify-center items-center gap-y-3">
-                        <h2 className="p-2 text-2xl">Review</h2>
-                        <section className="flex gap-x-4 px-1 justify-between w-full">
-                            Rating:
-                            <ul className="flex my-[0.1rem] list-none">
-                                {new Array(5).fill(0).map((e, i) => {
-                                    return (
-                                        <li
-                                            key={`review_star_${i}`}
-                                            className="cursor-pointer"
-                                            onMouseEnter={() => {
-                                                reviewOptions.reviewEdit &&
-                                                    setReviewOptions((prev) => {
-                                                        return {
-                                                            ...prev,
-                                                            tempReviewScore:
-                                                                i + 1,
-                                                        };
-                                                    });
-                                            }}
-                                            onMouseLeave={() => {
-                                                reviewOptions.reviewEdit &&
-                                                    setReviewOptions((prev) => {
-                                                        return {
-                                                            ...prev,
-                                                            tempReviewScore:
-                                                                reviewOptions.tempSelectReviewScore,
-                                                        };
-                                                    });
-                                            }}
-                                            onClick={() => {
-                                                reviewOptions.reviewEdit &&
-                                                    setReviewOptions((prev) => {
-                                                        return {
-                                                            ...prev,
-                                                            tempSelectReviewScore:
-                                                                i + 1,
-                                                        };
-                                                    });
-                                            }}>
-                                            {i <
-                                            reviewOptions.tempReviewScore ? (
-                                                <FaStar />
-                                            ) : (
-                                                <CiStar />
-                                            )}
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </section>
-                        {reviewOptions.reviewEdit ? (
-                            <fieldset className="border-white/30 border-[0.1px] focus-within:border-white">
-                                <textarea
-                                    style={{
-                                        fontFamily: 'inherit',
-                                    }}
-                                    className="bg-background text-white outline-none text-base resize-none h-[6rem]"
-                                    value={reviewOptions.tempReviewDescription}
-                                    onChange={(event) => {
-                                        event.preventDefault();
-                                        reviewOptions.reviewEdit &&
-                                            event.currentTarget?.value &&
-                                            setReviewOptions((prev) => {
-                                                return {
-                                                    ...prev,
-                                                    tempReviewDescription:
-                                                        event.currentTarget
-                                                            .value,
-                                                };
-                                            });
-                                    }}
-                                />
-                            </fieldset>
-                        ) : (
-                            <p className="text-base w-full">
-                                {reviewOptions.reviewDescription === ''
-                                    ? 'No Description'
-                                    : reviewOptions.reviewDescription}
-                            </p>
-                        )}
-                        {reviewOptions.reviewEdit && (
-                            <ul className="flex gap-x-2 w-full list-none">
-                                <li className="w-full">
-                                    <Button
-                                        extraClasses={[`!w-full`]}
-                                        buttonName={'Save'}
-                                        onClickHandler={() => {
-                                            setReviewOptions((prev) => {
-                                                return {
-                                                    ...prev,
-                                                    reviewEdit: false,
-                                                    reviewDescription:
-                                                        reviewOptions.tempReviewDescription,
-                                                    reviewScore:
-                                                        reviewOptions.tempSelectReviewScore,
-                                                };
-                                            });
-                                        }}
-                                    />
-                                </li>
-                                <li className="w-full">
-                                    <Button
-                                        extraClasses={[`!w-full`]}
-                                        buttonName={'Cancel'}
-                                        onClickHandler={() => {
-                                            setReviewOptions((prev) => {
-                                                return {
-                                                    ...prev,
-                                                    reviewEdit: false,
-                                                    tempReviewDescription:
-                                                        reviewOptions.reviewDescription,
-                                                    tempReviewScore:
-                                                        reviewOptions.reviewScore,
-                                                };
-                                            });
-                                        }}
-                                    />
-                                </li>
-                            </ul>
-                        )}
-                        {!reviewOptions.reviewEdit && (
-                            <Button
-                                extraClasses={[`!w-full`]}
-                                buttonName={'Edit Review'}
-                                onClickHandler={() => {
-                                    setReviewOptions((prev) => {
-                                        return { ...prev, reviewEdit: true };
-                                    });
-                                }}
-                            />
-                        )}
-                        <section className="w-full">
+                    <section className="grid gap-y-2">
+                        <ReviewComponent />
+                        <section className="w-full border-white/30 border-[0.1px] p-4 px-3">
                             <h4 className="text-lg">Author</h4>
-                            <ul className="list-none grid gap-y-2 text-base">
+                            <ul className="list-none grid gap-y-1 mt-1 text-sm">
+                                <li>{userMail}</li>
                                 {collab_active &&
-                                    collabs.map((e) => {
-                                        return <li>{e.email}</li>;
+                                    collabs.map((e, i) => {
+                                        return (
+                                            <li key={`${i}_author_id`}>
+                                                {e.email}
+                                            </li>
+                                        );
                                     })}
                             </ul>
                         </section>

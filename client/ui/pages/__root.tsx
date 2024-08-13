@@ -1,6 +1,4 @@
-import { CableContext } from '@/app/ActionCableContext';
 import { queryClient } from '@/app/RouteComponent';
-import { allProductsIndexStatus } from '@/atoms/states';
 import { loginStatusFetcherProps } from '@/react-query/query';
 import SideBar from '@/ui/components/sidebar';
 import Toast from '@/ui/components/toast';
@@ -9,8 +7,7 @@ import {
     Outlet,
     useRouterState,
 } from '@tanstack/react-router';
-import { useContext, useEffect, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useState } from 'react';
 import Footer from '../components/Footer';
 import Bar from '../components/loader/Bar';
 import SharedStore from '../misc/shared-storage';
@@ -68,26 +65,6 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
 
     const sideBarActive = (lastMatchContext as RootContextProps).sidebaractive!;
     const sideBarProps: SideBarProps = getSideBarProps();
-
-    const cableContext = useContext(CableContext);
-    const setIndexed = useSetRecoilState(allProductsIndexStatus);
-
-    useEffect(() => {
-        cableContext!.cable.subscriptions.create(
-            {
-                channel: 'AsyncQueryChannel',
-            },
-            {
-                // connected: () => console.log('connected'),
-                // disconnected: () => console.log('disconnected'),
-                received: (data) => {
-                    setIndexed(data.indexed);
-                },
-            }
-        );
-
-        return () => cableContext!.cable.disconnect();
-    }, []);
 
     return (
         <article className="min-h-screen min-w-screen flex flex-col sm:flex-row flex-wrap bg-background">

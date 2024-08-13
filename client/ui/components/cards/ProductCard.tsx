@@ -1,6 +1,5 @@
 import preview from '@/media/images/preview.jpg';
 import { Link } from '@tanstack/react-router';
-import { FaDotCircle } from 'react-icons/fa';
 import { GoLink } from 'react-icons/go';
 import { IoMdSettings } from 'react-icons/io';
 
@@ -22,7 +21,7 @@ const ProductCard = ({
     };
 
     return (
-        <article className="flex flex-col md:flex-row h-full border-white/30 border-[0.1px] rounded-xl overflow-hidden bg-background relative shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <article className="flex bg-white/5 flex-col md:flex-row h-full border-white/30 border-[0.1px] rounded-xl overflow-hidden bg-background relative shadow-lg hover:shadow-xl transition-shadow duration-300">
             <section className="md:w-[45%] h-48 md:h-auto relative">
                 <img
                     src={productData.thumbimageSource!}
@@ -53,36 +52,35 @@ const ProductCard = ({
                         rel="noopener noreferrer"
                         disabled={!productData.live}>
                         <h2
-                            className={`text-2xl font-bold tracking-wide break-words text-white ${productData.live && 'group-hover:text-sky-400'} transition-colors duration-200`}>
+                            className={`text-2xl font-bold tracking-wide break-words text-white ${productData.live && 'group-hover:text-sky-400'}      `}>
                             {productData.title}
                         </h2>
                         {productData.live && (
-                            <GoLink className="text-xl text-sky-400 cursor-pointer flex-shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                            <GoLink className="text-xl text-sky-400 cursor-pointer flex-shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity    " />
                         )}
                     </Link>
                 </header>
                 <p className="text-gray-300 text-sm tracking-wide mb-4 flex-grow">
                     {productData.summary || 'No summary'}
                 </p>
-                <ul className="flex flex-wrap gap-2 mb-4 list-none">
+                <div className="flex flex-wrap gap-2 mb-2">
                     {productData.tags !== '' &&
-                        productData.tags.split(',').map((e, i) => (
-                            <li
-                                className="text-xs px-3 py-1 rounded-full mb-1 text-black bg-white transition-colors duration-200"
-                                key={`product_card_tags_${i}`}>
-                                {e}
-                            </li>
+                        productData.tags.split(',').map((tag, i) => (
+                            <span
+                                key={`product_card_tags_${i}`}
+                                className="text-xs px-2 py-1 bg-indigo-600 text-white rounded-full">
+                                {tag.trim()}
+                            </span>
                         ))}
-                </ul>
+                </div>
                 <footer className="mt-auto">
-                    <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs">
+                    <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs mt-2">
                         <li
                             className={`${
                                 productData.live
                                     ? 'text-green-400'
                                     : 'text-red-400'
                             } flex items-center gap-x-1 font-medium`}>
-                            <FaDotCircle className="text-sm relative" />
                             Live
                         </li>
                         {productData.collab_active &&
@@ -93,7 +91,6 @@ const ProductCard = ({
                                             ? 'text-green-400'
                                             : 'text-red-400'
                                     } flex items-center gap-x-1 whitespace-nowrap font-medium`}>
-                                    <FaDotCircle className="text-sm relative" />
                                     Collab Approved
                                 </li>
                             )}
@@ -101,7 +98,7 @@ const ProductCard = ({
                 </footer>
             </section>
             <button
-                className="absolute top-3 right-3 text-white/70 hover:text-white text-xl cursor-pointer rounded-full p-2 transition-colors duration-200 bg-background"
+                className="absolute top-3 right-3 text-white/70 hover:text-white text-xl cursor-pointer rounded-full p-2       bg-[#181A1A]"
                 onClick={onSettingsClick}>
                 <IoMdSettings />
             </button>

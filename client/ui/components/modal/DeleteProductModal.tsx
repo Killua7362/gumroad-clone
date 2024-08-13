@@ -45,7 +45,7 @@ const DeleteProductModal = ({
             </Modal.Base>
             <Modal.Open>
                 <motion.li
-                    whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+                    whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
                     whileTap={{ scale: 0.95 }}>
                     <button
                         className={`w-full px-4 py-2 text-sm text-red-400 bg-background flex items-center gap-2 focus:outline-none hover:cursor-pointer hover:bg-background/80`}

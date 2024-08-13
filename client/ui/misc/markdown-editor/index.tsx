@@ -72,82 +72,6 @@ export interface MarkdownEditorProps
     editable?: boolean;
 }
 
-const markdownStyles = css`
-    img {
-        max-width: 80%;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-    }
-    .ProseMirror-selectednode {
-        outline: 0 !important;
-        position: relative;
-        height: fit-content;
-
-        img {
-            outline: 0 !important;
-        }
-    }
-    .remirror-theme {
-        @media (min-width: 640px) {
-            width: 97% !important;
-        }
-
-        width: 100% !important;
-
-        .ProseMirror {
-            padding: 0 !important;
-            min-height: 55vh !important;
-            overflow: hidden !important;
-            box-shadow: none !important;
-            .file-node-view-wrapper {
-                outline: 0;
-                margin: 1rem 0;
-            }
-        }
-
-        .ProseMirror:focus {
-            box-shadow: none;
-            overflow: hidden !important;
-        }
-
-        .MuiStack-root {
-            background-color: #09090b;
-            border: rgba(255, 255, 255, 0.6) 0.3px solid;
-            padding: 8px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            @media (min-width: 768px) {
-                width: 100%;
-            }
-            width: 100%;
-            .MuiBox-root {
-                display: flex;
-                gap: 5px;
-                background-color: #09090b;
-                margin: 0;
-                .MuiButtonBase-root {
-                    background-color: #09090b;
-                    svg {
-                        color: white;
-                        height: 1rem;
-                        width: 1rem;
-                    }
-                }
-                .Mui-selected {
-                    background-color: white;
-                    svg {
-                        color: black;
-                        height: 1rem;
-                        width: 1rem;
-                    }
-                }
-            }
-        }
-    }
-`; /**
- * The editor which is used to create the annotation. Supports formatting.
- */
 export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
     pageContent,
     placeholder = '',
@@ -157,6 +81,83 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
     theme,
     ...rest
 }) => {
+    const markdownStyles = css`
+        img {
+            max-width: 80%;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        .ProseMirror-selectednode {
+            outline: 0 !important;
+            position: relative;
+            height: fit-content;
+
+            img {
+                outline: 0 !important;
+            }
+        }
+        .remirror-theme {
+            @media (min-width: 640px) {
+                width: 97% !important;
+            }
+
+            width: 100% !important;
+
+            .ProseMirror {
+                padding: 0 !important;
+                min-height: 55vh !important;
+                overflow: hidden !important;
+                box-shadow: none !important;
+                .file-node-view-wrapper {
+                    outline: 0;
+                    margin: 1rem 0;
+                }
+            }
+
+            .ProseMirror:focus {
+                box-shadow: none;
+                overflow: hidden !important;
+            }
+
+            .MuiStack-root {
+                background-color: #09090b;
+                border: rgba(255, 255, 255, 0.6) 0.3px solid;
+                padding: 8px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                @media (min-width: 768px) {
+                    width: 100%;
+                }
+                width: 100%;
+                .MuiBox-root {
+                    display: flex;
+                    gap: 5px;
+                    background-color: #09090b;
+                    margin: 0;
+                    .MuiButtonBase-root {
+                        background-color: #09090b;
+                        svg {
+                            color: white;
+                            height: 1rem;
+                            width: 1rem;
+                        }
+                    }
+                    .Mui-selected {
+                        background-color: white;
+                        svg {
+                            color: black;
+                            height: 1rem;
+                            width: 1rem;
+                        }
+                    }
+                }
+            }
+        }
+    `; /**
+     * The editor which is used to create the annotation. Supports formatting.
+     */
+
     const extensions = useCallback(
         () => [
             new LinkExtension({ autoLink: true }),
@@ -248,7 +249,6 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
                         {children}
                         <OnChangeJSON
                             onChange={(data) => {
-                                console.log(JSON.stringify(data));
                                 setContent && setContent(data);
                             }}
                         />

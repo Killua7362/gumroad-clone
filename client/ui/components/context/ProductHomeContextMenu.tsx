@@ -32,7 +32,7 @@ const ProductHomeContextMenu = ({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.2 }}
-                className="absolute right-4 top-12 bg-gray-400 rounded-md shadow-lg overflow-hidden z-10"
+                className="absolute right-4 top-12 bg-background rounded-md shadow-lg overflow-hidden z-10"
                 style={{
                     width: '150px',
                     display:
@@ -44,7 +44,7 @@ const ProductHomeContextMenu = ({
                 <motion.ul className="py-1">
                     <motion.li
                         whileHover={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            backgroundColor: 'rgba(255, 255, 255, 0.6)',
                         }}
                         whileTap={{ scale: 0.95 }}>
                         <button
@@ -79,17 +79,14 @@ const ProductHomeContextMenu = ({
                     </motion.li>
                     <motion.li
                         whileHover={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            backgroundColor: 'rgba(255, 255, 255, 0.6)',
                         }}
                         whileTap={{ scale: 0.95 }}>
-                        <button
-                            className={`w-full px-4 py-2 text-sm  bg-background text-white flex items-center gap-2 focus:outline-none hover:cursor-pointer hover:bg-background/90`}>
-                            <Link
-                                to={`/products/edit/${value.product_id!}/home`}
-                                className="text-white no-underline">
-                                Edit
-                            </Link>
-                        </button>
+                        <Link
+                            to={`/products/edit/${value.product_id!}/home`}
+                            className="no-underline w-full px-4 py-2 text-sm  bg-background text-white flex items-center gap-2 focus:outline-none hover:cursor-pointer hover:bg-background/90">
+                            Edit
+                        </Link>
                     </motion.li>
                     <DeleteProductModal
                         idx={value.product_id!}

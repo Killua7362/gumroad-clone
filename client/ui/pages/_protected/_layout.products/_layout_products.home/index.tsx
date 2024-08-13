@@ -10,7 +10,6 @@ const ProductHomeSchema = z.object({
         .optional(),
     reverse: z.boolean().catch(false).optional(),
     search_word: z.string().optional(),
-    search_bar_active: z.boolean().catch(false).optional(),
     sort_bar_active: z.boolean().catch(false).optional(),
 });
 

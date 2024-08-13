@@ -50,7 +50,7 @@ const ProductCardLayout = ({ data }: ProductCardLayout) => {
     return (
         <section
             className={cx(
-                'mt-2 grid gap-6 px-4 sm:px-8 sm:pr-6 sm:pl-4 md:pl-0',
+                'mt-2 grid gap-6 px-4 mb-10 sm:px-8 sm:pr-6 sm:pl-4 md:pl-0',
                 css`
                                       /* prettier-ignore */
                                       ${`

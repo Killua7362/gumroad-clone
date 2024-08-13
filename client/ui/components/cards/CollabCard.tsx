@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router';
 import _ from 'lodash';
-import { FaDotCircle } from 'react-icons/fa';
 import { GoLink } from 'react-icons/go';
 
 interface CollabCard {
@@ -10,119 +9,113 @@ interface CollabCard {
 
 const CollabCard = ({ children, productData }: CollabCard) => {
     const collabApproved = () => {
-        return productData.collabs!.some((e) => e.approved === false);
+        return !productData.collabs!.some((e) => e.approved === false);
     };
 
     return (
-        <article className="flex flex-wrap gap-y-4 gap-x-6 border-white/30 border-[0.1px] rounded-xl p-6 relative justify-between max-w-[38rem] min-w-fit overflow-hidden">
-            <section className="grid gap-y-2">
-                <header>
-                    <Link
-                        className="group"
-                        style={{
-                            fontFamily: 'inherit',
-                            textDecoration: 'none',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                        }}
-                        to="/profile/$id/product/$productid"
-                        params={{
-                            id: productData.user_id!,
-                            productid: productData.product_id!,
-                        }}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        disabled={!productData.live}>
-                        <h2 className="text-2xl tracking-wider flex gap-x-2 items-center group-hover:text-sky-400">
-                            {productData.title}
-                        </h2>
-                        {productData.live && (
-                            <GoLink className="text-lg text-sky-400 cursor-pointer opacity-0 group-hover:opacity-100" />
+        <article className="bg-white/5 border border-white/10 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <header className="mb-4">
+                <Link
+                    className="group inline-flex items-center gap-2 no-underline"
+                    to="/profile/$id/product/$productid"
+                    params={{
+                        id: productData.user_id!,
+                        productid: productData.product_id!,
+                    }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    disabled={!productData.live}>
+                    <h2 className="text-2xl font-bold tracking-wider group-hover:text-sky-400  ">
+                        {productData.title}
+                    </h2>
+                    {productData.live && (
+                        <GoLink className="text-lg text-sky-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    )}
+                </Link>
+            </header>
+
+            <section className="mb-4">
+                <div className="flex flex-wrap gap-2 mb-2">
+                    {productData.tags !== '' &&
+                        productData.tags.split(',').map((tag, i) => (
+                            <span
+                                key={`product_card_tags_${i}`}
+                                className="text-xs px-2 py-1 bg-indigo-600 text-white rounded-full">
+                                {tag.trim()}
+                            </span>
+                        ))}
+                </div>
+                <div className="flex gap-4 text-sm">
+                    <span
+                        className={`flex items-center gap-1 ${productData.live ? 'text-green-400' : 'text-red-400'}`}>
+                        {productData.live ? 'Live' : 'Not Live'}
+                    </span>
+                    {productData.collab_active &&
+                        productData.collabs?.length !== 0 && (
+                            <span
+                                className={`flex items-center gap-1 ${collabApproved() ? 'text-green-400' : 'text-red-400'}`}>
+                                {collabApproved()
+                                    ? 'Collab Approved'
+                                    : 'Collab Pending'}
+                            </span>
                         )}
-                    </Link>
-                </header>
-                <footer className="grid gap-y-2">
-                    <ul className="flex flex-wrap gap-x-3">
-                        {productData.tags !== '' &&
-                            productData.tags.split(',').map((e, i) => {
-                                return (
-                                    <li
-                                        className="text-xs px-3 py-[0.2rem] bg-white text-black w-fit h-fit rounded-xl"
-                                        key={`product_card_tags_${i}`}>
-                                        {e}
-                                    </li>
-                                );
-                            })}
-                    </ul>
-                    <ul className="flex gap-x-6 mt-1 text-sm">
-                        <li
-                            className={`${productData.live ? 'text-green-400' : 'text-red-400'}  flex items-center gap-x-1`}>
-                            <FaDotCircle className="text-sm relative" />
-                            Live
-                        </li>
-                        {productData.collab_active &&
-                            productData.collabs?.length !== 0 && (
-                                <li
-                                    className={`${!collabApproved() ? 'text-green-400' : 'text-red-400'}  flex items-center gap-x-1 whitespace-nowrap`}>
-                                    <FaDotCircle className="text-sm relative" />
-                                    Collab Approved
-                                </li>
-                            )}
-                    </ul>
-                </footer>
+                </div>
             </section>
-            <section className="w-full sm:w-auto text-lg">
-                <h3 className="mb-1">Shares</h3>
-                <table className="text-start border-spacing-2 text-base border-separate w-full sm:w-auto">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>
-                                Email (approved{' '}
-                                {
-                                    productData.collabs?.filter(
-                                        (e) => e.approved
-                                    ).length
-                                }{' '}
-                                of {productData.collabs?.length})
-                            </th>
-                            <th>Share</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {productData.collabs!.map((e, i) => {
-                            return (
+
+            <section className="mb-4">
+                <h3 className="text-lg font-semibold mb-2">Shares</h3>
+                <div className="overflow-hidden">
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr className="border-b border-white/10">
+                                <th className="text-left py-2">#</th>
+                                <th className="text-left py-2">Email</th>
+                                <th className="text-right py-2">Share</th>
+                                <th className="text-center py-2">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {productData.collabs!.map((collab, i) => (
                                 <tr
-                                    className={`text-lg ${e.approved ? 'text-green-400' : 'text-red-400'}`}
-                                    key={`collab_${productData.title}_${i}`}>
-                                    <td className="text-white pr-4">{i + 1}</td>
-                                    <td className="whitespace-nowrap">
-                                        {e.email}
+                                    key={`collab_${productData.title}_${i}`}
+                                    className="border-b border-white/5">
+                                    <td className="py-2">{i + 1}</td>
+                                    <td className="py-2">{collab.email}</td>
+                                    <td className="text-right py-2">
+                                        {collab.share}%
                                     </td>
-                                    <td className="whitespace-nowrap">
-                                        {e.share} %
+                                    <td className="text-center py-2">
+                                        <span
+                                            className={`px-2 py-1 rounded-full text-xs ${collab.approved ? 'bg-green-600' : 'bg-red-600'}`}>
+                                            {collab.approved
+                                                ? 'Approved'
+                                                : 'Pending'}
+                                        </span>
                                     </td>
                                 </tr>
-                            );
-                        })}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td></td>
-                            <td>Total</td>
-                            <td>
-                                {_.sum(
-                                    productData.collabs!.map((e) => e.share)
-                                )}
-                                %
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
+                            ))}
+                        </tbody>
+                        <tfoot>
+                            <tr className="font-semibold">
+                                <td colSpan={2} className="py-2">
+                                    Total
+                                </td>
+                                <td className="text-right py-2">
+                                    {_.sum(
+                                        productData.collabs!.map((e) => e.share)
+                                    )}
+                                    %
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </section>
+
             {children}
         </article>
     );
 };
+
 export default CollabCard;

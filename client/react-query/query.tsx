@@ -149,6 +149,8 @@ export const collabsProductFetcher = ({
     initialData,
     type,
 }: collabsProductFetcher): returnCollabsProductFetcher => {
+    const indexable = useRecoilValue(allProductsIndexStatus);
+
     const { data, isSuccess, isPending } = useQuery({
         ...collabsProductFetcherProps({ type }),
         meta: {
@@ -157,7 +159,8 @@ export const collabsProductFetcher = ({
         enabled: !!(
             queryClient.getQueryData(['loginStatus']) &&
             (queryClient.getQueryData(['loginStatus']) as authSchema)
-                .logged_in == true
+                .logged_in == true &&
+            indexable
         ),
         initialData,
     });

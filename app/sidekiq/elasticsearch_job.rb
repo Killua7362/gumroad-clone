@@ -16,3 +16,4 @@ class ElasticsearchJob
     ActionCable.server.broadcast('async_query_channel', { indexed: true })
   end
 end
+

@@ -1,4 +1,3 @@
-import Button from '@/ui/components/button';
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute(
@@ -15,49 +14,29 @@ export const Route = createFileRoute(
 
 const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
     return (
-        <>
-            <header className="grid gap-y-6 pt-10 py-6">
-                <h1 className="text-3xl sm:text-4xl uppercase tracking-wide ml-4">
-                    Checkout
-                </h1>
-                <section className="border-b-[1px] h-5 border-white/30 flex gap-x-4 w-full">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8">
+            <header className="pt-4 py-8 sm:pt-8 border-b border-white/10">
+                <h1 className="text-4xl font-bold text-white mb-6">Products</h1>
+                <nav className="flex space-x-4">
                     <Link
                         to="/checkout/form"
                         style={{
                             textDecoration: 'none',
                         }}
-                        activeProps={{
-                            className: 'cursor-default pointer-events-none',
-                        }}>
-                        {({ isActive }) => (
-                            <Button
-                                buttonName="Form"
-                                isActive={isActive}
-                                extraClasses={[`!text-base !rounded-2xl`]}
-                            />
-                        )}
+                        className={`  no-underline ${location.pathname === '/checkout/form' ? 'text-white font-semibold' : 'text-white/80 hover:text-white '}`}>
+                        Home
                     </Link>
                     <Link
                         to="/checkout/suggestions"
                         style={{
                             textDecoration: 'none',
                         }}
-                        activeProps={{
-                            className: 'cursor-default pointer-events-none',
-                        }}>
-                        {({ isActive }) => (
-                            <Button
-                                buttonName="Suggest"
-                                isActive={isActive}
-                                extraClasses={[`!text-base !rounded-2xl`]}
-                            />
-                        )}
+                        className={`  no-underline ${location.pathname === '/products/suggestions' ? 'text-white font-semibold' : 'text-white/80 hover:text-white '}`}>
+                        Collaborators
                     </Link>
-                </section>
+                </nav>
             </header>
-            <main>
-                <article className="text-xl relative mt-4">{children}</article>
-            </main>
-        </>
+            <main className="py-8">{children}</main>
+        </div>
     );
 };

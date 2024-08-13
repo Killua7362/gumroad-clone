@@ -1,5 +1,6 @@
 import { filterTypeOptions } from '@/forms/schema/misc_schema';
 import Button from '@/ui/components/button';
+import Loader from '@/ui/components/loader';
 import NewProductModal from '@/ui/components/modal/NewProductModal';
 import ProductCardLayout from '@/ui/components/profile/layout/ProductCardLayout';
 import { SelectComponent } from '@/ui/components/select';
@@ -36,18 +37,22 @@ const ProductsHomePage = () => {
     }, 300);
 
     return (
-        <>
-            <section className="flex gap-x-3 items-center px-4 sm:px-0">
+        <div className="space-y-6">
+            <section className="flex flex-wrap gap-4 items-center">
                 <NewProductModal />
                 <Button
-                    extraClasses={['rounded-xl']}
+                    extraClasses={[
+                        'rounded-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2',
+                    ]}
                     buttonName="Filter"
                     onClickHandler={() => {}}
                 />
                 <Button
                     extraClasses={[
-                        'rounded-xl',
-                        `${params.sort_bar_active && '!border-white'}`,
+                        'rounded-full px-4 py-2',
+                        params.sort_bar_active
+                            ? 'bg-indigo-600 text-white'
+                            : 'bg-white/10 text-white/80 hover:bg-white/20',
                     ]}
                     buttonName="Sort"
                     isActive={params.sort_bar_active}
@@ -60,78 +65,32 @@ const ProductsHomePage = () => {
                         });
                     }}
                 />
-                <AnimatePresence>
-                    <motion.label
-                        layout={true}
-                        transition={{ duration: 0.1 }}
-                        className={`min-h-[2.4rem] w-fit border-white/30 flex rounded-xl items-center ${params.search_bar_active && 'focus-within:border-white border-[0.1px] bg-background text-white'}`}>
-                        <Button
-                            buttonName=""
-                            isActive={params.search_bar_active}
-                            extraClasses={[
-                                '!text-lg !py-[0.82rem] !rounded-xl !cursor-pointer',
-                                `${params.search_bar_active && '!border-0'}`,
-                            ]}
-                            onClickHandler={() => {
-                                navigate({
-                                    search: () => ({
-                                        ...params,
-                                        search_bar_active:
-                                            !params.search_bar_active,
-                                    }),
-                                });
-                            }}>
-                            <FaSearch />
-                        </Button>
-                        <AnimatePresence>
-                            {params.search_bar_active && (
-                                <motion.input
-                                    initial={{
-                                        width: params.search_bar_active
-                                            ? '20rem'
-                                            : 0,
-                                    }}
-                                    animate={{
-                                        width: '20rem',
-                                        transition: {
-                                            duration: 0.2,
-                                            delay: 0.2,
-                                        },
-                                    }}
-                                    exit={{
-                                        width: 0,
-                                    }}
-                                    autoFocus={true}
-                                    defaultValue={params.search_word}
-                                    onChange={(e) => {
-                                        e.preventDefault();
-                                        debounceSearchInput(e.target.value);
-                                    }}
-                                    placeholder="Enter title..."
-                                    className="h-full left-0 rounded-xl outline-none text-lg bg-background text-white"
-                                />
-                            )}
-                        </AnimatePresence>
-                    </motion.label>
-                </AnimatePresence>
+                <div className="flex-grow">
+                    <motion.div layout className="relative max-w-md">
+                        <input
+                            type="text"
+                            placeholder="Search products..."
+                            className="w-full bg-white/10 text-white rounded-full py-2 pl-10 pr-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 leading-6"
+                            defaultValue={params.search_word}
+                            onChange={(e) => {
+                                e.preventDefault();
+                                debounceSearchInput(e.target.value);
+                            }}
+                        />
+                        <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" />
+                    </motion.div>
+                </div>
             </section>
+
             <AnimatePresence>
                 {params.sort_bar_active && (
                     <motion.section
-                        initial={{
-                            opacity: 0,
-                        }}
-                        animate={{
-                            opacity: 1,
-                        }}
-                        exit={{
-                            opacity: 0,
-                        }}
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.2 }}
-                        className="relative flex gap-x-3 items-center px-4 sm:px-0"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                        }}>
+                        className="flex items-center gap-4 bg-white/5 rounded-lg p-4"
+                        onClick={(e) => e.stopPropagation()}>
                         <SelectComponent
                             placeholder="Sort by"
                             options={filterTypeOptions}
@@ -152,16 +111,18 @@ const ProductsHomePage = () => {
                         />
                         <Button
                             buttonName=""
-                            extraClasses={['!text-lg !rounded-xl']}
+                            extraClasses={[
+                                '!text-lg !rounded-full bg-white/10 hover:bg-white/20 p-2',
+                            ]}
                             onClickHandler={() => {
                                 navigate({
                                     search: () => ({
                                         ...params,
-                                        reverse: params.reverse ? false : true,
+                                        reverse: !params.reverse,
                                     }),
                                 });
                             }}>
-                            {params.reverse === true ? (
+                            {params.reverse ? (
                                 <FaArrowUpShortWide />
                             ) : (
                                 <FaArrowDownWideShort />
@@ -170,13 +131,19 @@ const ProductsHomePage = () => {
                     </motion.section>
                 )}
             </AnimatePresence>
-            <Suspense fallback={<div>Testing</div>}>
+
+            <Suspense
+                fallback={
+                    <div className="mt-10">
+                        <Loader />
+                    </div>
+                }>
                 <Await promise={initialData}>
                     {(data) => {
                         return <ProductCardLayout data={data} />;
                     }}
                 </Await>
             </Suspense>
-        </>
+        </div>
     );
 };
