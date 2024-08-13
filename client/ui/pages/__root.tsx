@@ -1,6 +1,6 @@
 import { CableContext } from '@/app/ActionCableContext';
 import { queryClient } from '@/app/RouteComponent';
-import { indexStatus } from '@/atoms/states';
+import { allProductsIndexStatus } from '@/atoms/states';
 import { loginStatusFetcherProps } from '@/react-query/query';
 import SideBar from '@/ui/components/sidebar';
 import Toast from '@/ui/components/toast';
@@ -70,7 +70,7 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
     const sideBarProps: SideBarProps = getSideBarProps();
 
     const cableContext = useContext(CableContext);
-    const setIndexed = useSetRecoilState(indexStatus);
+    const setIndexed = useSetRecoilState(allProductsIndexStatus);
 
     useEffect(() => {
         cableContext!.cable.subscriptions.create(

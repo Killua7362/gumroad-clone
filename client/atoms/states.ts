@@ -29,7 +29,7 @@ export const widgetBarItems = atom({
     effects_UNSTABLE: [persistAtom],
 });
 
-export const indexStatus = atom({
+export const allProductsIndexStatus = atom({
     key: 'indexeStatus',
     default: {
         indexed: true,

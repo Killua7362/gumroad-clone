@@ -1,5 +1,5 @@
 import { queryClient } from '@/app/RouteComponent';
-import { indexStatus } from '@/atoms/states';
+import { allProductsIndexStatus } from '@/atoms/states';
 import { useQuery } from '@tanstack/react-query';
 import { useRecoilValue } from 'recoil';
 import { CheckoutFormSchemaType } from './mutations';
@@ -84,7 +84,7 @@ export const allProductsFetcher = ({
     sort_by,
     search_word,
 }: allProductsFetcher): returnAllProductsFetcher => {
-    const indexable = useRecoilValue(indexStatus);
+    const indexable = useRecoilValue(allProductsIndexStatus);
 
     const { data, isSuccess, isPending } = useQuery({
         ...allProductsFetcherProps({ reverse, sort_by, search_word }),

@@ -4,12 +4,12 @@ class ElasticsearchJob
 
   def perform(id)
     object = Product.find_by(id: id.to_s)
-    object.reindex(mode: :inline)
+    object.reindex
 
     loop do
       break if Searchkick.reindex_status('products_development')[:completed]
 
-      sleep 3
+      sleep 5
     end
 
     Product.searchkick_index.refresh

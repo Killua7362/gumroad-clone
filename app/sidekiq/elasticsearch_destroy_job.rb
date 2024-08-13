@@ -9,7 +9,7 @@ class ElasticsearchDestroyJob
     loop do
       break if Searchkick.reindex_status('products_development')[:completed]
 
-      sleep 3
+      sleep 5
     end
 
     Product.searchkick_index.refresh
