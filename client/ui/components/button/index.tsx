@@ -8,7 +8,12 @@ interface ButtonSchema {
     buttonName: string;
     extraClasses?: string[];
     type?: ButtonTypes;
-    onClickHandler?: () => void;
+    onClickHandler?: (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => void;
+    onMouseDownHandler?: (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => void;
     children?: React.ReactNode;
     isActive?: boolean;
     isLoading?: boolean;
@@ -22,6 +27,7 @@ const Button = ({
     extraClasses = [''],
     type = 'button',
     onClickHandler,
+    onMouseDownHandler,
     children,
     isActive = false,
     isLoading = false,
@@ -39,11 +45,8 @@ const Button = ({
             title={title || ''}
             type={type}
             form={formID}
-            onClick={async (e) => {
-                if (onClickHandler) {
-                    await onClickHandler();
-                }
-            }}
+            onClick={onClickHandler}
+            onMouseDown={onMouseDownHandler}
             whileHover={{
                 ...(!isActive && {
                     transform: 'translate(-4px,-4px)',

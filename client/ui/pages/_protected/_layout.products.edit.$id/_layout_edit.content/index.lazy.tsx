@@ -1,4 +1,4 @@
-import { createRef, RefObject, useContext, useEffect, useState } from 'react';
+import { createRef, useContext, useEffect, useReducer, useState } from 'react';
 
 import { queryClient } from '@/app/RouteComponent';
 import Button from '@/ui/components/button';
@@ -16,6 +16,8 @@ import { createLazyFileRoute } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
 import { useFieldArray } from 'react-hook-form';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { FaCheck } from 'react-icons/fa';
+import { RxCross2 } from 'react-icons/rx';
 import { RemirrorJSON } from 'remirror';
 import { ProductContentSearchType } from '.';
 import { productEditContext } from '../_layout_edit';
@@ -27,6 +29,47 @@ export const Route = createLazyFileRoute(
         return <ProductEditContentPage />;
     },
 });
+
+interface State {
+    readOnly: boolean[];
+    contextActive: boolean[];
+    renameInputRefs: any[];
+}
+
+interface Action {
+    type: 'toggle_context' | 'toggle_readonly' | 'add_page';
+    idx?: number;
+}
+
+const reducer = (state: State, action: Action) => {
+    const { type } = action;
+
+    let newContextActive: boolean[] = [...state.contextActive];
+    let newReadOnly: boolean[] = [...state.readOnly];
+    let newRenameInputRefs: any[] = [...state.renameInputRefs];
+    switch (type) {
+        case 'toggle_context':
+            newContextActive[action.idx!] = !state.contextActive[action.idx!];
+            return {
+                ...state,
+                contextActive: newContextActive,
+            };
+        case 'toggle_readonly':
+            newReadOnly[action.idx!] = !state.readOnly[action.idx!];
+            return {
+                ...state,
+                readOnly: newReadOnly,
+            };
+        case 'add_page':
+            return {
+                contextActive: [...newContextActive, false],
+                readOnly: [...newReadOnly, true],
+                renameInputRefs: [...newRenameInputRefs, createRef()],
+            };
+        default:
+            return state;
+    }
+};
 
 const ProductEditContentPage = () => {
     const localProductEditContext = useContext(productEditContext);
@@ -42,13 +85,14 @@ const ProductEditContentPage = () => {
 
     const pages = watch('contents') || [];
 
+    const [state, dispatch] = useReducer(reducer, {
+        readOnly: Array(pages.length).fill(true),
+        contextActive: Array(pages.length).fill(false),
+        renameInputRefs: Array(pages.length).fill(createRef()),
+    });
+
     const searchParams = Route.useSearch();
     const navigate = Route.useNavigate();
-
-    const [inputRefs, setInputRefs] = useState<RefObject<HTMLInputElement>[]>(
-        []
-    );
-    const [contextActive, setContextActive] = useState<boolean[]>([]);
 
     const [rendered, setRendered] = useState(false);
 
@@ -56,7 +100,7 @@ const ProductEditContentPage = () => {
     const collab_active = watch('collab_active');
 
     useEffect(() => {
-        if (!searchParams.page || searchParams.page! > pages.length) {
+        if (!searchParams.page || searchParams.page! <= 0) {
             navigate({
                 search: (prev: ProductContentSearchType) => ({
                     ...prev,
@@ -67,26 +111,26 @@ const ProductEditContentPage = () => {
                 },
                 replace: true,
             });
+        } else if (searchParams.page! > pages.length) {
+            navigate({
+                search: (prev: ProductContentSearchType) => ({
+                    ...prev,
+                    page: pages.length,
+                }),
+                state: {
+                    ...getValues(),
+                },
+                replace: true,
+            });
         }
         setRendered(true);
     }, []);
-
-    useEffect(() => {
-        let temp1: RefObject<HTMLInputElement>[] = [];
-        let temp2: boolean[] = [];
-        for (let i = 0; i < pages.length; i++) {
-            temp1 = [...temp1, createRef()];
-            temp2 = [...temp2, false];
-        }
-        setInputRefs(temp1);
-        setContextActive(temp2);
-    }, [pages.length]);
 
     return (
         rendered && (
             <>
                 <article className="flex lg:justify-start flex-row lg:flex-col gap-y-3 gap-x-6 mt-4 mx-4">
-                    <section className="border-white/30 border-[0.1px] flex flex-col gap-y-4 justify-between w-full max-w-[20rem]">
+                    <section className="border-white/30 border-[0.1px] flex flex-col gap-y-4 justify-between w-full max-w-[20rem] rounded-lg">
                         <IonReorderGroup
                             disabled={false}
                             onIonItemReorder={(event) => {
@@ -120,12 +164,19 @@ const ProductEditContentPage = () => {
                                 return (
                                     <IonItem key={e.id}>
                                         <IonRow
-                                            className={`justify-between flex-nowrap items-center px-2 py-0 overflow-none ${searchParams.page === i + 1 && 'bg-accent/80 text-white'} `}
+                                            className={`justify-between flex-nowrap cursor-pointer items-center px-2 py-0 overflow-none ${searchParams.page === i + 1 && 'bg-white/5 text-white'} `}
                                             onClick={() => {
                                                 if (
-                                                    inputRefs[i].current
-                                                        ?.readOnly
+                                                    searchParams.page ===
+                                                        i + 1 &&
+                                                    state.readOnly[i]
                                                 ) {
+                                                    dispatch({
+                                                        type: 'toggle_context',
+                                                        idx: i,
+                                                    });
+                                                    return;
+                                                } else {
                                                     navigate({
                                                         search: (
                                                             prev: ProductContentSearchType
@@ -143,49 +194,29 @@ const ProductEditContentPage = () => {
                                             onKeyDown={(e) => {
                                                 if (
                                                     e.key === 'Enter' &&
-                                                    inputRefs[i].current
-                                                        ?.readOnly === false
+                                                    !state.readOnly[i]
                                                 ) {
-                                                    inputRefs[
-                                                        i
-                                                    ].current!.readOnly = true;
+                                                    dispatch({
+                                                        type: 'toggle_readonly',
+                                                        idx: i,
+                                                    });
                                                 }
                                             }}>
                                             <IonReorder className="mt-[0.35rem] mr-[0.3rem]" />
-                                            <IonLabel>
-                                                <input
-                                                    className={`text-lg outline-none p-2 my-1 w-full ${searchParams.page === i + 1 ? 'bg-accent/80 text-white' : 'bg-background text-white'}`}
-                                                    placeholder="Untitled..."
-                                                    ref={inputRefs[i]}
-                                                    readOnly={true}
-                                                    value={pages[i].name}
-                                                    onChange={(e) => {
-                                                        setValue(
-                                                            `contents.${i}.name`,
-                                                            e.target.value,
-                                                            {
-                                                                shouldDirty:
-                                                                    true,
-                                                            }
-                                                        );
-                                                    }}
-                                                    onBlur={() => {
-                                                        inputRefs[
-                                                            i
-                                                        ].current!.readOnly =
-                                                            true;
-                                                    }}
-                                                />
+                                            <IonLabel className="w-full">
+                                                <div
+                                                    className={`text-lg p-2 my-1 w-full ${searchParams.page === i + 1 ? 'bg-inherit text-white' : 'bg-background text-white'}`}>
+                                                    {pages[i].name ||
+                                                        'Untitled'}
+                                                </div>
                                             </IonLabel>
                                             <BsThreeDotsVertical
                                                 className="cursor-pointer hover:text-accent/50"
                                                 onClick={(event) => {
                                                     event.stopPropagation();
-                                                    setContextActive((prev) => {
-                                                        const temp: boolean[] =
-                                                            [...prev];
-                                                        temp[i] = !temp[i];
-                                                        return temp;
+                                                    dispatch({
+                                                        type: 'toggle_context',
+                                                        idx: i,
                                                     });
                                                 }}
                                             />
@@ -193,14 +224,14 @@ const ProductEditContentPage = () => {
                                         <motion.ul
                                             layout
                                             style={{
-                                                display: contextActive[i]
+                                                display: state.contextActive[i]
                                                     ? 'block'
                                                     : 'none',
                                                 position: 'relative',
-                                                height: contextActive[i]
+                                                height: state.contextActive[i]
                                                     ? 'fit-content'
                                                     : '0',
-                                                opacity: contextActive[i]
+                                                opacity: state.contextActive[i]
                                                     ? '1'
                                                     : '0',
                                                 originX: '0px',
@@ -209,19 +240,83 @@ const ProductEditContentPage = () => {
                                             }}
                                             transition={{
                                                 layout: { duration: 0.2 },
-                                            }}>
-                                            <li
-                                                className="p-4 py-3 bg-white text-black cursor-pointer hover:bg-white/90"
-                                                onClick={() => {
-                                                    inputRefs[
-                                                        i
-                                                    ].current!.readOnly = false;
-                                                    inputRefs[
-                                                        i
-                                                    ].current?.focus();
-                                                }}>
-                                                Rename
-                                            </li>
+                                            }}
+                                            className="list-none bg-background hover:bg-white/5">
+                                            <fieldset className="p-0 flex relative">
+                                                <input
+                                                    ref={
+                                                        state.renameInputRefs[i]
+                                                    }
+                                                    className={`text-lg outline-none min-w-0 w-auto px-4 py-2 text-white bg-inherit ${state.readOnly[i] && 'cursor-pointer'}`}
+                                                    placeholder="Untitled..."
+                                                    readOnly={state.readOnly[i]}
+                                                    defaultValue={'Rename'}
+                                                    onClick={(e) => {
+                                                        if (state.readOnly[i]) {
+                                                            dispatch({
+                                                                type: 'toggle_readonly',
+                                                                idx: i,
+                                                            });
+                                                            e.currentTarget.value =
+                                                                pages[i].name;
+                                                        }
+                                                    }}
+                                                    // onChange={(e) => {
+                                                    //     setValue(
+                                                    //         `contents.${i}.name`,
+                                                    //         e.target.value,
+                                                    //         {
+                                                    //             shouldDirty:
+                                                    //                 true,
+                                                    //         }
+                                                    //     );
+                                                    // }}
+                                                    onBlur={(e) => {
+                                                        dispatch({
+                                                            type: 'toggle_readonly',
+                                                            idx: i,
+                                                        });
+
+                                                        e.currentTarget.value =
+                                                            'Rename';
+                                                    }}
+                                                />
+                                                {!state.readOnly[i] && (
+                                                    <section className="flex gap-x-2 py-2 mr-2 absolute right-0">
+                                                        <Button
+                                                            buttonName=""
+                                                            extraClasses={[
+                                                                '!p-1',
+                                                            ]}
+                                                            onMouseDownHandler={(
+                                                                e
+                                                            ) => {
+                                                                e.preventDefault();
+                                                                setValue(
+                                                                    `contents.${i}.name`,
+                                                                    state
+                                                                        .renameInputRefs[
+                                                                        i
+                                                                    ].current
+                                                                        .value,
+                                                                    {
+                                                                        shouldDirty:
+                                                                            true,
+                                                                    }
+                                                                );
+                                                            }}>
+                                                            <FaCheck />
+                                                        </Button>
+                                                        <Button
+                                                            buttonName=""
+                                                            extraClasses={[
+                                                                '!p-1',
+                                                            ]}>
+                                                            <RxCross2 />
+                                                        </Button>
+                                                    </section>
+                                                )}
+                                            </fieldset>
                                             {pages.length > 1 && (
                                                 <ProductEditContentDeleteModal
                                                     i={i}
@@ -236,15 +331,18 @@ const ProductEditContentPage = () => {
                         </IonReorderGroup>
                         <Button
                             buttonName="Add page"
-                            extraClasses={[`!w-full`]}
+                            extraClasses={[`!w-full !rounded-lg`]}
                             onClickHandler={() => {
                                 append({ name: '', content: '' });
+                                dispatch({
+                                    type: 'add_page',
+                                });
                             }}
                         />
                     </section>
                     <section className="grid gap-y-2">
                         <ReviewComponent />
-                        <section className="w-full border-white/30 border-[0.1px] p-4 px-3">
+                        <section className="w-full border-white/30 border-[0.1px] p-4 px-3 rounded-lg">
                             <h4 className="text-lg">Author</h4>
                             <ul className="list-none grid gap-y-1 mt-1 text-sm">
                                 <li>{userMail}</li>

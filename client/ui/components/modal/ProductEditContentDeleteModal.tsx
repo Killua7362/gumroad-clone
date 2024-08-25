@@ -63,7 +63,7 @@ const ProductEditContentDeleteModal = ({
                 </article>
             </Modal.Base>
             <Modal.Open>
-                <li className="p-4 py-3 bg-white text-black cursor-pointer hover:bg-white/90">
+                <li className="px-4 py-2 bg-background text-white cursor-pointer hover:bg-white/5 text-lg">
                     Delete
                 </li>
             </Modal.Open>

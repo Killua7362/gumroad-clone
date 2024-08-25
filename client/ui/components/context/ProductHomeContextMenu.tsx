@@ -5,7 +5,6 @@ import { ProductsCardContextMenu } from '@/ui/pages/_protected/_layout.products/
 import { Link } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSetRecoilState } from 'recoil';
-import { z } from 'zod';
 import DeleteProductModal from '../modal/DeleteProductModal';
 
 interface ProductHomeContextMenu {
@@ -59,12 +58,10 @@ const ProductHomeContextMenu = ({
                                         live: !value.live,
                                     });
                                 } catch (e) {
-                                    if (e instanceof z.ZodError) {
-                                        setToastRender({
-                                            active: false,
-                                            message: 'Some fields are empty',
-                                        });
-                                    }
+                                    setToastRender({
+                                        active: false,
+                                        message: 'Some fields are empty ${e}',
+                                    });
                                 }
 
                                 setContextMenuConfig((prev) => {

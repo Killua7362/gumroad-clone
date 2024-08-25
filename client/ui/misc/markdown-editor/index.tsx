@@ -120,8 +120,9 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
             }
 
             .MuiStack-root {
-                background-color: #09090b;
-                border: rgba(255, 255, 255, 0.6) 0.3px solid;
+                border-radius: 0.5rem;
+                background-color: #181a1a;
+                border: rgba(255, 255, 255, 0.3) 0.1px solid;
                 padding: 8px;
                 display: flex;
                 flex-wrap: wrap;
@@ -133,10 +134,10 @@ export const MarkdownEditor: FC<PropsWithChildren<MarkdownEditorProps>> = ({
                 .MuiBox-root {
                     display: flex;
                     gap: 5px;
-                    background-color: #09090b;
+                    background-color: #181a1a;
                     margin: 0;
                     .MuiButtonBase-root {
-                        background-color: #09090b;
+                        background-color: #181a1a;
                         svg {
                             color: white;
                             height: 1rem;

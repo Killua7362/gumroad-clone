@@ -23,7 +23,7 @@ const ReviewComponent = () => {
     });
 
     return (
-        <section className="flex flex-col w-full max-w-[20rem] border-white/30 border-[0.1px] h-fit p-4 justify-center items-center gap-y-3">
+        <section className="flex flex-col w-full max-w-[20rem] border-white/30 border-[0.1px] h-fit p-4 justify-center items-center gap-y-3 rounded-lg">
             <h2 className="p-2 text-2xl">Review</h2>
             <section className="flex gap-x-4 px-1 justify-between w-full">
                 Rating:
