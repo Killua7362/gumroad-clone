@@ -49,14 +49,14 @@ const ProductEditHomePage = () => {
 
     return (
         <article className="w-full flex flex-col items-center sm:items-start lg:flex-row">
-            <section className="grid gap-y-4 w-full xl:w-6/12 xl:h-[38rem] px-4 sm:pr-6 sm:pl-0 xl:px-5 overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white scrollbar-track-background">
+            <section className="grid gap-y-4 w-full xl:w-6/12 xl:h-[48rem] px-4 sm:pr-6 sm:pl-0 xl:px-5 overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white scrollbar-track-background">
                 <MainSection />
                 <ImageSection />
                 <CollabSection />
                 <SettingsSection />
             </section>
             <section
-                className={`w-6/12 h-[38rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}>
+                className={`w-6/12 h-[48rem] overflow-x-auto overflow-y-auto bg-background scrollbar-none  hidden border-x-[0px] xl:block border-white/30 p-2 px-0 border-l-[0.1px]`}>
                 <span className="m-3 mt-1 text-xl uppercase font-medium tracking-widest text-white/70">
                     Preview
                 </span>

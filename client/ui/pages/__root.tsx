@@ -71,7 +71,7 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
             <Toast />
             {(sideBarActive || false) && <SideBar {...sideBarProps} />}
             <div
-                className={`absolute w-full min-h-screen sm:w-auto flex flex-col justify-between overflow-y-auto overflow-x-hidden md:mx-8 sm:right-0 px-2 sm:px-0 scrollbar-thin scrollbar-thumb-white scrollbar-track-background top-[5rem] sm:top-0`}
+                className={`absolute w-full min-h-screen sm:w-auto flex flex-col justify-between overflow-y-auto overflow-x-hidden sm:right-0 px-2 sm:px-0 scrollbar-thin scrollbar-thumb-white scrollbar-track-background sm:top-0`}
                 style={{
                     left:
                         (sideBarActive || false) &&
@@ -80,6 +80,11 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
                                 ? '18rem'
                                 : '5rem'
                             : 0,
+                    top:
+                        (sideBarActive || false) &&
+                        sideBarProps.windowWidth < 640
+                            ? '5rem'
+                            : '0rem',
                 }}>
                 <section className="h-full relative mb-10">{children}</section>
                 <Footer />

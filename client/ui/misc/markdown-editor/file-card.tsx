@@ -1,9 +1,11 @@
+import { isBase64 } from '@/lib/image_process';
 import Button from '@/ui/components/button';
 import DeleteContentItemModal from '@/ui/components/modal/DeleteContentItemsModal';
 import { useCommands } from '@remirror/react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';
+import { TbDownload } from 'react-icons/tb';
 
 const FileCard = ({ ...props }: any) => {
     const { deleteFile, updateFile } = useCommands();
@@ -43,19 +45,29 @@ const FileCard = ({ ...props }: any) => {
                 },
             }}
             layout
-            className={`px-6 pt-2 pb-4 flex flex-col gap-y-4 border-[0.1px] rounded-lg overflow-hidden ${isExpanded ? 'bg-background' : 'bg-white/5'} transition-colors duration-200`}
+            className={`px-6 pt-2 pb-4 gap-y-4 border-[0.1px] rounded-lg overflow-hidden ${isExpanded ? 'bg-background' : 'bg-white/5'} transition-colors duration-200`}
             style={{
                 boxShadow: isExpanded ? '' : '0px 4px 0px 2px black',
             }}>
             <div className={`flex justify-between items-center gap-x-4`}>
-                <div className="w-[calc(100%-4rem)] my-1">
+                <div className="w-[calc(100%-4rem)] my-1 grid gap-y-2">
                     <div className="text-3xl">{file_name}</div>
                     <div className="flex justify-between w-full text-base text-white/70">
-                        <div>{props.node.attrs.fileSize} MB</div>
+                        <div>{props.node.attrs.fileSize / 10 ** 6} MB</div>
                         <div>{props.node.attrs.fileType}</div>
                     </div>
                 </div>
                 <div className="flex gap-x-4">
+                    <DeleteContentItemModal pos={props.getPosition()} />
+                    {!isBase64(props.node.attrs.src) && (
+                        <Button
+                            buttonName=""
+                            onClickHandler={() => {
+                                window.location.href = `https://drive.google.com/uc?id=${props.node.attrs.src}&export=download`;
+                            }}>
+                            <TbDownload />
+                        </Button>
+                    )}
                     {!editFields && (
                         <Button
                             buttonName=""
@@ -67,7 +79,6 @@ const FileCard = ({ ...props }: any) => {
                             <IoIosArrowDown />
                         </Button>
                     )}
-                    <DeleteContentItemModal pos={props.getPosition()} />
                 </div>
             </div>
             {isExpanded && (

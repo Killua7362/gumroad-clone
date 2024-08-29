@@ -36,7 +36,10 @@ const CheckoutLayout = ({ children }: { children: React.ReactNode }) => {
                     </Link>
                 </nav>
             </header>
-            <main className="py-8">{children}</main>
+
+            <main className="text-xl flex flex-col lg:flex-row gap-4 relative left-0 top-4">
+                {children}
+            </main>
         </div>
     );
 };

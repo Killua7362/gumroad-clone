@@ -231,8 +231,11 @@ const FilterCheckoutModal = ({
                     </footer>
                 </article>
             </Modal.Base>
-            <Modal.Open className="h-full w-full">
-                <Button buttonName="Filter" extraClasses={[`!w-full`]} />
+            <Modal.Open className="h-full grow">
+                <Button
+                    buttonName="Filter"
+                    extraClasses={[`!w-[calc(100%-2rem)]`]}
+                />
             </Modal.Open>
         </Modal.Root>
     );

@@ -63,17 +63,15 @@ export const ProfileHomePage = ({
                 preview={preview}
                 name={preview ? profilePageProps.name! : profileStatus.name}>
                 <article
-                    className={`w-full grid gap-y-6 h-full scrollbar-thin scrollbar-thumb-white scrollbar-track-background ${preview ? 'pt-[6rem]' : 'pt-[6rem] sm:pt-[11rem] md:pt-[6rem]'}`}>
-                    <section className="min-h-[5rem] w-full flex justify-center items-center bg-accent/30 shadow-xl shadow-black/60">
-                        <header className="w-10/12 xl:w-8/12 text-xl">
-                            <h3 className="w-full">
-                                {preview
-                                    ? profilePageProps.bio!
-                                    : profileStatus.bio}
-                            </h3>
-                        </header>
+                    className={`w-full gap-y-6 h-full scrollbar-thin scrollbar-thumb-white scrollbar-track-background `}>
+                    <section className="bg-white/5 rounded-lg py-6 text-xl flex justify-center m-6 border-white/10 border-[0.1px]">
+                        <div className="flex gap-x-4 w-10/12 text-justify">
+                            {preview
+                                ? profilePageProps.bio!
+                                : profileStatus.bio}
+                        </div>
                     </section>
-                    <section className="w-10/12 xl:w-8/12 mx-auto h-full flex flex-col mt-2 gap-y-8">
+                    <section className="w-9/12 mx-auto h-full grid mt-8 gap-y-3">
                         {preview &&
                             profilePageProps.category &&
                             profilePageProps.category.map((e, i) => {

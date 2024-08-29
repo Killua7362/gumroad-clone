@@ -1,7 +1,7 @@
 import { allProductsFetcher } from '@/react-query/query';
 import { ProductsCardContextMenu } from '@/ui/pages/_protected/_layout.products/_layout_products.home/index.lazy';
 import { css, cx } from '@emotion/css';
-import { useSearch } from '@tanstack/react-router';
+import { Link, useSearch } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import ProductCard from '../../cards/ProductCard';
 import ProductHomeContextMenu from '../../context/ProductHomeContextMenu';
@@ -52,13 +52,13 @@ const ProductCardLayout = ({ data }: ProductCardLayout) => {
             className={cx(
                 'mt-2 grid gap-6 px-4 mb-10 sm:px-8 sm:pr-6 sm:pl-4 md:pl-0',
                 css`
-                                      /* prettier-ignore */
-                                      ${`
-                                      grid-template-columns: repeat(1, 1fr);
-                                      @media (min-width: 768px) {
-                                          grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-                                      }
-                                    `}
+                        /* prettier-ignore */
+                        ${`
+                        grid-template-columns: repeat(1, 1fr);
+                        @media (min-width: 768px) {
+                            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+                        }
+                      `}
                                 `
             )}>
             {allProductsData.map((value, i) => {
@@ -67,13 +67,38 @@ const ProductCardLayout = ({ data }: ProductCardLayout) => {
                         key={value.product_id}
                         productData={{
                             ...value,
-                        }}
-                        onSettingsClick={(
-                            event: React.MouseEvent<
-                                HTMLButtonElement,
-                                MouseEvent
-                            >
-                        ) => handleSettingsClick(event, value.product_id!)}>
+                        }}>
+                        <ProductCard.ImageSection />
+                        <section className="flex flex-col flex-grow p-6 md:w-[55%]">
+                            <header className="mb-3">
+                                <Link
+                                    className="group"
+                                    style={{
+                                        textDecoration: 'none',
+                                    }}
+                                    to="/profile/$id/product/$productid"
+                                    params={{
+                                        id: value.user_id!,
+                                        productid: value.product_id!,
+                                    }}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    disabled={!value.live}>
+                                    <ProductCard.TitleSection />
+                                </Link>
+                            </header>
+                            <ProductCard.SummarySection />
+                            <ProductCard.TagsSection />
+                            <ProductCard.StatusSection />
+                        </section>
+                        <ProductCard.ContextMenu
+                            onSettingsClick={(
+                                event: React.MouseEvent<
+                                    HTMLButtonElement,
+                                    MouseEvent
+                                >
+                            ) => handleSettingsClick(event, value.product_id!)}
+                        />
                         <ProductHomeContextMenu
                             contextMenuConfig={contextMenuConfig}
                             setContextMenuConfig={setContextMenuConfig}

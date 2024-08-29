@@ -1,5 +1,5 @@
 import { Link, useParams } from '@tanstack/react-router';
-import { IoMdCart } from 'react-icons/io';
+import Button from '../../button';
 
 interface ProfileNavbar {
     name: string;
@@ -10,38 +10,24 @@ const ProfileNavbar = ({ name, preview }: ProfileNavbar) => {
     const params = preview ? undefined : useParams({ strict: false });
 
     return (
-        <section className="fixed border-b-[0.1px] border-white/30 min-h-[6rem] w-full top-0 bg-background z-30 left-0">
-            <div className="w-10/12 xl:w-8/12 h-full mx-auto flex items-center justify-between md:flex-row flex-col gap-y-6 my-6">
+        <header className="min-h-[6rem] py-8 sm:relative border-b border-white/10 w-full flex items-center justify-center bg-background">
+            <div className="w-9/12 h-full flex items-center justify-between gap-x-16 gap-y-6 flex-wrap">
                 <Link
                     disabled={preview}
                     to={preview ? `/` : `/profile/$id`}
                     className="no-underline text-white"
                     {...(!preview && { params: { id: params?.id! } })}>
-                    <div className="text-3xl w-full cursor-pointer">{name}</div>
+                    <h1 className="text-4xl font-bold text-white">{name}</h1>
                 </Link>
-                <div className="flex gap-x-3 items-center justify-between md:justify-start w-full md:w-fit">
-                    <div className="flex gap-x-2">
-                        <input
-                            className="p-2 text-lg bg-background text-white border-white/30 border-[0.1px] rounded-md overflow-hidden focus-within:outline-none focus-within:border-white/70"
-                            placeholder="Enter your email"
-                        />
-                        <div className="border-white/30 border-[0.1px] p-2 text-lg rounded-md">
-                            Subscribe
-                        </div>
-                    </div>
-                    <Link
-                        disabled={preview}
-                        to={preview ? `/` : `/profile/$id/checkout`}
-                        className="no-underline text-white"
-                        {...(!preview && { params: { id: params?.id! } })}>
-                        <div className="text-lg ml-2 p-2 flex gap-x-2 items-center border-white/30 border-[0.1px] rounded-md cursor-pointer hover:text-white/70">
-                            <IoMdCart />
-                            <span className="text-xl">1</span>
-                        </div>
-                    </Link>
+                <div className="flex gap-x-2 ">
+                    <input
+                        className="border-white/30 text-white focus-within:border-blue-500 text-xl focus-within:ring-blue-500 transition-colors duration-200 border-[0.1px] w-full rounded-md p-2  outline-none bg-inherit"
+                        placeholder="Type your email"
+                    />
+                    <Button buttonName={'Submit'} />
                 </div>
             </div>
-        </section>
+        </header>
     );
 };
 export default ProfileNavbar;

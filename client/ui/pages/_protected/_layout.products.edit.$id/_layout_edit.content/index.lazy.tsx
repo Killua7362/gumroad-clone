@@ -242,7 +242,26 @@ const ProductEditContentPage = () => {
                                                 layout: { duration: 0.2 },
                                             }}
                                             className="list-none bg-background hover:bg-white/5">
-                                            <fieldset className="p-0 flex relative">
+                                            <div
+                                                className="p-0 flex relative"
+                                                tabIndex={-1}
+                                                onBlur={(e) => {
+                                                    if (
+                                                        !e.currentTarget.contains(
+                                                            e.relatedTarget
+                                                        )
+                                                    ) {
+                                                        dispatch({
+                                                            type: 'toggle_readonly',
+                                                            idx: i,
+                                                        });
+
+                                                        state.renameInputRefs[
+                                                            i
+                                                        ].current.value =
+                                                            'Rename';
+                                                    }
+                                                }}>
                                                 <input
                                                     ref={
                                                         state.renameInputRefs[i]
@@ -261,25 +280,6 @@ const ProductEditContentPage = () => {
                                                                 pages[i].name;
                                                         }
                                                     }}
-                                                    // onChange={(e) => {
-                                                    //     setValue(
-                                                    //         `contents.${i}.name`,
-                                                    //         e.target.value,
-                                                    //         {
-                                                    //             shouldDirty:
-                                                    //                 true,
-                                                    //         }
-                                                    //     );
-                                                    // }}
-                                                    onBlur={(e) => {
-                                                        dispatch({
-                                                            type: 'toggle_readonly',
-                                                            idx: i,
-                                                        });
-
-                                                        e.currentTarget.value =
-                                                            'Rename';
-                                                    }}
                                                 />
                                                 {!state.readOnly[i] && (
                                                     <section className="flex gap-x-2 py-2 mr-2 absolute right-0">
@@ -288,10 +288,7 @@ const ProductEditContentPage = () => {
                                                             extraClasses={[
                                                                 '!p-1',
                                                             ]}
-                                                            onMouseDownHandler={(
-                                                                e
-                                                            ) => {
-                                                                e.preventDefault();
+                                                            onClickHandler={() => {
                                                                 setValue(
                                                                     `contents.${i}.name`,
                                                                     state
@@ -316,7 +313,7 @@ const ProductEditContentPage = () => {
                                                         </Button>
                                                     </section>
                                                 )}
-                                            </fieldset>
+                                            </div>
                                             {pages.length > 1 && (
                                                 <ProductEditContentDeleteModal
                                                     i={i}

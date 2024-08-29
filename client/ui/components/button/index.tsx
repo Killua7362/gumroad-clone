@@ -11,9 +11,6 @@ interface ButtonSchema {
     onClickHandler?: (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ) => void;
-    onMouseDownHandler?: (
-        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => void;
     children?: React.ReactNode;
     isActive?: boolean;
     isLoading?: boolean;
@@ -27,7 +24,6 @@ const Button = ({
     extraClasses = [''],
     type = 'button',
     onClickHandler,
-    onMouseDownHandler,
     children,
     isActive = false,
     isLoading = false,
@@ -46,7 +42,6 @@ const Button = ({
             type={type}
             form={formID}
             onClick={onClickHandler}
-            onMouseDown={onMouseDownHandler}
             whileHover={{
                 ...(!isActive && {
                     transform: 'translate(-4px,-4px)',
